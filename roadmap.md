@@ -124,15 +124,15 @@ découverte du quartier et sait quoi faire si elle ne donne pas la permission de
 **Résultat attendu :** comprendre rapidement qui publie, quoi, où approximativement et jusqu’à
 quand ; terminer une publication sans confusion ni promesse excessive.
 
-| Chantier              | Livrables                                                                                                        |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Hiérarchie du feed    | Ordre visuel cohérent entre vidéo, catégorie, auteur, distance approximative et expiration                       |
-| Légendes              | ✅ Limite visuelle à trois lignes et commande de lecture étendue ; tests E2E ajoutés                             |
-| Catégories et alertes | Différencier catégorie « Alerte » et danger immédiat ; rappeler les consignes d’urgence à l’endroit utile        |
-| Actions vidéo         | Contrôler chevauchement avec la légende, taille tactile, labels accessibles et retours d’action                  |
-| Expiration            | Libellé compréhensible et cohérent avec la durée restante réelle                                                 |
-| Publication           | Revoir les étapes caméra → aperçu → informations → envoi → traitement ; rendre erreurs et progression explicites |
-| Reprise réseau        | Présenter clairement le statut d’une publication en attente et l’issue si la position n’est plus admissible      |
+| Chantier              | Livrables                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Hiérarchie du feed    | Ordre visuel cohérent entre vidéo, catégorie, auteur, distance approximative et expiration                         |
+| Légendes              | ✅ Limite visuelle à trois lignes et commande de lecture étendue ; tests E2E ajoutés                               |
+| Catégories et alertes | ✅ En mode « Alerte », distinguer les publications communautaires des alertes officielles et rappeler le 112 ; E2E |
+| Actions vidéo         | Contrôler chevauchement avec la légende, taille tactile, labels accessibles et retours d’action                    |
+| Expiration            | Libellé compréhensible et cohérent avec la durée restante réelle                                                   |
+| Publication           | Revoir les étapes caméra → aperçu → informations → envoi → traitement ; rendre erreurs et progression explicites   |
+| Reprise réseau        | Présenter clairement le statut d’une publication en attente et l’issue si la position n’est plus admissible        |
 
 **Critères de sortie**
 

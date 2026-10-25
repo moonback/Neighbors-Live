@@ -8,7 +8,8 @@
   "alerts": {
     "banner": "{count, plural, one {# alerte proche} other {# alertes proches}}",
     "new": "Nouvelle alerte : {caption}",
-    "show": "Voir les alertes"
+    "show": "Voir les alertes",
+    "notice": "Les alertes sont des publications de la communauté, pas des alertes officielles. En cas de danger immédiat, appelez le 112."
   },
   "location": {
     "primerTitle": "Voir ce qui se passe près de vous",

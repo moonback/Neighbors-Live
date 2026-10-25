@@ -188,6 +188,11 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
             ))}
           </select>
         </div>
+        {category === 'alert' && (
+          <p className="rounded-xl border border-alert/50 bg-black/80 px-3 py-2 text-sm text-white">
+            {t('alerts.notice')}
+          </p>
+        )}
         {coords && (
           <AlertsBanner
             lat={coords.lat}

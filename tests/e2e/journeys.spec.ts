@@ -67,6 +67,11 @@ test('feed: plays the visible video muted, preloads only the next one', async ({
   // Filters and radius
   await page.getByRole('button', { name: 'Alerte', exact: true }).click();
   await expect(page.getByTestId('feed-item').first()).toContainText('Alerte');
+  await expect(
+    page.getByText(
+      'Les alertes sont des publications de la communauté, pas des alertes officielles. En cas de danger immédiat, appelez le 112.',
+    ),
+  ).toBeVisible();
 });
 
 test('feed: reduced motion pauses autoplay but keeps manual playback available', async ({
@@ -83,6 +88,22 @@ test('feed: reduced motion pauses autoplay but keeps manual playback available',
 
   await first.getByRole('button', { name: 'Lire la vidéo' }).click();
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBe(true);
+});
+
+test('feed: reports when manual video playback fails', async ({ page }) => {
+  await page.goto(`/?${BELLEVILLE}`);
+  const first = page.getByTestId('feed-item').first();
+  const video = first.locator('video');
+  await expect(first).toBeVisible();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBe(true);
+  await first.getByRole('button', { name: 'Mettre en pause' }).click();
+  await video.evaluate(() => {
+    HTMLMediaElement.prototype.play = () =>
+      Promise.reject(new DOMException('Playback blocked', 'NotAllowedError'));
+  });
+  await first.getByRole('button', { name: 'Lire la vidéo' }).click();
+  await expect(first.getByRole('status')).toHaveText('Lecture impossible. Touchez pour réessayer.');
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
 });
 
 test('merchant introduction is public and application remains behind authentication', async ({
