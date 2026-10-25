@@ -72,29 +72,45 @@ export default async function AdminPage({
     .slice(0, 20);
   const userColumns = 'id, username, role, reputation, banned_at';
 
-  const [stats, merchants, users, actions, t, tk, format] = await Promise.all([
-    admin.rpc('admin_stats', { p_admin: viewer.id }),
-    admin
-      .from('merchant_profiles')
-      .select('user_id, business_name, description, created_at')
-      .eq('status', 'pending')
-      .order('created_at', { ascending: true })
-      .limit(20),
-    search
-      ? admin.from('profiles').select(userColumns).ilike('username', `%${search}%`).limit(20)
-      : admin.from('profiles').select(userColumns).not('banned_at', 'is', null).limit(20),
-    admin
-      .from('moderation_actions')
-      .select('id, kind, note, created_at, actor_id, target_user_id, video_id, h3_cell')
-      .order('created_at', { ascending: false })
-      .limit(20),
-    getTranslations('admin'),
-    getTranslations('moderation.decisions.kinds'),
-    getFormatter(),
-  ]);
+  const [stats, processingVideos, merchants, users, actions, t, tk, tc, format] = await Promise.all(
+    [
+      admin.rpc('admin_stats', { p_admin: viewer.id }),
+      admin
+        .from('videos')
+        .select('id, author_id, category, caption, created_at', { count: 'exact' })
+        .eq('status', 'processing')
+        .order('created_at', { ascending: true })
+        .limit(20),
+      admin
+        .from('merchant_profiles')
+        .select('user_id, business_name, description, created_at')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: true })
+        .limit(20),
+      search
+        ? admin.from('profiles').select(userColumns).ilike('username', `%${search}%`).limit(20)
+        : admin.from('profiles').select(userColumns).not('banned_at', 'is', null).limit(20),
+      admin
+        .from('moderation_actions')
+        .select('id, kind, note, created_at, actor_id, target_user_id, video_id, h3_cell')
+        .order('created_at', { ascending: false })
+        .limit(20),
+      getTranslations('admin'),
+      getTranslations('moderation.decisions.kinds'),
+      getTranslations('common.categories'),
+      getFormatter(),
+    ],
+  );
 
   const parsedStats = statsSchema.safeParse(stats.data);
-  if (stats.error || merchants.error || users.error || actions.error || !parsedStats.success) {
+  if (
+    stats.error ||
+    processingVideos.error ||
+    merchants.error ||
+    users.error ||
+    actions.error ||
+    !parsedStats.success
+  ) {
     return (
       <div className="mx-auto flex max-w-5xl flex-col gap-5 p-4 sm:p-6">
         <h1 className="pt-4 text-2xl font-bold">{t('title')}</h1>
@@ -109,17 +125,28 @@ export default async function AdminPage({
   const actionRows = actions.data;
   const profileIds = [
     ...new Set([
+      ...processingVideos.data.map((video) => video.author_id),
       ...actionRows.flatMap((action) =>
         [action.actor_id, action.target_user_id].filter((id): id is string => id !== null),
       ),
       ...merchants.data.map((merchant) => merchant.user_id),
     ]),
   ];
-  const actionProfiles =
+  const videoIds = processingVideos.data.map((video) => video.id);
+  const [actionProfiles, processingJobs] = await Promise.all([
     profileIds.length > 0
-      ? await admin.from('profiles').select('id, username').in('id', profileIds)
-      : null;
-  if (actionProfiles?.error) {
+      ? admin.from('profiles').select('id, username').in('id', profileIds)
+      : Promise.resolve(null),
+    videoIds.length > 0
+      ? admin
+          .from('media_jobs')
+          .select('video_id, status, attempts, max_attempts, updated_at')
+          .eq('kind', 'process')
+          .in('video_id', videoIds)
+          .order('updated_at', { ascending: false })
+      : Promise.resolve(null),
+  ]);
+  if (actionProfiles?.error || processingJobs?.error) {
     return (
       <div className="mx-auto flex max-w-5xl flex-col gap-5 p-4 sm:p-6">
         <h1 className="pt-4 text-2xl font-bold">{t('title')}</h1>
@@ -134,6 +161,12 @@ export default async function AdminPage({
   const profileNames = new Map(
     (actionProfiles?.data ?? []).map((profile) => [profile.id, profile.username]),
   );
+  const latestJobByVideo = new Map<string, NonNullable<typeof processingJobs>['data'][number]>();
+  for (const job of processingJobs?.data ?? []) {
+    if (job.video_id && !latestJobByVideo.has(job.video_id)) {
+      latestJobByVideo.set(job.video_id, job);
+    }
+  }
   const { zones } = parsedStats.data;
 
   return (
@@ -183,6 +216,70 @@ export default async function AdminPage({
             );
           })}
         </dl>
+      </section>
+
+      <section aria-labelledby="processing-videos-title" className="flex flex-col gap-3">
+        <div>
+          <h2 id="processing-videos-title" className="text-lg font-semibold">
+            {t('processingVideos')}
+            <span className="ml-2 rounded-full bg-sky-500/10 px-2 py-0.5 text-sm text-sky-700">
+              {(processingVideos.count ?? processingVideos.data.length).toLocaleString('fr-FR')}
+            </span>
+          </h2>
+          <p className="text-sm text-fog">{t('processingVideosHint')}</p>
+        </div>
+        {processingVideos.data.length === 0 ? (
+          <p className="rounded-xl border border-line p-4 text-sm text-fog">
+            {t('emptyProcessingVideos')}
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {processingVideos.data.map((video) => {
+              const job = latestJobByVideo.get(video.id);
+              const author = profileNames.get(video.author_id);
+              return (
+                <li
+                  key={video.id}
+                  className="flex flex-col gap-2 rounded-xl border border-line bg-panel p-4 sm:flex-row sm:items-center sm:justify-between"
+                  data-testid="processing-video"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm">
+                      <strong>{tc(video.category)}</strong> · {video.caption || '—'}
+                    </p>
+                    <p className="mt-1 text-xs text-fog">
+                      {t('processingVideoAuthor', {
+                        username: author ? `@${author}` : video.author_id.slice(0, 8),
+                      })}
+                      {' · '}
+                      {format.dateTime(new Date(video.created_at), {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-sm sm:text-right">
+                    <p className="font-semibold text-sky-700">{t('videoStatusProcessing')}</p>
+                    <p className="text-xs text-fog">
+                      {job ? (
+                        <>
+                          {t(`jobStatus.${job.status}`)}
+                          {' · '}
+                          {t('jobAttempts', {
+                            attempts: job.attempts,
+                            maxAttempts: job.max_attempts,
+                          })}
+                        </>
+                      ) : (
+                        t('noProcessingJob')
+                      )}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
 
       <section aria-labelledby="zones" className="flex flex-col gap-3">

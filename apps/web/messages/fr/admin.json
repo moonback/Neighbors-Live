@@ -15,6 +15,19 @@
     "pending_appeals": "Contestations en attente",
     "pending_merchants": "Commerces à valider"
   },
+  "processingVideos": "Vidéos en traitement",
+  "processingVideosHint": "Les 20 vidéos les plus anciennes sont affichées en premier.",
+  "emptyProcessingVideos": "Aucune vidéo n’est actuellement en traitement.",
+  "processingVideoAuthor": "Par {username}",
+  "videoStatusProcessing": "Vidéo en traitement",
+  "jobStatus": {
+    "queued": "Tâche en file d’attente",
+    "running": "Traitement en cours",
+    "done": "Tâche terminée",
+    "failed": "Échec de la tâche"
+  },
+  "jobAttempts": "Tentative {attempts}/{maxAttempts}",
+  "noProcessingJob": "Aucune tâche média associée",
   "zones": "Zones",
   "zonesHint": "Les 15 zones les plus actives sont affichées ; ouvrez une zone pour accéder à sa file de modération.",
   "zone": "Zone {short}",

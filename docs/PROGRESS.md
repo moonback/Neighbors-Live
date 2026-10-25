@@ -6,8 +6,8 @@ Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans
 
 Dernière mise à jour : 2026-10-25 — audit contenu/UX et roadmap documentés ; clarification des
 textes, onboarding raccourci, page publique commerçante, lisibilité du feed, reprise hors ligne
-explicite et tableau de bord d’administration enrichi. Typecheck, lint, tests unitaires, E2E ciblés
-et build réussis.
+explicite et tableau de bord d’administration enrichi, avec file des vidéos en traitement. Typecheck,
+lint, 47 tests unitaires, E2E ciblé et build réussis.
 
 ## 0. Cadrage et fondations
 
@@ -117,7 +117,7 @@ voir sections suivantes au fil de l'avancement.
 | Contexte des alertes et consigne d’urgence                 | ✅   | Alerte communautaire distinguée d’une alerte officielle ; appel au 112 rappelé ; E2E           |
 | Retour en cas d’échec de lecture vidéo                     | ✅   | Message de reprise accessible ; état pause conservé ; E2E réussi                               |
 | Statuts de reprise des vidéos hors ligne                   | ✅   | Position, précision, réseau, déplacement et délai distingués ; E2E du délai réussi             |
-| Tableau de bord d’administration                           | ✅   | Indicateurs actionnables, état vide/erreur, demandes détaillées et journal contextualisé ; E2E |
+| Tableau de bord d’administration                           | ✅   | File des vidéos `processing` (20 plus anciennes, auteur, date, état et tentatives du job) ; E2E vérifié |
 | Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise                   |
 | Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                                  |
 
