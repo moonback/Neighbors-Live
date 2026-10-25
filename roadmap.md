@@ -26,6 +26,8 @@ parcours avant une refonte graphique générale.
 - Tests E2E ajoutés pour la présentation publique commerçante, la protection de l’espace de demande
   et le développement/repli d’une longue légende ; ces deux parcours E2E ciblés passent, comme le
   typecheck, le lint, les tests unitaires et le build de production.
+- Le feed respecte désormais aussi une préférence de mouvement réduit modifiée pendant la session :
+  l’autoplay s’arrête, mais la commande de lecture manuelle reste disponible.
 
 Les corrections ne remplacent pas une revue juridique. Les coordonnées de l’éditeur et les
 informations réelles des sous-traitants restent à fournir. Le suivi détaillé est dans
@@ -205,7 +207,7 @@ notamment avec clavier, technologies d’assistance et paramètres d’affichage
 | Clavier et lecteurs d’écran | Revue de navigation, dialogue modal, focus, annonces de statuts et formulaires                          |
 | Contraste et zoom           | Contrôle des contrastes, zoom navigateur et tailles de police agrandies                                 |
 | Vidéo                       | Contrôles compréhensibles, mode muet explicite, légende visible et alternatives lorsque disponibles     |
-| Mouvement                   | Vérification du respect de `prefers-reduced-motion` pour les transitions et animations                  |
+| Mouvement                   | ✅ Autoplay du feed arrêté selon `prefers-reduced-motion`, avec lecture manuelle disponible ; E2E       |
 | i18n                        | Parité des messages FR/EN pour auth, capture, erreurs, modération et commerces                          |
 | Appareils                   | Matrice d’essai iPhone Safari, Android Chrome et navigateurs desktop supportés                          |
 | PWA/push                    | Essais réels d’installation, permissions, réception et désabonnement ; noter les limites par plateforme |

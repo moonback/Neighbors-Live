@@ -51,7 +51,7 @@ export function VideoCard({
     const video = ref.current;
     if (!video) return;
     if (active && autoplay) void video.play().catch(() => setPaused(true));
-    if (!active) video.pause();
+    if (!active || !autoplay) video.pause();
   }, [active, autoplay, src]);
 
   async function refreshUrl() {

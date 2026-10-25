@@ -69,6 +69,22 @@ test('feed: plays the visible video muted, preloads only the next one', async ({
   await expect(page.getByTestId('feed-item').first()).toContainText('Alerte');
 });
 
+test('feed: reduced motion pauses autoplay but keeps manual playback available', async ({
+  page,
+}) => {
+  await page.goto(`/?${BELLEVILLE}`);
+  const first = page.getByTestId('feed-item').first();
+  const video = first.locator('video');
+  await expect(first).toBeVisible();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBe(true);
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
+
+  await first.getByRole('button', { name: 'Lire la vidéo' }).click();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBe(true);
+});
+
 test('merchant introduction is public and application remains behind authentication', async ({
   browser,
 }) => {

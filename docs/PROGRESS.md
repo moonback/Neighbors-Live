@@ -112,6 +112,7 @@ voir sections suivantes au fil de l'avancement.
 | Présentation commerçant améliorée                          | ✅   | Copie mise à jour ; page publique répertoriée ci-dessous                             |
 | Page publique de présentation commerçant                   | ✅   | `/commerces`, chemin de demande redirigé vers l’espace connecté ; E2E réussi         |
 | Légende longue du feed développable                        | ✅   | Limitation à trois lignes avec contrôle accessible ; E2E réussi                      |
+| Mouvement réduit dans le feed                              | ✅   | L’autoplay se met en pause ; lecture manuelle disponible ; E2E réussi                |
 | Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise         |
 | Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                        |
 
