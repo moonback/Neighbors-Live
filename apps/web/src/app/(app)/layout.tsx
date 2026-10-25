@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { BottomNav } from '@/components/BottomNav';
+import { OfflineQueueRunner } from '@/components/capture/OfflineQueueRunner';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations('common');
@@ -15,6 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         {children}
       </main>
       <BottomNav />
+      <OfflineQueueRunner />
     </>
   );
 }

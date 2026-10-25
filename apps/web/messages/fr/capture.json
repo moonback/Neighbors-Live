@@ -1,0 +1,73 @@
+{
+  "title": "Filmer",
+  "close": "Fermer la caméra",
+  "primer": {
+    "title": "Filmer ce qui se passe",
+    "body": "Pour filmer, Neighbors Live a besoin de :",
+    "camera": "Caméra et micro : uniquement pendant que cet écran est ouvert. Les vidéos se filment dans l’application, l’import depuis la galerie n’est pas possible.",
+    "location": "Position, au moment de publier : pour montrer la vidéo aux voisins proches. Elle est arrondie à environ 50 m pour tout le monde.",
+    "privacy": "Les visages sont floutés automatiquement avant publication.",
+    "continue": "Activer la caméra",
+    "later": "Pas maintenant"
+  },
+  "errors": {
+    "denied": "L’accès à la caméra ou au micro est refusé. Autorisez-le dans les réglages du navigateur pour ce site, puis réessayez.",
+    "notFound": "Aucune caméra disponible sur cet appareil.",
+    "unsupported": "Ce navigateur ne permet pas d’enregistrer une vidéo. Essayez avec Safari (iOS) ou Chrome (Android).",
+    "generic": "Impossible de démarrer la caméra."
+  },
+  "switch": "Changer de caméra",
+  "record": "Démarrer l’enregistrement",
+  "stop": "Arrêter l’enregistrement",
+  "remaining": "{seconds} s restantes",
+  "maxDuration": "30 secondes maximum",
+  "preview": {
+    "title": "Aperçu",
+    "retake": "Refaire",
+    "next": "Continuer"
+  },
+  "form": {
+    "title": "Publier",
+    "category": "Catégorie",
+    "caption": "Légende",
+    "captionHint": "{count}/140 caractères",
+    "eventEnd": "Fin de l’événement",
+    "eventEndHint": "Dans les 7 prochains jours.",
+    "merchantDuration": "Durée de l’offre",
+    "hours": "{count, plural, one {# heure} other {# heures}}",
+    "lifetime": {
+      "alert": "Visible 6 heures.",
+      "deal": "Visible 48 heures.",
+      "event": "Visible jusqu’à la fin de l’événement.",
+      "help": "Visible 7 jours.",
+      "lost": "Visible 7 jours.",
+      "shop": "Visible pendant la durée choisie."
+    },
+    "shopOnly": "Réservé aux comptes commerçants validés.",
+    "publish": "Publier ici",
+    "locating": "Localisation en cours…",
+    "uploading": "Envoi… {percent} %",
+    "processing": "Vidéo envoyée ! Floutage et traitement en cours, elle apparaîtra dans quelques instants.",
+    "seeStatus": "Suivre le statut",
+    "another": "Filmer une autre vidéo"
+  },
+  "location": {
+    "denied": "La localisation est refusée. Elle est nécessaire pour publier : autorisez-la dans les réglages du navigateur.",
+    "imprecise": "Position trop imprécise (± {accuracy} m, 100 m maximum). Sortez à découvert ou attendez quelques secondes, puis réessayez.",
+    "unavailable": "Position indisponible. Vérifiez que la localisation est activée et réessayez.",
+    "retry": "Réessayer la localisation"
+  },
+  "offline": {
+    "queued": "Vous êtes hors ligne : la vidéo est gardée sur cet appareil et sera publiée automatiquement au retour du réseau, si vous êtes toujours au même endroit.",
+    "pending": "{count, plural, one {# vidéo en attente d’envoi} other {# vidéos en attente d’envoi}}",
+    "sent": "Votre vidéo en attente a été publiée.",
+    "dropped": "Une vidéo en attente n’a pas été publiée : vous n’êtes plus à proximité du lieu filmé."
+  },
+  "errorsPublish": {
+    "position_incoherent": "Votre position semble incohérente avec votre dernière publication.",
+    "merchant_quota_exceeded": "Quota d’offres atteint pour aujourd’hui.",
+    "not_merchant": "Réservé aux comptes commerçants validés.",
+    "profile_incomplete": "Choisissez d’abord un pseudo.",
+    "upload_missing": "L’envoi du fichier n’a pas abouti. Réessayez."
+  }
+}
