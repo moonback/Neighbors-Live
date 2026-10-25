@@ -104,22 +104,22 @@ voir sections suivantes au fil de l'avancement.
 
 ### Améliorations contenu et UI/UX
 
-| Élément                                                    | État | Notes                                                                                          |
-| ---------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------- |
-| Promesse d’accueil et tagline clarifiées                   | ✅   | Texte centré sur les informations utiles en courtes vidéos, sans ambiguïté de direct           |
-| Installation PWA facultative, hors du parcours principal   | ✅   | Guide d’installation accessible séparément via `/onboarding?step=install`                      |
-| Action principale d’onboarding visible et contenu défilant | ✅   | Vérification E2E ajoutée au viewport mobile 375 × 500                                          |
-| Textes de confidentialité, floutage et modération alignés  | ✅   | Limites du floutage et examen après signalements explicités                                    |
-| Présentation commerçant améliorée                          | ✅   | Copie mise à jour ; page publique répertoriée ci-dessous                                       |
-| Page publique de présentation commerçant                   | ✅   | `/commerces`, chemin de demande redirigé vers l’espace connecté ; E2E réussi                   |
-| Légende longue du feed développable                        | ✅   | Limitation à trois lignes avec contrôle accessible ; E2E réussi                                |
-| Mouvement réduit dans le feed                              | ✅   | L’autoplay se met en pause ; lecture manuelle disponible ; E2E réussi                          |
-| Contexte des alertes et consigne d’urgence                 | ✅   | Alerte communautaire distinguée d’une alerte officielle ; appel au 112 rappelé ; E2E           |
-| Retour en cas d’échec de lecture vidéo                     | ✅   | Message de reprise accessible ; état pause conservé ; E2E réussi                               |
-| Statuts de reprise des vidéos hors ligne                   | ✅   | Position, précision, réseau, déplacement et délai distingués ; E2E du délai réussi             |
+| Élément                                                    | État | Notes                                                                                                   |
+| ---------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------- |
+| Promesse d’accueil et tagline clarifiées                   | ✅   | Texte centré sur les informations utiles en courtes vidéos, sans ambiguïté de direct                    |
+| Installation PWA facultative, hors du parcours principal   | ✅   | Guide d’installation accessible séparément via `/onboarding?step=install`                               |
+| Action principale d’onboarding visible et contenu défilant | ✅   | Vérification E2E ajoutée au viewport mobile 375 × 500                                                   |
+| Textes de confidentialité, floutage et modération alignés  | ✅   | Limites du floutage et examen après signalements explicités                                             |
+| Présentation commerçant améliorée                          | ✅   | Copie mise à jour ; page publique répertoriée ci-dessous                                                |
+| Page publique de présentation commerçant                   | ✅   | `/commerces`, chemin de demande redirigé vers l’espace connecté ; E2E réussi                            |
+| Légende longue du feed développable                        | ✅   | Limitation à trois lignes avec contrôle accessible ; E2E réussi                                         |
+| Mouvement réduit dans le feed                              | ✅   | L’autoplay se met en pause ; lecture manuelle disponible ; E2E réussi                                   |
+| Contexte des alertes et consigne d’urgence                 | ✅   | Alerte communautaire distinguée d’une alerte officielle ; appel au 112 rappelé ; E2E                    |
+| Retour en cas d’échec de lecture vidéo                     | ✅   | Message de reprise accessible ; état pause conservé ; E2E réussi                                        |
+| Statuts de reprise des vidéos hors ligne                   | ✅   | Position, précision, réseau, déplacement et délai distingués ; E2E du délai réussi                      |
 | Tableau de bord d’administration                           | ✅   | File des vidéos `processing` (20 plus anciennes, auteur, date, état et tentatives du job) ; E2E vérifié |
-| Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise                   |
-| Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                                  |
+| Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise                            |
+| Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                                           |
 
 ## Limites connues
 

@@ -31,6 +31,10 @@ parcours avant une refonte graphique générale.
 - Le tableau de bord admin présente des indicateurs actionnables, des files et états vides explicites,
   les informations utiles des demandes commerce et un journal des décisions contextualisé ; le
   parcours admin est couvert par un test E2E.
+- La page admin liste aussi les vidéos `processing` (20 plus anciennes d’abord), leur auteur, leur
+  date et le statut/compteur de tentatives du job média lorsqu’il existe. La requête ne sélectionne
+  ni coordonnées exactes ni chemins de stockage ; l’E2E vérifie une réservation en traitement puis
+  la supprime.
 
 Les corrections ne remplacent pas une revue juridique. Les coordonnées de l’éditeur et les
 informations réelles des sous-traitants restent à fournir. Le suivi détaillé est dans
