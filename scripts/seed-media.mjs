@@ -1,19 +1,25 @@
 // Generates the 6 demo clips referenced by supabase/seed.sql (demo/clip-N.mp4 + .jpg) with the
 // worker image's ffmpeg, then uploads them to the private `videos` bucket.
 // Clips are synthetic (test pattern + label + tone): no third-party footage, no rights issue.
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const outDir = resolve(root, '.demo-media');
 
-const env = Object.fromEntries(
-  readFileSync(resolve(root, '.env'), 'utf8')
-    .split('\n')
-    .filter((l) => l.includes('=') && !l.startsWith('#'))
-    .map((l) => [l.slice(0, l.indexOf('=')), l.slice(l.indexOf('=') + 1).trim()]),
-);
+// Demo media only ever go to the LOCAL stack: credentials come from `supabase status`, never
+// from .env (which may point to a hosted project).
+const raw = execFileSync('pnpm', ['exec', 'supabase', 'status', '-o', 'json'], {
+  cwd: root,
+  shell: process.platform === 'win32',
+  encoding: 'utf8',
+});
+const status = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1));
+const env = { SUPABASE_URL: status.API_URL, SUPABASE_SERVICE_ROLE_KEY: status.SERVICE_ROLE_KEY };
+if (!/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(env.SUPABASE_URL ?? '')) {
+  throw new Error(`seed-media refuses non-local Supabase URL: ${env.SUPABASE_URL}`);
+}
 
 const clips = [
   [1, 'Alerte', '0'],

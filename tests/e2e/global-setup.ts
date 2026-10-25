@@ -8,7 +8,7 @@ import { resolve } from 'node:path';
  */
 export default async function globalSetup() {
   const env = Object.fromEntries(
-    readFileSync(resolve(import.meta.dirname, '../../.env'), 'utf8')
+    readFileSync(resolve(import.meta.dirname, '../../apps/web/.env.local'), 'utf8')
       .split('\n')
       .filter((l) => l.includes('=') && !l.startsWith('#'))
       .map((l) => [l.slice(0, l.indexOf('=')), l.slice(l.indexOf('=') + 1).trim()]),

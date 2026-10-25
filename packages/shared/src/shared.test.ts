@@ -9,6 +9,8 @@ import {
   isPlausibleMove,
   isPlausiblePosition,
   moderationDecisionSchema,
+  passwordSchema,
+  signUpSchema,
   realtimeCell,
   realtimeCells,
   sanitizeText,
@@ -102,6 +104,21 @@ describe('schemas', () => {
     expect(bad({ category: 'event' })).toBe(false);
     expect(bad({ durationMs: 45_000 })).toBe(false);
     expect(bad({ lat: 0, lng: 0 })).toBe(false);
+  });
+
+  it('enforces the password policy', () => {
+    expect(passwordSchema.safeParse('voisins2026').success).toBe(true);
+    expect(passwordSchema.safeParse('court1').success).toBe(false);
+    expect(passwordSchema.safeParse('sanschiffre').success).toBe(false);
+    expect(passwordSchema.safeParse('12345678').success).toBe(false);
+    expect(passwordSchema.safeParse('a1'.repeat(40)).success).toBe(false);
+    expect(
+      signUpSchema.parse({ email: ' Lea@Example.ORG ', password: 'voisins2026', username: 'Lea' }),
+    ).toEqual({
+      email: 'lea@example.org',
+      password: 'voisins2026',
+      username: 'lea',
+    });
   });
 
   it('validates usernames', () => {

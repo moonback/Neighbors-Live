@@ -3,8 +3,10 @@
 begin;
 select no_plan();
 
--- Isolate from demo data (rolled back at the end of the file).
+-- Isolate from demo data and from jobs left by e2e runs (rolled back at the end of the file).
 delete from public.videos;
+delete from public.media_jobs;
+delete from public.notification_outbox;
 
 create temp table u as
 select tests.create_user('carla') as carla, tests.create_user('dan') as dan,

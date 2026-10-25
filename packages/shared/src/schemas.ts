@@ -41,6 +41,26 @@ export const usernameSchema = z
   .toLowerCase()
   .regex(/^[a-z0-9_]{3,20}$/, { message: 'username_invalid' });
 
+/** 8–72 characters (bcrypt truncates beyond 72 bytes), at least one letter and one digit. */
+export const passwordSchema = z
+  .string()
+  .min(8, { message: 'password_too_short' })
+  .max(72, { message: 'password_too_long' })
+  .refine((p) => /[A-Za-z]/.test(p) && /\d/.test(p), { message: 'password_too_weak' });
+
+export const emailSchema = z.string().trim().toLowerCase().pipe(z.email().max(254));
+
+export const signUpSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  username: usernameSchema,
+});
+
+export const signInSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(1).max(72),
+});
+
 export const recordedMimeSchema = z.enum(['video/mp4', 'video/webm']);
 
 export const createVideoSchema = z

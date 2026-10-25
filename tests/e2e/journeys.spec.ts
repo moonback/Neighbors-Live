@@ -3,11 +3,35 @@ import { signIn, signUp } from './helpers';
 
 const BELLEVILLE = 'lat=48.8722&lng=2.3767';
 
-test('sign-up: magic link, unique pseudo, profile', async ({ page }) => {
-  const { username } = await signUp(page, 'signup');
+test('sign-up and sign-in with e-mail + password, unique pseudo', async ({ page, browser }) => {
+  const { username, email, password } = await signUp(page, 'signup');
   await page.goto('/me');
   await expect(page.getByRole('heading', { name: `@${username}` })).toBeVisible();
   await expect(page.getByText('Réputation')).toBeVisible();
+
+  const other = await browser.newContext();
+  const p = await other.newPage();
+  // The pseudo is unique.
+  await p.goto('/login?mode=signup');
+  await p.getByLabel('Adresse e-mail').fill(`dup_${Date.now()}@e2e.test`);
+  await p.getByLabel('Pseudo').fill(username);
+  await p.getByLabel('Mot de passe', { exact: true }).fill('autre-mdp-2026');
+  await p.getByRole('button', { name: 'Créer mon compte' }).click();
+  await expect(p.getByText('Ce pseudo est déjà pris.')).toBeVisible();
+  // Weak passwords are refused before any request.
+  await p.getByLabel('Pseudo').fill(`x${Date.now().toString(36)}`.slice(0, 20));
+  await p.getByLabel('Mot de passe', { exact: true }).fill('court');
+  await p.getByRole('button', { name: 'Créer mon compte' }).click();
+  await expect(p.getByText('8 caractères minimum.')).toBeVisible();
+  // Wrong password, then the right one.
+  await p.goto('/login');
+  await p.getByLabel('Adresse e-mail').fill(email);
+  await p.getByLabel('Mot de passe', { exact: true }).fill('mauvais-mdp-1');
+  await p.getByRole('button', { name: 'Se connecter' }).click();
+  await expect(p.getByText('Adresse e-mail ou mot de passe incorrect.')).toBeVisible();
+  await signIn(p, email, '/me', password);
+  await expect(p.getByRole('heading', { name: `@${username}` })).toBeVisible();
+  await other.close();
 });
 
 test('feed: plays the visible video muted, preloads only the next one', async ({ page }) => {
