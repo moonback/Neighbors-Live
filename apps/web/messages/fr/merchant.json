@@ -1,0 +1,14 @@
+{
+  "title": "Espace commerçant",
+  "intro": "Les commerces de proximité peuvent publier des offres visibles par les voisins, avec un badge « Commerce ». Gratuit dans cette version.",
+  "apply": "Demander un compte commerce",
+  "businessName": "Nom du commerce",
+  "description": "Présentation courte (facultatif)",
+  "submit": "Envoyer la demande",
+  "pending": "Votre demande est en cours d’examen par l’équipe.",
+  "rejected": "Votre demande n’a pas été acceptée.",
+  "approved": "Votre compte commerce est actif.",
+  "quota": "Offres publiées sur 24 h : {used} / {quota}",
+  "publish": "Publier une offre",
+  "rules": "Une offre = une vidéo filmée sur place, catégorie « Commerce », avec une durée de visibilité de 6 h à 7 jours."
+}

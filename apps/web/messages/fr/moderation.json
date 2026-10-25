@@ -1,0 +1,59 @@
+{
+  "title": "Modération",
+  "intro": "Les habitants modèrent leur quartier. Les décisions sont journalisées et peuvent être contestées.",
+  "zones": "Mes zones",
+  "zone": "Zone {short}",
+  "queue": "File de modération",
+  "empty": "Rien à examiner dans cette zone.",
+  "reasons": "Motifs signalés",
+  "reports": "{count, plural, one {# signalement} other {# signalements}}",
+  "hiddenAuto": "Masquée automatiquement",
+  "actions": {
+    "validate": "Valider",
+    "hide": "Masquer",
+    "remove": "Supprimer",
+    "warn": "Avertir l’auteur"
+  },
+  "note": "Note (obligatoire pour une suppression)",
+  "done": "Décision enregistrée.",
+  "appeals": "Contestations à réexaminer",
+  "appealsEmpty": "Aucune contestation en attente.",
+  "appealReason": "Motif de la contestation",
+  "uphold": "Donner raison à l’auteur",
+  "reject": "Maintenir la décision",
+  "apply": {
+    "title": "Devenir modérateur de mon quartier",
+    "rules": "Conditions : compte de plus de 14 jours, au moins 5 publications jamais signalées, réputation suffisante. Vous modérez les zones où vous avez déjà publié.",
+    "eligible": "Vous remplissez les conditions.",
+    "notEligible": "Vous ne remplissez pas encore les conditions.",
+    "zone": "Zone",
+    "submit": "Devenir modérateur de cette zone",
+    "done": "Vous êtes maintenant modérateur de cette zone. Merci !",
+    "noZone": "Publiez d’abord dans votre quartier."
+  },
+  "decisions": {
+    "title": "Décisions me concernant",
+    "empty": "Aucune décision de modération vous concernant.",
+    "kinds": {
+      "validate": "Vidéo validée",
+      "hide": "Vidéo masquée",
+      "remove": "Vidéo supprimée",
+      "warn": "Avertissement",
+      "auto_hide": "Masquée après 3 signalements",
+      "revert": "Décision annulée par un administrateur",
+      "ban": "Compte suspendu",
+      "unban": "Suspension levée",
+      "appeal_upheld": "Contestation acceptée",
+      "appeal_rejected": "Contestation rejetée"
+    },
+    "appeal": "Contester",
+    "appealLabel": "Expliquez pourquoi la décision vous semble injustifiée (10 caractères minimum)",
+    "appealSent": "Contestation envoyée. Elle sera examinée par un autre modérateur ou un administrateur.",
+    "appealed": "Contestation : {status}",
+    "status": {
+      "pending": "en attente",
+      "upheld": "acceptée",
+      "rejected": "rejetée"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { Button } from '@/components/ui';
 
 /**
@@ -25,6 +25,7 @@ export function PermissionPrimer({
   onCancel: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
@@ -35,14 +36,14 @@ export function PermissionPrimer({
   return (
     <dialog
       ref={ref}
-      aria-labelledby="primer-title"
+      aria-labelledby={titleId}
       onCancel={(e) => {
         e.preventDefault();
         onCancel();
       }}
       className="m-auto w-[min(92vw,28rem)] rounded-2xl border border-line bg-panel p-5 text-white backdrop:bg-black/70"
     >
-      <h2 id="primer-title" className="mb-3 text-xl font-bold">
+      <h2 id={titleId} className="mb-3 text-xl font-bold">
         {title}
       </h2>
       <div className="flex flex-col gap-2 text-sm text-fog">{children}</div>

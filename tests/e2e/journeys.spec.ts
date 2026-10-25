@@ -1,0 +1,111 @@
+import { expect, test, type Browser } from '@playwright/test';
+import { signIn, signUp } from './helpers';
+
+const BELLEVILLE = 'lat=48.8722&lng=2.3767';
+
+test('sign-up: magic link, unique pseudo, profile', async ({ page }) => {
+  const { username } = await signUp(page, 'signup');
+  await page.goto('/me');
+  await expect(page.getByRole('heading', { name: `@${username}` })).toBeVisible();
+  await expect(page.getByText('Réputation')).toBeVisible();
+});
+
+test('feed: plays the visible video muted, preloads only the next one', async ({ page }) => {
+  await page.goto(`/?${BELLEVILLE}`);
+  const first = page.getByTestId('feed-item').first();
+  await expect(first).toBeVisible();
+  await expect
+    .poll(() => first.locator('video').evaluate((v: HTMLVideoElement) => !v.paused && v.muted))
+    .toBe(true);
+  const sources = await page.locator('video[src]').count();
+  expect(sources).toBeLessThanOrEqual(2);
+  await first.getByRole('button', { name: 'Activer le son' }).click();
+  await expect(first.locator('video')).toHaveJSProperty('muted', false);
+  // Filters and radius
+  await page.getByRole('button', { name: 'Alerte', exact: true }).click();
+  await expect(page.getByTestId('feed-item').first()).toContainText('Alerte');
+});
+
+async function reportAs(browser: Browser, videoId: string, prefix: string) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await signUp(page, prefix);
+  const res = await page.request.post(`/api/videos/${videoId}/report`, {
+    data: { reason: 'recognizable_person', details: 'visage' },
+    headers: { Origin: 'http://localhost:3000' },
+  });
+  expect(res.status()).toBe(201);
+  await context.close();
+}
+
+test('report until hidden, then a zone moderator removes it with a note', async ({
+  page,
+  browser,
+}) => {
+  // Pick a resident's video in central Belleville (moderated by the demo moderator).
+  const feed = await page.request.get(`/api/feed?${BELLEVILLE}&radius=1000&limit=20`);
+  const { items } = (await feed.json()) as {
+    items: Array<{ id: string; author: { username: string } }>;
+  };
+  const target = items.find(
+    (i) => !i.author.username.startsWith('modo') && !i.author.username.startsWith('pub_'),
+  );
+  expect(target, 'a demo video near Belleville').toBeTruthy();
+  const id = target!.id;
+
+  // First report through the UI…
+  await signUp(page, 'rep_ui');
+  await page.goto(`/?video=${id}&${BELLEVILLE}`);
+  const card = page.locator(`[data-video-id="${id}"]`);
+  await card.getByRole('button', { name: 'Signaler' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Signaler cette vidéo' });
+  await dialog.getByLabel('Une personne est reconnaissable').check();
+  await dialog.getByRole('button', { name: 'Envoyer le signalement' }).click();
+  await expect(dialog.getByText(/transmis aux modérateurs/)).toBeVisible();
+
+  // …still visible after one report; hidden after 3 distinct accounts.
+  expect((await page.request.get(`/api/videos/${id}/media`)).status()).toBe(200);
+  await reportAs(browser, id, 'rep_two');
+  await reportAs(browser, id, 'rep_three');
+  await expect
+    .poll(async () => (await page.request.get(`/api/videos/${id}/media`)).status())
+    .toBe(404);
+
+  // The demo moderator of Belleville sees it in the zone queue and removes it.
+  const modContext = await browser.newContext();
+  const mod = await modContext.newPage();
+  await signIn(mod, 'modo.belleville@neighbors.test', `/moderation?video=${id}`);
+  await mod.goto(`/moderation?video=${id}`);
+  const item = mod.locator(`[data-testid="queue-item"][data-video-id="${id}"]`);
+  await expect(item).toBeVisible();
+  await expect(item).toContainText('Masquée automatiquement');
+  await expect(item.getByRole('button', { name: 'Supprimer' })).toBeDisabled(); // note required
+  await item
+    .getByLabel('Note (obligatoire pour une suppression)')
+    .fill('Visage reconnaissable au premier plan');
+  await item.getByRole('button', { name: 'Supprimer' }).click();
+  await expect(mod.getByText('Décision enregistrée.')).toBeVisible();
+  await expect(item).toHaveCount(0);
+  await modContext.close();
+});
+
+test('data export and account deletion', async ({ page }) => {
+  const { username } = await signUp(page, 'del');
+  await page.goto('/parametres');
+
+  const download = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'Exporter mes données (JSON)' }).click();
+  const file = await (await download).path();
+  const { readFile } = await import('node:fs/promises');
+  const exported = JSON.parse(await readFile(file, 'utf8')) as { profile: { username: string } };
+  expect(exported.profile.username).toBe(username);
+
+  const button = page.getByRole('button', { name: 'Supprimer définitivement' });
+  await expect(button).toBeDisabled();
+  await page.getByLabel(`Tapez votre pseudo « ${username} » pour confirmer`).fill(username);
+  await button.click();
+  await expect(page).toHaveURL(/deleted=1/);
+  await expect(page.getByText('Votre compte a été supprimé')).toBeVisible();
+  expect((await page.request.get('/api/me/videos')).status()).toBe(401);
+  expect((await page.request.get(`/u/${username}`)).status()).toBe(404);
+});

@@ -109,13 +109,13 @@ out('');
 
 // --- Accounts -------------------------------------------------------------------------------
 out(
-  'insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data) values',
+  'insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data, confirmation_token, recovery_token, email_change_token_new, email_change_token_current, email_change, phone_change, phone_change_token, reauthentication_token) values',
 );
 out(
   users
     .map(
       (u) =>
-        `  (${q(uuid(u.n))}, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', ${q(u.email)}, now(), now() - interval '${u.days} days', now(), '{"provider":"email","providers":["email"]}', '{}')`,
+        `  (${q(uuid(u.n))}, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', ${q(u.email)}, now(), now() - interval '${u.days} days', now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', '', '', '', '', '')`,
     )
     .join(',\n') + ';',
 );

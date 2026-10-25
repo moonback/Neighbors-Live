@@ -1,0 +1,26 @@
+{
+  "title": "Administration",
+  "stats": {
+    "users": "Comptes",
+    "banned": "Suspendus",
+    "active_videos": "Vidéos en ligne",
+    "hidden_videos": "Vidéos masquées",
+    "open_reports": "Signalements ouverts",
+    "pending_appeals": "Contestations en attente",
+    "pending_merchants": "Commerces à valider"
+  },
+  "zones": "Zones",
+  "zoneRow": "{active} en ligne · {hidden} masquées · {reports} signalements · {mods} modérateurs",
+  "merchants": "Demandes de comptes commerce",
+  "approve": "Valider",
+  "rejectMerchant": "Refuser",
+  "users": "Utilisateurs",
+  "search": "Rechercher un pseudo",
+  "ban": "Suspendre",
+  "unban": "Lever la suspension",
+  "banned": "suspendu",
+  "note": "Motif (obligatoire)",
+  "actions": "Dernières décisions",
+  "revert": "Annuler cette décision",
+  "done": "Action enregistrée."
+}
