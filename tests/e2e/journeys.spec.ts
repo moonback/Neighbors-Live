@@ -106,6 +106,48 @@ test('feed: reports when manual video playback fails', async ({ page }) => {
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
 });
 
+test('feed: shows a retry action when a signed video URL is unavailable', async ({ page }) => {
+  const item = {
+    id: '10000000-0000-4000-8000-000000000001',
+    category: 'help',
+    caption: 'Vidéo de test indisponible',
+    author: {
+      id: '00000000-0000-4000-8000-000000000001',
+      username: 'test',
+      color: '#ffd34d',
+      isMerchant: false,
+    },
+    publishedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
+    usefulCount: 0,
+    commentCount: 0,
+    isMerchant: false,
+    lat: 48.8722,
+    lng: 2.3767,
+    distanceM: 100,
+    videoUrl: null,
+    posterUrl: null,
+    reacted: false,
+  };
+  let mediaRequests = 0;
+  await page.route('**/api/feed?**', (route) =>
+    route.fulfill({ json: { items: [item], nextCursor: null } }),
+  );
+  await page.route(`**/api/videos/${item.id}/media`, (route) => {
+    mediaRequests += 1;
+    return route.fulfill({ json: item });
+  });
+
+  await page.goto(`/?${BELLEVILLE}`);
+  const card = page.getByTestId('feed-item').first();
+  await expect(card.getByRole('alert')).toHaveText(
+    'La vidéo ne peut pas être chargée pour le moment.',
+  );
+  await card.getByRole('button', { name: 'Réessayer' }).click();
+  await expect.poll(() => mediaRequests).toBeGreaterThan(1);
+  await expect(card.getByRole('button', { name: 'Réessayer' })).toBeVisible();
+});
+
 test('offline publication: explains when a queued video is too old to publish', async ({
   page,
 }) => {

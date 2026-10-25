@@ -46,5 +46,8 @@
     "already": "Vous avez déjà signalé cette vidéo."
   },
   "unavailable": "Cette vidéo n’est plus disponible.",
+  "mediaLoading": "Chargement de la vidéo…",
+  "mediaUnavailable": "La vidéo ne peut pas être chargée pour le moment.",
+  "retryMedia": "Réessayer",
   "openFeed": "Voir autour de ce lieu"
 }

@@ -3,7 +3,7 @@
 import { CATEGORY_COLORS } from '@nl/shared';
 import Link from 'next/link';
 import { useFormatter, useLocale, useTranslations, useNow } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
@@ -43,6 +43,12 @@ export function VideoCard({
   const ref = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState(item.videoUrl);
   const [paused, setPaused] = useState(true);
+  const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const mediaRetries = useRef(0);
+  const mediaRequest = useRef<{
+    generation: number;
+    controller: AbortController | null;
+  }>({ generation: 0, controller: null });
   const [useful, setUseful] = useState({ reacted: item.reacted, count: item.usefulCount });
   const [toast, setToast] = useState<string | null>(null);
   const [captionExpanded, setCaptionExpanded] = useState(false);
@@ -54,10 +60,77 @@ export function VideoCard({
     if (!active || !autoplay) video.pause();
   }, [active, autoplay, src]);
 
-  async function refreshUrl() {
-    // Signed URLs are short-lived: fetch a fresh one when playback fails.
-    const res = await api<FeedItem>(`/api/videos/${item.id}/media`);
-    if (res.ok && res.data.videoUrl && res.data.videoUrl !== src) setSrc(res.data.videoUrl);
+  const requestMediaUrl = useCallback(async () => {
+    const generation = ++mediaRequest.current.generation;
+    mediaRequest.current.controller?.abort();
+    const controller = new AbortController();
+    mediaRequest.current.controller = controller;
+
+    try {
+      const result = await api<FeedItem>(`/api/videos/${item.id}/media`, {
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted || generation !== mediaRequest.current.generation) return null;
+      return result;
+    } catch {
+      return null;
+    }
+  }, [item.id]);
+
+  const refreshUrl = useCallback(
+    async (force = false) => {
+      if (mediaRetries.current >= 1) {
+        setMediaState('error');
+        return;
+      }
+      mediaRetries.current += 1;
+      const res = await requestMediaUrl();
+      if (!res) return;
+      if (res.ok && res.data.videoUrl && (force || res.data.videoUrl !== src)) {
+        setSrc(res.data.videoUrl);
+        setMediaState('loading');
+        return;
+      }
+      if (force && res.ok && res.data.videoUrl) ref.current?.load();
+      setMediaState('error');
+    },
+    [requestMediaUrl, src],
+  );
+
+  useEffect(() => {
+    if (!load || src || mediaRetries.current >= 1) return;
+
+    let current = true;
+    mediaRetries.current += 1;
+    void requestMediaUrl().then((res) => {
+      if (!current || !res) return;
+      if (res.ok && res.data.videoUrl) {
+        mediaRetries.current = 0;
+        setSrc(res.data.videoUrl);
+        setMediaState('loading');
+      } else {
+        setMediaState('error');
+      }
+    });
+
+    return () => {
+      current = false;
+    };
+  }, [item.id, load, requestMediaUrl, src]);
+
+  useEffect(
+    () => () => {
+      mediaRequest.current.generation += 1;
+      mediaRequest.current.controller?.abort();
+      mediaRequest.current.controller = null;
+    },
+    [item.id],
+  );
+
+  function retryMedia() {
+    mediaRetries.current = 0;
+    setMediaState('loading');
+    void refreshUrl(true);
   }
 
   async function toggleUseful() {
@@ -118,15 +191,44 @@ export function VideoCard({
         loop
         onPlay={() => setPaused(false)}
         onPause={() => setPaused(true)}
-        onError={() => void refreshUrl()}
+        onLoadedData={() => {
+          mediaRetries.current = 0;
+          setMediaState('ready');
+        }}
+        onError={() => {
+          if (load && src) void refreshUrl();
+        }}
         onClick={togglePlay}
         className="h-full w-full object-cover"
       />
+      {load && mediaState === 'loading' && (
+        <p
+          role="status"
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 rounded-full bg-black/70 px-4 py-2 text-sm text-white"
+        >
+          {t('mediaLoading')}
+        </p>
+      )}
+      {load && mediaState === 'error' && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 p-6 text-center">
+          <p role="alert" className="text-sm text-white">
+            {t('mediaUnavailable')}
+          </p>
+          <button
+            type="button"
+            onClick={retryMedia}
+            className="min-h-11 rounded-xl bg-white px-4 py-2 font-semibold text-ink"
+          >
+            {t('retryMedia')}
+          </button>
+        </div>
+      )}
       <button
         type="button"
         onClick={togglePlay}
         aria-label={paused ? t('play') : t('pause')}
-        className={`absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-3xl transition-opacity ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
+        disabled={mediaState !== 'ready'}
+        className={`absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-3xl transition-opacity disabled:hidden ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
       >
         <span aria-hidden="true">{paused ? '▶' : '❚❚'}</span>
       </button>
