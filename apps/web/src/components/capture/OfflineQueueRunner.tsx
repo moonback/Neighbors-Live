@@ -2,9 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { judge, listQueued, removeQueued } from '@/lib/offline-queue';
 import { currentPosition } from '@/lib/platform';
-import { publish, PublishError } from '@/lib/publish';
 
 /**
  * Republishes recordings kept offline once the network is back, but only if the device is
@@ -20,9 +18,12 @@ export function OfflineQueueRunner() {
     if (running.current || !navigator.onLine) return;
     running.current = true;
     try {
+      // Loaded lazily: this runner is mounted on every page but rarely has work.
+      const { judge, listQueued, removeQueued } = await import('@/lib/offline-queue');
       const items = await listQueued();
       setPending(items.length);
       if (items.length === 0) return;
+      const { publish, PublishError } = await import('@/lib/publish');
       let fix;
       try {
         const pos = await currentPosition();

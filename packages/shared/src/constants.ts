@@ -52,9 +52,9 @@ export type VideoStatus = (typeof VIDEO_STATUSES)[number];
 
 export const CATEGORY_COLORS: Record<Category, string> = {
   alert: '#dc2626',
-  deal: '#16a34a',
+  deal: '#15803d',
   event: '#7c3aed',
   help: '#2563eb',
-  shop: '#d97706',
-  lost: '#0891b2',
+  shop: '#b45309',
+  lost: '#0e7490',
 };

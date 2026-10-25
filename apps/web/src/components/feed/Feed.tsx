@@ -1,6 +1,7 @@
 'use client';
 
 import { CATEGORIES, RADII_M, type Category } from '@nl/shared';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -11,9 +12,13 @@ import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
 import { useLocation } from '@/lib/useLocation';
 import { AlertsBanner } from './AlertsBanner';
-import { Comments } from './Comments';
-import { ReportDialog } from './ReportDialog';
 import { VideoCard } from './VideoCard';
+
+// Sheets are only needed once opened.
+const Comments = dynamic(() => import('./Comments').then((m) => m.Comments), { ssr: false });
+const ReportDialog = dynamic(() => import('./ReportDialog').then((m) => m.ReportDialog), {
+  ssr: false,
+});
 
 interface Props {
   initialRadius: number;
@@ -263,8 +268,10 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
         </div>
       )}
 
-      <Comments videoId={commentsFor} signedIn={signedIn} onClose={() => setCommentsFor(null)} />
-      <ReportDialog videoId={reportFor} onClose={() => setReportFor(null)} />
+      {commentsFor && (
+        <Comments videoId={commentsFor} signedIn={signedIn} onClose={() => setCommentsFor(null)} />
+      )}
+      {reportFor && <ReportDialog videoId={reportFor} onClose={() => setReportFor(null)} />}
     </div>
   );
 }

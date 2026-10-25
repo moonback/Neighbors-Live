@@ -1,11 +1,9 @@
 'use client';
 
-import { haversineMeters, realtimeCells } from '@nl/shared';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
-import { browserClient } from '@/lib/supabase/browser';
 
 interface LiveAlert {
   id: string;
@@ -47,22 +45,32 @@ export function AlertsBanner({
       if (alive && res.ok) setAlerts(new Map(res.data.items.map((i) => [i.id, i.caption])));
     });
 
-    const supabase = browserClient();
-    const channels = realtimeCells({ lat, lng }, radius).map((cell) =>
-      supabase
-        .channel(`alerts:${cell}`, { config: { private: false } })
-        .on('broadcast', { event: 'alert' }, ({ payload }) => {
-          const a = payload as LiveAlert;
-          if (haversineMeters({ lat, lng }, a) > radius + 50) return;
-          setAlerts((prev) => new Map(prev).set(a.id, a.caption));
-          setFlash(a.caption || '');
-          setTimeout(() => setFlash(null), 6000);
-        })
-        .subscribe(),
+    // Realtime client and H3 are loaded after first paint, only where the banner is used.
+    let cleanup = () => {};
+    void Promise.all([import('@nl/shared'), import('@/lib/supabase/browser')]).then(
+      ([{ haversineMeters, realtimeCells }, { browserClient }]) => {
+        if (!alive) return;
+        const supabase = browserClient();
+        const channels = realtimeCells({ lat, lng }, radius).map((cell) =>
+          supabase
+            .channel(`alerts:${cell}`, { config: { private: false } })
+            .on('broadcast', { event: 'alert' }, ({ payload }) => {
+              const a = payload as LiveAlert;
+              if (haversineMeters({ lat, lng }, a) > radius + 50) return;
+              setAlerts((prev) => new Map(prev).set(a.id, a.caption));
+              setFlash(a.caption || '');
+              setTimeout(() => setFlash(null), 6000);
+            })
+            .subscribe(),
+        );
+        cleanup = () => {
+          for (const c of channels) void supabase.removeChannel(c);
+        };
+      },
     );
     return () => {
       alive = false;
-      for (const c of channels) void supabase.removeChannel(c);
+      cleanup();
     };
   }, [lat, lng, radius]);
 

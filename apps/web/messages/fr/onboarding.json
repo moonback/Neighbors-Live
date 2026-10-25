@@ -1,0 +1,41 @@
+{
+  "step": "Étape {current} sur {total}",
+  "next": "Suivant",
+  "back": "Retour",
+  "skip": "Passer",
+  "finish": "J’ai compris, c’est parti",
+  "value": {
+    "title": "Votre quartier, en direct",
+    "body": "Neighbors Live montre les courtes vidéos filmées par vos voisins, à 300 m, 1 km ou 3 km autour de vous : alertes, bons plans, événements, entraide, commerces, objets perdus.",
+    "points": [
+      "Filmées sur place, dans l’application : pas d’import depuis la galerie.",
+      "Éphémères : une alerte disparaît après 6 h, un bon plan après 48 h.",
+      "Modérées par des habitants du quartier."
+    ]
+  },
+  "permissions": {
+    "title": "Vos autorisations, expliquées avant d’être demandées",
+    "body": "Avant chaque demande de votre navigateur, nous vous expliquons à quoi elle sert. Vous pouvez refuser et changer d’avis plus tard.",
+    "camera": "Caméra et micro — uniquement quand vous filmez.",
+    "location": "Position — pour afficher et publier près de vous. Elle n’est pas enregistrée pendant votre navigation ; pour les vidéos publiées, elle est arrondie à environ 50 m pour tout le monde.",
+    "notifications": "Notifications — si vous voulez être prévenu des alertes de votre zone, au plus une fois toutes les 30 minutes."
+  },
+  "install": {
+    "title": "Installer l’application",
+    "body": "Ajoutez Neighbors Live à votre écran d’accueil : ouverture plein écran, plus rapide, et notifications possibles.",
+    "ios": "Sur iPhone ou iPad (Safari) : touchez le bouton Partager, puis « Sur l’écran d’accueil ». Les notifications ne fonctionnent sur iOS qu’une fois l’application installée et ouverte depuis l’icône.",
+    "android": "Sur Android (Chrome) : utilisez le bouton ci-dessous ou le menu ⋮ puis « Installer l’application ».",
+    "button": "Installer",
+    "installed": "L’application est déjà installée."
+  },
+  "rules": {
+    "title": "Les règles de la communauté",
+    "points": [
+      "Filmez des faits utiles au quartier, pas des personnes : évitez les visages et les plaques (un floutage automatique existe mais il n’est pas infaillible).",
+      "Pas d’adresse précise, pas de harcèlement, pas de dénonciation.",
+      "En cas de danger, appelez d’abord le 112 : Neighbors Live n’est pas un service d’urgence.",
+      "Signalez ce qui pose problème : à 3 signalements, la vidéo est masquée et examinée."
+    ],
+    "link": "Lire les règles complètes"
+  }
+}

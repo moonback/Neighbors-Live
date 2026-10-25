@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { clientEnv } from '@/lib/env';
+import { ONBOARDED_COOKIE } from '@/lib/onboarding';
 import { safeNext } from '@/lib/redirect';
 import { createClient } from '@/lib/supabase/server';
 
@@ -14,11 +15,15 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
   if (error || !data.user) return NextResponse.redirect(new URL('/login?error=callback', site));
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('username')
-    .eq('id', data.user.id)
-    .single();
+  const [{ data: profile }, { data: settings }] = await Promise.all([
+    supabase.from('profiles').select('username').eq('id', data.user.id).single(),
+    supabase.from('user_settings').select('onboarded_at').eq('user_id', data.user.id).single(),
+  ]);
   const target = profile?.username ? next : `/bienvenue?next=${encodeURIComponent(next)}`;
-  return NextResponse.redirect(new URL(target, site));
+  const res = NextResponse.redirect(new URL(target, site));
+  // An account already onboarded elsewhere skips the onboarding on this new device.
+  if (settings?.onboarded_at) {
+    res.cookies.set(ONBOARDED_COOKIE, '1', { path: '/', maxAge: 31_536_000, sameSite: 'lax' });
+  }
+  return res;
 }

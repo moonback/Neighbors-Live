@@ -21,6 +21,8 @@ export function buildCsp({ nonce, isDev, supabaseUrl, mapStyleUrl, siteUrl }: Cs
     ],
     // Inline <style> tags carry the nonce; dev tooling injects un-nonced styles.
     'style-src': ["'self'", isDev ? "'unsafe-inline'" : `'nonce-${nonce}'`],
+    // style="" attributes (sizes, colours) cannot run script; <style> elements still need the nonce.
+    'style-src-attr': ["'unsafe-inline'"],
     'img-src': ["'self'", 'blob:', 'data:', supabase.origin, tiles],
     'media-src': ["'self'", 'blob:', supabase.origin],
     'connect-src': ["'self'", supabase.origin, realtime, tiles],

@@ -1,0 +1,114 @@
+{
+  "draft": "Version de travail rédigée pour le lancement. Ces textes doivent être relus et validés par un juriste avant toute mise en production.",
+  "updated": "Dernière mise à jour : 25 octobre 2026",
+  "pages": {
+    "confidentialite": {
+      "title": "Politique de confidentialité",
+      "sections": [
+        {
+          "title": "Qui sommes-nous",
+          "body": "Neighbors Live est édité par [nom de l’éditeur, forme juridique, adresse, e-mail de contact]. Le responsable du traitement est l’éditeur."
+        },
+        {
+          "title": "Données collectées",
+          "body": "Compte : adresse e-mail (connexion par lien magique), pseudo, bio facultative, préférences. Publications : vidéo filmée dans l’application, catégorie, légende, position au moment de la publication et sa précision. Interactions : réactions « Utile », commentaires, signalements, contestations. Notifications : abonnement technique du navigateur et zone choisie (un quartier d’environ 1 km², jamais votre position exacte). Sécurité : empreintes salées et non réversibles de l’adresse IP et de l’e-mail pour limiter les abus."
+        },
+        {
+          "title": "Ce que nous ne collectons pas",
+          "body": "Aucun historique de vos positions n’est conservé : la position utilisée pour afficher le fil n’est ni enregistrée ni journalisée. Aucune photo de profil, aucun numéro de téléphone, aucun traceur publicitaire."
+        },
+        {
+          "title": "Position des vidéos",
+          "body": "La position exacte d’une vidéo est conservée pour vérifier sa cohérence et la rattacher à un quartier. Elle n’est jamais montrée : chacun voit une position arrondie à environ 50 m et des distances arrondies à 100 m."
+        },
+        {
+          "title": "Floutage",
+          "body": "Les visages sont floutés automatiquement avant publication et la vidéo originale non floutée est supprimée dès que la version traitée est en ligne. Ce floutage est automatique et peut manquer des visages très petits ou de profil : signalez toute personne reconnaissable. Le floutage automatique des plaques d’immatriculation n’est pas actif à ce jour."
+        },
+        {
+          "title": "Durées de conservation",
+          "body": "Vidéos : jusqu’à leur expiration (6 h à 7 jours selon la catégorie), puis fichiers supprimés ; la fiche de la publication (sans fichier) est conservée pour l’historique de réputation jusqu’à la suppression du compte. Vidéo retirée par la modération : fichiers conservés 7 jours (délai de contestation) puis supprimés. Journal de modération : conservé pour assurer la traçabilité des décisions, avec des identifiants pseudonymes. Compteurs anti-abus : 24 heures."
+        },
+        {
+          "title": "Vos droits",
+          "body": "Vous pouvez à tout moment exporter vos données (Paramètres → Mes données), retirer une vidéo immédiatement, modifier vos informations et supprimer votre compte, ce qui supprime votre profil, vos vidéos et leurs fichiers, vos commentaires, réactions, signalements et abonnements. Vous pouvez aussi nous contacter et saisir la CNIL."
+        },
+        {
+          "title": "Sous-traitants",
+          "body": "Hébergement de la base de données et des fichiers : Supabase. Hébergement de l’application : Vercel. Traitement vidéo : [hébergeur du worker]. Fonds de carte : OpenFreeMap / OpenStreetMap. Notifications : services push des navigateurs (Google, Apple, Mozilla). [Préciser les localisations et garanties de transfert.]"
+        }
+      ]
+    },
+    "conditions": {
+      "title": "Conditions d’utilisation",
+      "sections": [
+        {
+          "title": "Objet",
+          "body": "Neighbors Live permet de partager de courtes vidéos utiles aux habitants d’un quartier. Le service est gratuit."
+        },
+        {
+          "title": "Compte",
+          "body": "Un compte est personnel. Vous êtes responsable de ce que vous publiez. Nous pouvons suspendre un compte qui enfreint les règles de la communauté."
+        },
+        {
+          "title": "Contenus",
+          "body": "Vous conservez vos droits sur vos vidéos et nous accordez une licence non exclusive, gratuite et limitée à leur durée de visibilité, pour les afficher aux utilisateurs proches. Vous garantissez avoir le droit de filmer ce que vous publiez et respecter le droit à l’image des personnes."
+        },
+        {
+          "title": "Modération",
+          "body": "Les contenus sont modérés par des habitants volontaires et par l’équipe. Toute décision est journalisée et peut être contestée une fois ; la contestation est examinée par une autre personne."
+        },
+        {
+          "title": "Pas un service d’urgence",
+          "body": "Neighbors Live ne remplace pas les services de secours. En cas de danger, appelez le 112."
+        },
+        {
+          "title": "Responsabilité",
+          "body": "Les informations publiées par les utilisateurs ne sont pas vérifiées a priori. [Clauses de responsabilité à compléter par un juriste, notamment au regard du statut d’hébergeur et du règlement européen sur les services numériques.]"
+        }
+      ]
+    },
+    "regles": {
+      "title": "Règles de la communauté",
+      "sections": [
+        {
+          "title": "Utile avant tout",
+          "body": "Publiez ce qui sert au quartier : une alerte, une info pratique, un événement, un coup de main, un objet trouvé, une offre de commerce de proximité."
+        },
+        {
+          "title": "Respect des personnes",
+          "body": "Ne filmez pas des personnes pour les montrer : évitez les visages, les enfants, les plaques et les adresses précises. Pas de dénonciation, de harcèlement, de propos haineux ou discriminatoires."
+        },
+        {
+          "title": "Vérité",
+          "body": "Ne publiez pas de fausses informations, ne détournez pas une catégorie (une « alerte » doit en être une)."
+        },
+        {
+          "title": "Commerces",
+          "body": "Les offres commerciales sont réservées aux comptes commerce validés, dans la catégorie « Commerce », dans la limite du quota quotidien."
+        },
+        {
+          "title": "Signalements et sanctions",
+          "body": "À 3 signalements de comptes différents, une vidéo est masquée en attendant la décision d’un modérateur du quartier. Les décisions jouent sur la réputation ; les manquements graves ou répétés entraînent une suspension."
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contact",
+      "sections": [
+        {
+          "title": "Nous écrire",
+          "body": "Pour toute question, demande liée à vos données personnelles ou signalement urgent d’un contenu illicite : [adresse e-mail de contact]."
+        },
+        {
+          "title": "Signaler un contenu",
+          "body": "Le plus rapide est d’utiliser le bouton « Signaler » sous la vidéo : il alerte directement les modérateurs du quartier."
+        },
+        {
+          "title": "Autorités",
+          "body": "Les demandes des autorités sont à adresser à [adresse dédiée]."
+        }
+      ]
+    }
+  }
+}

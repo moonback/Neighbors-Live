@@ -16,6 +16,8 @@ export default defineConfig({
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: 'http://localhost:3000',
+    // Onboarding already seen (it has its own test); new contexts start from scratch.
+    storageState: './tests/e2e/storage.json',
     locale: 'fr-FR',
     timezoneId: 'Europe/Paris',
     geolocation: { latitude: 48.8722, longitude: 2.3767, accuracy: 20 },

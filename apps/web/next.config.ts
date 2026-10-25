@@ -28,6 +28,14 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // The worker is served from /serwist/ but controls the whole app.
+        source: '/serwist/:path*',
+        headers: [
+          { key: 'Service-Worker-Allowed', value: '/' },
+          { key: 'Cache-Control', value: 'no-cache' },
+        ],
+      },
     ];
   },
 };

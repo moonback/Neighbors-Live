@@ -2,9 +2,20 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { buildCsp } from '@/lib/csp';
 import { clientEnv } from '@/lib/env';
+import { ONBOARDED_COOKIE } from '@/lib/onboarding';
+/** App screens that first-time visitors only reach after the 4-screen onboarding. */
+const GATED = /^\/(carte|me|u\/[^/]+|parametres|moderation|commerce|admin)?$/;
 
 /** Refreshes the Supabase session cookies and sets a per-request CSP nonce. */
 export async function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+  if (GATED.test(pathname) && !request.cookies.has(ONBOARDED_COOKIE)) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/onboarding';
+    url.search = `?next=${encodeURIComponent(pathname + search)}`;
+    return NextResponse.redirect(url);
+  }
+
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const csp = buildCsp({
     nonce,
