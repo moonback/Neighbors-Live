@@ -6,6 +6,7 @@
   "expires": "expire {when}",
   "play": "Lire la vidéo",
   "pause": "Mettre en pause",
+  "playbackError": "Lecture impossible. Touchez pour réessayer.",
   "unmute": "Activer le son",
   "mute": "Couper le son",
   "useful": "Utile",

@@ -90,7 +90,12 @@ export function VideoCard({
   function togglePlay() {
     const video = ref.current;
     if (!video) return;
-    if (video.paused) void video.play();
+    if (video.paused)
+      void video.play().catch(() => {
+        setPaused(true);
+        setToast(t('playbackError'));
+        setTimeout(() => setToast(null), 3000);
+      });
     else video.pause();
   }
 
