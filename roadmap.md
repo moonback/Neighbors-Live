@@ -132,7 +132,7 @@ quand ; terminer une publication sans confusion ni promesse excessive.
 | Actions vidéo         | ✅ Contrôle du chevauchement, zones tactiles, labels ; échec de lecture annoncé avec possibilité de réessayer ; E2E |
 | Expiration            | Libellé compréhensible et cohérent avec la durée restante réelle                                                    |
 | Publication           | Revoir les étapes caméra → aperçu → informations → envoi → traitement ; rendre erreurs et progression explicites    |
-| Reprise réseau        | Présenter clairement le statut d’une publication en attente et l’issue si la position n’est plus admissible         |
+| Reprise réseau        | ✅ Statuts distincts pour réseau, position imprécise/indisponible, déplacement et ancienneté ; reprise manuelle     |
 
 **Critères de sortie**
 

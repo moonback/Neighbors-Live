@@ -61,7 +61,13 @@
     "queued": "Vous êtes hors ligne : la vidéo est gardée sur cet appareil et sera publiée automatiquement au retour du réseau, si vous êtes toujours au même endroit.",
     "pending": "{count, plural, one {# vidéo en attente d’envoi} other {# vidéos en attente d’envoi}}",
     "sent": "Votre vidéo en attente a été publiée.",
-    "dropped": "Une vidéo en attente n’a pas été publiée : vous n’êtes plus à proximité du lieu filmé."
+    "retry": "Réessayer",
+    "retryable": "Envoi temporairement impossible. La vidéo est conservée sur cet appareil.",
+    "locationUnavailable": "Position indisponible. La vidéo est conservée ; vérifiez vos réglages de localisation puis réessayez.",
+    "waitPrecision": "Position trop imprécise pour publier. La vidéo reste sur cet appareil ; réessayez dans un endroit dégagé.",
+    "droppedMoved": "Vidéo non publiée : vous n’êtes plus à proximité du lieu filmé.",
+    "droppedStale": "Vidéo non publiée : elle a dépassé le délai de conservation de 6 heures.",
+    "failed": "Échec de publication. La vidéo n’a pas été conservée ; filmez-en une nouvelle pour réessayer."
   },
   "errorsPublish": {
     "position_incoherent": "Votre position semble incohérente avec votre dernière publication.",

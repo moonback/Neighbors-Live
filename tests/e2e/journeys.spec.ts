@@ -106,6 +106,49 @@ test('feed: reports when manual video playback fails', async ({ page }) => {
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
 });
 
+test('offline publication: explains when a queued video is too old to publish', async ({
+  page,
+}) => {
+  const id = `expired-${Date.now()}`;
+  await page.goto('/');
+  await page.evaluate(async (queuedId) => {
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.open('neighbors-live', 1);
+      request.onupgradeneeded = () => {
+        request.result.createObjectStore('outbox', { keyPath: 'id' });
+      };
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        const database = request.result;
+        const transaction = database.transaction('outbox', 'readwrite');
+        transaction.objectStore('outbox').put({
+          id: queuedId,
+          blob: new Blob(['queued video'], { type: 'video/webm' }),
+          meta: {
+            category: 'alert',
+            caption: 'Alerte de test',
+            mimeType: 'video/webm',
+            durationMs: 1000,
+          },
+          fix: { lat: 48.8722, lng: 2.3767, accuracy: 20 },
+          createdAt: Date.now() - 6 * 60 * 60 * 1000 - 1000,
+        });
+        transaction.oncomplete = () => {
+          database.close();
+          resolve();
+        };
+        transaction.onerror = () => reject(transaction.error);
+      };
+    });
+    window.dispatchEvent(new Event('online'));
+  }, id);
+
+  await expect(page.getByRole('status')).toContainText(
+    'Vidéo non publiée : elle a dépassé le délai de conservation de 6 heures.',
+  );
+  await expect(page.getByRole('button', { name: 'Réessayer' })).toHaveCount(0);
+});
+
 test('merchant introduction is public and application remains behind authentication', async ({
   browser,
 }) => {

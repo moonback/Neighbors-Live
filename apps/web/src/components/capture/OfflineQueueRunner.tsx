@@ -12,11 +12,14 @@ export function OfflineQueueRunner() {
   const t = useTranslations('capture.offline');
   const [pending, setPending] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
+  const [canRetry, setCanRetry] = useState(false);
   const running = useRef(false);
 
   const drain = useCallback(async () => {
     if (running.current || !navigator.onLine) return;
     running.current = true;
+    setMessage(null);
+    setCanRetry(false);
     try {
       // Loaded lazily: this runner is mounted on every page but rarely has work.
       const { judge, listQueued, removeQueued } = await import('@/lib/offline-queue');
@@ -33,14 +36,20 @@ export function OfflineQueueRunner() {
           accuracy: Math.round(pos.coords.accuracy),
         };
       } catch {
+        setMessage(t('locationUnavailable'));
+        setCanRetry(true);
         return;
       }
       for (const item of items) {
         const verdict = judge(item, Date.now(), fix);
-        if (verdict === 'wait-precision') continue;
+        if (verdict === 'wait-precision') {
+          setMessage(t('waitPrecision'));
+          setCanRetry(true);
+          continue;
+        }
         if (verdict !== 'publish') {
           await removeQueued(item.id);
-          setMessage(t('dropped'));
+          setMessage(t(verdict === 'drop-stale' ? 'droppedStale' : 'droppedMoved'));
           continue;
         }
         try {
@@ -48,7 +57,13 @@ export function OfflineQueueRunner() {
           await removeQueued(item.id);
           setMessage(t('sent'));
         } catch (error) {
-          if (!(error instanceof PublishError && error.retryable)) await removeQueued(item.id);
+          if (error instanceof PublishError && error.retryable) {
+            setMessage(t('retryable'));
+            setCanRetry(true);
+          } else {
+            await removeQueued(item.id);
+            setMessage(t('failed'));
+          }
         }
       }
       setPending((await listQueued()).length);
@@ -73,7 +88,18 @@ export function OfflineQueueRunner() {
       role="status"
       className="fixed inset-x-3 top-3 z-40 rounded-xl border border-line bg-panel/95 px-3 py-2 text-sm shadow-lg"
     >
-      {message ?? t('pending', { count: pending })}
+      <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
+        <span>{message ?? t('pending', { count: pending })}</span>
+        {canRetry && (
+          <button
+            type="button"
+            onClick={() => void drain()}
+            className="min-h-11 shrink-0 rounded-lg px-3 font-semibold text-accent underline underline-offset-4"
+          >
+            {t('retry')}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

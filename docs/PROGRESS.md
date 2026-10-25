@@ -115,6 +115,7 @@ voir sections suivantes au fil de l'avancement.
 | Mouvement réduit dans le feed                              | ✅   | L’autoplay se met en pause ; lecture manuelle disponible ; E2E réussi                |
 | Contexte des alertes et consigne d’urgence                 | ✅   | Alerte communautaire distinguée d’une alerte officielle ; appel au 112 rappelé ; E2E |
 | Retour en cas d’échec de lecture vidéo                     | ✅   | Message de reprise accessible ; état pause conservé ; E2E réussi                     |
+| Statuts de reprise des vidéos hors ligne                   | ✅   | Position, précision, réseau, déplacement et délai distingués ; E2E du délai réussi   |
 | Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise         |
 | Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                        |
 
