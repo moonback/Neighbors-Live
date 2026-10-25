@@ -5,8 +5,9 @@ l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
 Dernière mise à jour : 2026-10-25 — audit contenu/UX et roadmap documentés ; clarification des
-textes, onboarding raccourci, page publique commerçante, lisibilité du feed et consigne d’urgence
-contextuelle implémentés. Typecheck, lint, tests unitaires, E2E ciblés et build réussis.
+textes, onboarding raccourci, page publique commerçante, lisibilité du feed, reprise hors ligne
+explicite et tableau de bord d’administration enrichi. Typecheck, lint, tests unitaires, E2E ciblés
+et build réussis.
 
 ## 0. Cadrage et fondations
 
@@ -103,21 +104,22 @@ voir sections suivantes au fil de l'avancement.
 
 ### Améliorations contenu et UI/UX
 
-| Élément                                                    | État | Notes                                                                                |
-| ---------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
-| Promesse d’accueil et tagline clarifiées                   | ✅   | Texte centré sur les informations utiles en courtes vidéos, sans ambiguïté de direct |
-| Installation PWA facultative, hors du parcours principal   | ✅   | Guide d’installation accessible séparément via `/onboarding?step=install`            |
-| Action principale d’onboarding visible et contenu défilant | ✅   | Vérification E2E ajoutée au viewport mobile 375 × 500                                |
-| Textes de confidentialité, floutage et modération alignés  | ✅   | Limites du floutage et examen après signalements explicités                          |
-| Présentation commerçant améliorée                          | ✅   | Copie mise à jour ; page publique répertoriée ci-dessous                             |
-| Page publique de présentation commerçant                   | ✅   | `/commerces`, chemin de demande redirigé vers l’espace connecté ; E2E réussi         |
-| Légende longue du feed développable                        | ✅   | Limitation à trois lignes avec contrôle accessible ; E2E réussi                      |
-| Mouvement réduit dans le feed                              | ✅   | L’autoplay se met en pause ; lecture manuelle disponible ; E2E réussi                |
-| Contexte des alertes et consigne d’urgence                 | ✅   | Alerte communautaire distinguée d’une alerte officielle ; appel au 112 rappelé ; E2E |
-| Retour en cas d’échec de lecture vidéo                     | ✅   | Message de reprise accessible ; état pause conservé ; E2E réussi                     |
-| Statuts de reprise des vidéos hors ligne                   | ✅   | Position, précision, réseau, déplacement et délai distingués ; E2E du délai réussi   |
-| Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise         |
-| Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                        |
+| Élément                                                    | État | Notes                                                                                          |
+| ---------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------- |
+| Promesse d’accueil et tagline clarifiées                   | ✅   | Texte centré sur les informations utiles en courtes vidéos, sans ambiguïté de direct           |
+| Installation PWA facultative, hors du parcours principal   | ✅   | Guide d’installation accessible séparément via `/onboarding?step=install`                      |
+| Action principale d’onboarding visible et contenu défilant | ✅   | Vérification E2E ajoutée au viewport mobile 375 × 500                                          |
+| Textes de confidentialité, floutage et modération alignés  | ✅   | Limites du floutage et examen après signalements explicités                                    |
+| Présentation commerçant améliorée                          | ✅   | Copie mise à jour ; page publique répertoriée ci-dessous                                       |
+| Page publique de présentation commerçant                   | ✅   | `/commerces`, chemin de demande redirigé vers l’espace connecté ; E2E réussi                   |
+| Légende longue du feed développable                        | ✅   | Limitation à trois lignes avec contrôle accessible ; E2E réussi                                |
+| Mouvement réduit dans le feed                              | ✅   | L’autoplay se met en pause ; lecture manuelle disponible ; E2E réussi                          |
+| Contexte des alertes et consigne d’urgence                 | ✅   | Alerte communautaire distinguée d’une alerte officielle ; appel au 112 rappelé ; E2E           |
+| Retour en cas d’échec de lecture vidéo                     | ✅   | Message de reprise accessible ; état pause conservé ; E2E réussi                               |
+| Statuts de reprise des vidéos hors ligne                   | ✅   | Position, précision, réseau, déplacement et délai distingués ; E2E du délai réussi             |
+| Tableau de bord d’administration                           | ✅   | Indicateurs actionnables, état vide/erreur, demandes détaillées et journal contextualisé ; E2E |
+| Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise                   |
+| Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                                  |
 
 ## Limites connues
 

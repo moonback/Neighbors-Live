@@ -233,6 +233,43 @@ mieux évoquer un service local fiable.
 Ne pas entreprendre une refonte complète avant les tests utilisateurs : le mode sombre peut être
 un choix intentionnel et le code seul ne permet pas d’en juger la qualité visuelle réelle.
 
+## Administration — diagnostic et amélioration
+
+### Constat avant amélioration
+
+Le tableau de bord `/admin` réunissait déjà des compteurs, les zones, les demandes commerçantes,
+la recherche d’utilisateurs et les dernières décisions. Plusieurs détails limitaient son usage
+opérationnel :
+
+- les compteurs étaient statiques et ne menaient pas aux files correspondantes ;
+- le nombre de contestations était visible, mais l’accès au traitement passait par une navigation
+  indirecte vers la modération ;
+- les demandes de commerce n’affichaient ni présentation, ni date de réception, ni compte demandeur ;
+- le journal des décisions n’identifiait pas l’acteur, la cible ou la zone/vidéo concernée ;
+- les états vides n’étaient pas explicités, et les erreurs de requête pouvaient être confondues avec
+  des compteurs à zéro ou des listes vides ;
+- certaines listes étaient limitées sans que leur périmètre soit annoncé.
+
+### Améliorations appliquées
+
+- Regroupement responsive des indicateurs et liens directs depuis les compteurs vers les opérations
+  de modération, les contestations et les demandes commerçantes.
+- Présentation des demandes commerce avec description, compte demandeur, date de réception et ordre
+  chronologique ; actions désactivées pendant leur enregistrement.
+- Journal des décisions enrichi avec acteur, cible, date précise, note et liens vers la zone ou la
+  vidéo quand ces références existent.
+- États vides explicites pour les zones, demandes commerce, utilisateurs et décisions.
+- Erreur de chargement affichée au lieu de présenter silencieusement des données incomplètes comme
+  un tableau de bord vide ; validation du format des statistiques serveur.
+- Périmètre des listes limitées (15 zones, 20 demandes et 20 décisions) annoncé dans l’interface.
+
+### Limites restantes
+
+Les demandes d’approbation et de refus reposent sur l’action serveur existante ; l’examen métier,
+les motifs de refus et les règles de décision doivent encore être validés par l’équipe. Les
+historique et files n’ont pas encore de pagination. Ce travail améliore la vue admin sans changer
+les droits ni le modèle d’autorisation.
+
 ## Accessibilité et qualité d’usage
 
 Le dépôt comprend déjà quelques bonnes pratiques, dont un lien d’évitement, des états annoncés et
@@ -298,6 +335,8 @@ Le séquencement, les livrables et les critères de sortie sont détaillés dans
 - `apps/web/src/components/feed/VideoCard.tsx`
 - `apps/web/src/components/BottomNav.tsx`
 - `apps/web/src/components/ui.tsx`
+- `apps/web/src/app/(app)/admin/page.tsx`
+- `apps/web/src/components/admin/AdminClient.tsx`
 - `apps/web/src/app/globals.css`
 - `apps/web/src/app/(app)/commerce/page.tsx`
 - `docs/PROGRESS.md`

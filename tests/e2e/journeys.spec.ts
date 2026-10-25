@@ -168,6 +168,25 @@ test('merchant introduction is public and application remains behind authenticat
   await context.close();
 });
 
+test('admin dashboard summarizes work and provides operational navigation', async ({ page }) => {
+  await signIn(page, 'admin@neighbors.test', '/admin');
+  await expect(page.getByRole('heading', { name: 'Administration' })).toBeVisible();
+  await expect(
+    page.getByText('Vue d’ensemble de la plateforme, des demandes et des décisions de modération.'),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Ouvrir la modération' })).toHaveAttribute(
+    'href',
+    '/moderation',
+  );
+  await expect(page.getByRole('heading', { name: 'Indicateurs' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Demandes de comptes commerce' })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Rechercher un pseudo' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dernières décisions' })).toBeVisible();
+  await expect(
+    page.getByText('Les données d’administration n’ont pas pu être chargées.', { exact: false }),
+  ).toHaveCount(0);
+});
+
 async function reportAs(browser: Browser, videoId: string, prefix: string) {
   const context = await browser.newContext();
   const page = await context.newPage();

@@ -17,30 +17,54 @@ function useAdminAction() {
   const errorText = useErrorText();
   const router = useRouter();
   const [status, setStatus] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
+  const [pending, setPending] = useState(false);
   const run = async (body: Body) => {
+    if (pending) return;
+    setPending(true);
     const res = await api('/api/admin', { body });
     setStatus(
       res.ok
         ? { kind: 'success', text: t('done') }
-        : { kind: 'error', text: errorText(res.error) ?? '' },
+        : { kind: 'error', text: errorText(res.error) ?? t('actionError') },
     );
     if (res.ok) router.refresh();
+    setPending(false);
   };
-  return { run, status };
+  return { run, status, pending };
 }
 
-export function MerchantReview({ userId, name }: { userId: string; name: string }) {
+export function MerchantReview({
+  userId,
+  name,
+  applicant,
+  description,
+  submittedAt,
+}: {
+  userId: string;
+  name: string;
+  applicant: string;
+  description: string;
+  submittedAt: string;
+}) {
   const t = useTranslations('admin');
-  const { run, status } = useAdminAction();
+  const { run, status, pending } = useAdminAction();
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-2">
-        <span className="flex-1 font-medium">{name}</span>
-        <Button onClick={() => run({ type: 'merchant', userId, approve: true })}>
+    <div className="flex h-full flex-col gap-4 rounded-2xl border border-line bg-panel p-4">
+      <div className="flex-1">
+        <h3 className="font-semibold">{name}</h3>
+        <p className="text-sm text-fog">{t('merchantApplicant', { username: applicant })}</p>
+        <p className="mt-1 text-sm leading-relaxed text-fog">
+          {description || t('noMerchantDescription')}
+        </p>
+        <p className="mt-2 text-xs text-fog">{t('submittedAt', { date: submittedAt })}</p>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button disabled={pending} onClick={() => run({ type: 'merchant', userId, approve: true })}>
           {t('approve')}
         </Button>
         <Button
           variant="secondary"
+          disabled={pending}
           onClick={() => run({ type: 'merchant', userId, approve: false })}
         >
           {t('rejectMerchant')}
@@ -65,7 +89,7 @@ export function NotedAction({
   variant?: 'secondary' | 'danger';
 }) {
   const t = useTranslations('admin');
-  const { run, status } = useAdminAction();
+  const { run, status, pending } = useAdminAction();
   const [note, setNote] = useState('');
   const id = `note-${body.type}-${body.type === 'ban' ? body.userId : body.actionId}`;
   return (
@@ -83,10 +107,10 @@ export function NotedAction({
         />
         <Button
           variant={variant}
-          disabled={note.trim().length < 3}
+          disabled={pending || note.trim().length < 3}
           onClick={() => run({ ...body, note })}
         >
-          {label}
+          {pending ? t('saving') : label}
         </Button>
       </div>
       {status && <Notice kind={status.kind}>{status.text}</Notice>}

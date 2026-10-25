@@ -28,6 +28,9 @@ parcours avant une refonte graphique générale.
   typecheck, le lint, les tests unitaires et le build de production.
 - Le feed respecte désormais aussi une préférence de mouvement réduit modifiée pendant la session :
   l’autoplay s’arrête, mais la commande de lecture manuelle reste disponible.
+- Le tableau de bord admin présente des indicateurs actionnables, des files et états vides explicites,
+  les informations utiles des demandes commerce et un journal des décisions contextualisé ; le
+  parcours admin est couvert par un test E2E.
 
 Les corrections ne remplacent pas une revue juridique. Les coordonnées de l’éditeur et les
 informations réelles des sous-traitants restent à fournir. Le suivi détaillé est dans
