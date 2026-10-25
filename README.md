@@ -324,6 +324,8 @@ Le suivi à jour des écarts et des vérifications se trouve dans
 
 ## Documentation
 
+- [Audit contenu et UI/UX](./AUDIT-CONTENU-UX.md)
+- [Roadmap contenu, UX et positionnement](./roadmap.md)
 - [Architecture et flux de données](./docs/ARCHITECTURE.md)
 - [Décisions techniques et dépendances](./docs/DECISIONS.md)
 - [Avancement, tests exécutés et limites](./docs/PROGRESS.md)

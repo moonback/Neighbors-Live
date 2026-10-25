@@ -5,7 +5,8 @@ l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
 Dernière mise à jour : 2026-10-25 — fondations, base, auth, capture, worker, feed, carte et
-interactions faits ; modération en cours.
+interactions faits ; modération en cours. Audit contenu/UX et roadmap produits documentés ;
+améliorations d’interface non encore implémentées.
 
 ## 0. Cadrage et fondations
 
