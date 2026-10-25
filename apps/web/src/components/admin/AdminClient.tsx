@@ -25,7 +25,13 @@ function useAdminAction() {
     setStatus(
       res.ok
         ? { kind: 'success', text: t('done') }
-        : { kind: 'error', text: errorText(res.error) ?? t('actionError') },
+        : {
+            kind: 'error',
+            text:
+              res.error === 'review_conflict'
+                ? t('review_conflict')
+                : (errorText(res.error) ?? t('actionError')),
+          },
     );
     if (res.ok) router.refresh();
     setPending(false);
@@ -48,6 +54,11 @@ export function MerchantReview({
 }) {
   const t = useTranslations('admin');
   const { run, status, pending } = useAdminAction();
+  const review = (approve: boolean) => {
+    if (window.confirm(t(approve ? 'confirmApproveMerchant' : 'confirmRejectMerchant', { name }))) {
+      void run({ type: 'merchant', userId, approve });
+    }
+  };
   return (
     <div className="flex h-full flex-col gap-4 rounded-2xl border border-line bg-panel p-4">
       <div className="flex-1">
@@ -59,14 +70,10 @@ export function MerchantReview({
         <p className="mt-2 text-xs text-fog">{t('submittedAt', { date: submittedAt })}</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button disabled={pending} onClick={() => run({ type: 'merchant', userId, approve: true })}>
+        <Button disabled={pending} onClick={() => review(true)}>
           {t('approve')}
         </Button>
-        <Button
-          variant="secondary"
-          disabled={pending}
-          onClick={() => run({ type: 'merchant', userId, approve: false })}
-        >
+        <Button variant="secondary" disabled={pending} onClick={() => review(false)}>
           {t('rejectMerchant')}
         </Button>
       </div>
@@ -92,6 +99,11 @@ export function NotedAction({
   const { run, status, pending } = useAdminAction();
   const [note, setNote] = useState('');
   const id = `note-${body.type}-${body.type === 'ban' ? body.userId : body.actionId}`;
+  const submit = () => {
+    if (body.type === 'ban' && body.banned && !window.confirm(t('confirmBan'))) return;
+    if (body.type === 'revert' && !window.confirm(t('confirmRevert'))) return;
+    void run({ ...body, note });
+  };
   return (
     <div className="flex flex-col gap-1">
       <div className="flex gap-2">
@@ -105,11 +117,7 @@ export function NotedAction({
           value={note}
           onChange={(e) => setNote(e.target.value)}
         />
-        <Button
-          variant={variant}
-          disabled={pending || note.trim().length < 3}
-          onClick={() => run({ ...body, note })}
-        >
+        <Button variant={variant} disabled={pending || note.trim().length < 3} onClick={submit}>
           {pending ? t('saving') : label}
         </Button>
       </div>

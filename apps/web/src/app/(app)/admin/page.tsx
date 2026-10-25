@@ -56,21 +56,79 @@ const STAT_LINKS: Partial<Record<(typeof STAT_KEYS)[number], string>> = {
   pending_merchants: '#merchants',
 };
 const REVERTIBLE = new Set(['hide', 'remove', 'auto_hide', 'validate', 'warn', 'ban']);
+const AUDIT_KINDS = [
+  'validate',
+  'hide',
+  'remove',
+  'warn',
+  'auto_hide',
+  'revert',
+  'ban',
+  'unban',
+  'appeal_upheld',
+  'appeal_rejected',
+] as const;
 
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    page?: string;
+    auditPage?: string;
+    action?: string;
+    actor?: string;
+    target?: string;
+    since?: string;
+  }>;
 }) {
   const viewer = await getViewer();
   if (viewer?.role !== 'admin') notFound();
-  const { q } = await searchParams;
+  const {
+    q,
+    page: pageParam,
+    auditPage: auditPageParam,
+    action,
+    actor,
+    target,
+    since,
+  } = await searchParams;
   const admin = adminClient();
   const search = (q ?? '')
-    .toLowerCase()
-    .replace(/[^a-z0-9_]/g, '')
-    .slice(0, 20);
+    .trim()
+    .replace(/[^a-z0-9_-]/gi, '')
+    .slice(0, 80);
+  const page = /^\d+$/.test(pageParam ?? '') ? Math.min(Number(pageParam), 1000) : 0;
+  const pageSize = 20;
+  const userOffset = page * pageSize;
+  const auditPage = /^\d+$/.test(auditPageParam ?? '') ? Math.min(Number(auditPageParam), 1000) : 0;
+  const auditOffset = auditPage * pageSize;
+  const auditKind = AUDIT_KINDS.find((kind) => kind === action);
+  const auditActor = /^[0-9a-f-]{36}$/i.test(actor ?? '') ? actor : undefined;
+  const auditTarget = ['user', 'video', 'zone', 'system'].includes(target ?? '') ? target : '';
+  const auditSince =
+    /^\d{4}-\d{2}-\d{2}$/.test(since ?? '') && !Number.isNaN(Date.parse(`${since}T00:00:00.000Z`))
+      ? since
+      : undefined;
   const userColumns = 'id, username, role, reputation, banned_at';
+
+  let auditQuery = admin
+    .from('moderation_actions')
+    .select('id, kind, note, created_at, actor_id, target_user_id, video_id, h3_cell', {
+      count: 'exact',
+    })
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false });
+  if (auditKind) auditQuery = auditQuery.eq('kind', auditKind);
+  if (auditActor) auditQuery = auditQuery.eq('actor_id', auditActor);
+  if (auditSince) auditQuery = auditQuery.gte('created_at', `${auditSince}T00:00:00.000Z`);
+  if (auditTarget === 'user') auditQuery = auditQuery.not('target_user_id', 'is', null);
+  if (auditTarget === 'video') auditQuery = auditQuery.not('video_id', 'is', null);
+  if (auditTarget === 'zone') auditQuery = auditQuery.not('h3_cell', 'is', null);
+  if (auditTarget === 'system') {
+    auditQuery = auditQuery.is('target_user_id', null).is('video_id', null).is('h3_cell', null);
+  }
+  auditQuery = auditQuery.range(auditOffset, auditOffset + pageSize - 1);
 
   const [stats, processingVideos, merchants, users, actions, t, tk, tc, format] = await Promise.all(
     [
@@ -88,13 +146,25 @@ export default async function AdminPage({
         .order('created_at', { ascending: true })
         .limit(20),
       search
-        ? admin.from('profiles').select(userColumns).ilike('username', `%${search}%`).limit(20)
-        : admin.from('profiles').select(userColumns).not('banned_at', 'is', null).limit(20),
-      admin
-        .from('moderation_actions')
-        .select('id, kind, note, created_at, actor_id, target_user_id, video_id, h3_cell')
-        .order('created_at', { ascending: false })
-        .limit(20),
+        ? /^[0-9a-f-]{36}$/i.test(search)
+          ? admin
+              .from('profiles')
+              .select(userColumns)
+              .eq('id', search)
+              .range(userOffset, userOffset + pageSize - 1)
+          : admin
+              .from('profiles')
+              .select(userColumns, { count: 'exact' })
+              .ilike('username', `%${search}%`)
+              .order('username')
+              .range(userOffset, userOffset + pageSize - 1)
+        : admin
+            .from('profiles')
+            .select(userColumns, { count: 'exact' })
+            .not('banned_at', 'is', null)
+            .order('username')
+            .range(userOffset, userOffset + pageSize - 1),
+      auditQuery,
       getTranslations('admin'),
       getTranslations('moderation.decisions.kinds'),
       getTranslations('common.categories'),
@@ -168,9 +238,26 @@ export default async function AdminPage({
     }
   }
   const { zones } = parsedStats.data;
+  const auditParams = new URLSearchParams({
+    ...(search ? { q: search } : {}),
+    ...(auditKind ? { action: auditKind } : {}),
+    ...(auditActor ? { actor: auditActor } : {}),
+    ...(auditTarget ? { target: auditTarget } : {}),
+    ...(auditSince ? { since: auditSince } : {}),
+  });
+  const userPageHref = (nextPage: number) => {
+    const params = new URLSearchParams({ ...(search ? { q: search } : {}) });
+    params.set('page', String(nextPage));
+    return `/admin?${params}#users`;
+  };
+  const auditPageHref = (nextPage: number) => {
+    const params = new URLSearchParams(auditParams);
+    params.set('auditPage', String(nextPage));
+    return `/admin?${params}#actions`;
+  };
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-8 p-4 sm:p-6">
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 p-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:p-6">
       <header className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider text-accent">
@@ -187,7 +274,28 @@ export default async function AdminPage({
         </Link>
       </header>
 
-      <section aria-labelledby="overview-title" className="flex flex-col gap-3">
+      <nav
+        aria-label={t('navigation')}
+        className="sticky top-0 z-20 -mx-4 flex gap-2 overflow-x-auto border-b border-line bg-ink/95 px-4 py-2 backdrop-blur sm:static sm:mx-0 sm:flex-wrap sm:overflow-visible sm:border-0 sm:bg-transparent sm:p-0"
+      >
+        {(['overview', 'processingVideos', 'zones', 'merchants', 'users', 'actions'] as const).map(
+          (key) => (
+            <a
+              key={key}
+              href={`#${key}`}
+              className="min-h-10 shrink-0 rounded-full border border-line px-3 py-2 text-sm font-medium hover:border-accent focus-visible:outline-accent"
+            >
+              {t(key)}
+            </a>
+          ),
+        )}
+      </nav>
+
+      <section
+        id="overview"
+        aria-labelledby="overview-title"
+        className="scroll-mt-20 flex flex-col gap-3"
+      >
         <h2 id="overview-title" className="text-lg font-semibold">
           {t('overview')}
         </h2>
@@ -218,7 +326,11 @@ export default async function AdminPage({
         </dl>
       </section>
 
-      <section aria-labelledby="processing-videos-title" className="flex flex-col gap-3">
+      <section
+        id="processingVideos"
+        aria-labelledby="processing-videos-title"
+        className="scroll-mt-20 flex flex-col gap-3"
+      >
         <div>
           <h2 id="processing-videos-title" className="text-lg font-semibold">
             {t('processingVideos')}
@@ -282,7 +394,7 @@ export default async function AdminPage({
         )}
       </section>
 
-      <section aria-labelledby="zones" className="flex flex-col gap-3">
+      <section id="zones" aria-labelledby="zones" className="scroll-mt-20 flex flex-col gap-3">
         <div>
           <h2 id="zones" className="text-lg font-semibold">
             {t('zones')}
@@ -318,7 +430,11 @@ export default async function AdminPage({
         )}
       </section>
 
-      <section id="merchants" aria-labelledby="merchants-title" className="flex flex-col gap-3">
+      <section
+        id="merchants"
+        aria-labelledby="merchants-title"
+        className="scroll-mt-20 flex flex-col gap-3"
+      >
         <div>
           <h2 id="merchants-title" className="text-lg font-semibold">
             {t('merchants')}
@@ -349,7 +465,11 @@ export default async function AdminPage({
         )}
       </section>
 
-      <section id="users" aria-labelledby="users-title" className="flex flex-col gap-3">
+      <section
+        id="users"
+        aria-labelledby="users-title"
+        className="scroll-mt-20 flex flex-col gap-3"
+      >
         <div>
           <h2 id="users-title" className="text-lg font-semibold">
             {t('users')}
@@ -366,6 +486,7 @@ export default async function AdminPage({
             defaultValue={q}
             placeholder={t('search')}
             className={inputClass}
+            autoComplete="off"
           />
           <button
             type="submit"
@@ -400,15 +521,95 @@ export default async function AdminPage({
             ))}
           </ul>
         )}
+        {(users.count ?? 0) > pageSize && (
+          <nav aria-label={t('userPagination')} className="flex items-center justify-between gap-3">
+            <span className="text-sm text-fog">
+              {t('pageOf', {
+                page: page + 1,
+                pages: Math.ceil((users.count ?? 0) / pageSize),
+              })}
+            </span>
+            <div className="flex gap-2">
+              {page > 0 && (
+                <Link
+                  className="rounded-lg border border-line px-3 py-2 text-sm"
+                  href={userPageHref(page - 1)}
+                >
+                  {t('previous')}
+                </Link>
+              )}
+              {userOffset + users.data.length < (users.count ?? 0) && (
+                <Link
+                  className="rounded-lg border border-line px-3 py-2 text-sm"
+                  href={userPageHref(page + 1)}
+                >
+                  {t('next')}
+                </Link>
+              )}
+            </div>
+          </nav>
+        )}
       </section>
 
-      <section aria-labelledby="actions" className="flex flex-col gap-3">
+      <section
+        id="actions"
+        aria-labelledby="actions-title"
+        className="scroll-mt-20 flex flex-col gap-3"
+      >
         <div>
-          <h2 id="actions" className="text-lg font-semibold">
+          <h2 id="actions-title" className="text-lg font-semibold">
             {t('actions')}
           </h2>
           <p className="text-sm text-fog">{t('actionsHint')}</p>
         </div>
+        <form action="/admin" method="get" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t('filterAction')}</span>
+            <select name="action" defaultValue={auditKind ?? ''} className={inputClass}>
+              <option value="">{t('allActions')}</option>
+              {AUDIT_KINDS.map((kind) => (
+                <option key={kind} value={kind}>
+                  {tk(kind)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t('filterActor')}</span>
+            <input
+              name="actor"
+              defaultValue={auditActor}
+              className={inputClass}
+              placeholder={t('actorId')}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t('filterTarget')}</span>
+            <select name="target" defaultValue={auditTarget} className={inputClass}>
+              <option value="">{t('allTargets')}</option>
+              {(['user', 'video', 'zone', 'system'] as const).map((kind) => (
+                <option key={kind} value={kind}>
+                  {t(`targetTypes.${kind}`)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t('since')}</span>
+            <input type="date" name="since" defaultValue={auditSince} className={inputClass} />
+          </label>
+          <div className="flex items-end gap-2">
+            <button
+              type="submit"
+              className="min-h-11 rounded-xl border border-line px-4 font-semibold hover:border-accent"
+            >
+              {t('applyFilters')}
+            </button>
+            <Link href="/admin#actions" className="min-h-11 content-center px-2 text-sm underline">
+              {t('clearFilters')}
+            </Link>
+          </div>
+        </form>
         {actionRows.length === 0 ? (
           <p className="rounded-xl border border-line p-4 text-sm text-fog">{t('emptyActions')}</p>
         ) : (
@@ -476,6 +677,37 @@ export default async function AdminPage({
               );
             })}
           </ol>
+        )}
+        {(actions.count ?? 0) > pageSize && (
+          <nav
+            aria-label={t('auditPagination')}
+            className="flex items-center justify-between gap-3"
+          >
+            <span className="text-sm text-fog">
+              {t('pageOf', {
+                page: auditPage + 1,
+                pages: Math.ceil((actions.count ?? 0) / pageSize),
+              })}
+            </span>
+            <div className="flex gap-2">
+              {auditPage > 0 && (
+                <Link
+                  className="rounded-lg border border-line px-3 py-2 text-sm"
+                  href={auditPageHref(auditPage - 1)}
+                >
+                  {t('previous')}
+                </Link>
+              )}
+              {auditOffset + actionRows.length < (actions.count ?? 0) && (
+                <Link
+                  className="rounded-lg border border-line px-3 py-2 text-sm"
+                  href={auditPageHref(auditPage + 1)}
+                >
+                  {t('next')}
+                </Link>
+              )}
+            </div>
+          </nav>
         )}
       </section>
     </div>

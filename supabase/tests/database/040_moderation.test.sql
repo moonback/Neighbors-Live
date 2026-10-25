@@ -108,6 +108,7 @@ select throws_ok($$select public.admin_stats((select mod_a from m))$$, 'forbidde
 insert into public.merchant_profiles (user_id, business_name) values ((select outsider from m), 'Café du coin');
 select public.admin_review_merchant((select boss from m), (select outsider from m), true);
 select is((select role::text from public.profiles where id = (select outsider from m)), 'merchant', 'admin_review_merchant: approval grants the merchant badge');
+select throws_ok($$select public.admin_review_merchant((select boss from m), (select outsider from m), false)$$, 'review_conflict', 'admin_review_merchant: reviewed application cannot be decided twice');
 
 -- ---------------------------------------------------------------- moderator eligibility
 create temp table cand as select tests.create_user('candidate', 20, 15) as c, tests.create_user('newbie', 3, 50) as n;

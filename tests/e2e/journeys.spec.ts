@@ -205,8 +205,14 @@ test('admin dashboard summarizes work and provides operational navigation', asyn
     await expect(processingVideo).toBeVisible();
     await expect(processingVideo.getByText('Aucune tâche média associée')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Demandes de comptes commerce' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Rechercher un pseudo' })).toBeVisible();
+    await expect(
+      page.getByRole('textbox', { name: 'Rechercher un pseudo ou un identifiant' }),
+    ).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Dernières décisions' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Action' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Type de cible' })).toBeVisible();
+    await expect(page.getByLabel('Depuis le')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Filtrer le journal' })).toBeVisible();
     await expect(
       page.getByText('Les données d’administration n’ont pas pu être chargées.', { exact: false }),
     ).toHaveCount(0);

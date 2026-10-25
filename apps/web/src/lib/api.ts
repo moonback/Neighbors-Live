@@ -34,6 +34,7 @@ const DB_ERRORS: Record<string, number> = {
   video_not_awaiting_upload: 409,
   video_not_active: 409,
   not_revertible: 409,
+  review_conflict: 409,
 };
 
 export function fromDbError(error: { message: string; code?: string }): ApiError {
