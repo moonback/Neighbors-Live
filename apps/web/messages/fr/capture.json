@@ -6,7 +6,7 @@
     "body": "Pour filmer, Neighbors Live a besoin de :",
     "camera": "Caméra et micro : uniquement pendant que cet écran est ouvert. Les vidéos se filment dans l’application, l’import depuis la galerie n’est pas possible.",
     "location": "Position, au moment de publier : pour montrer la vidéo aux voisins proches. Elle est arrondie à environ 50 m pour tout le monde.",
-    "privacy": "Les visages sont floutés automatiquement avant publication.",
+    "privacy": "Un floutage automatique des visages est appliqué avant publication, mais il peut en manquer. Évitez de filmer des personnes reconnaissables et signalez tout contenu préoccupant. Les plaques ne sont pas floutées.",
     "continue": "Activer la caméra",
     "later": "Pas maintenant"
   },

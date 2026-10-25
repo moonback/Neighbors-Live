@@ -2,11 +2,28 @@
 
 **Version :** 1.0  
 **Date :** 25 octobre 2026  
-**Statut :** plan proposé ; les changements d’interface ci-dessous ne sont pas encore implémentés.
+**Statut :** en cours ; une première passe de contenu et d’onboarding est implémentée. Les phases
+ci-dessous restent partiellement ou entièrement à réaliser selon leurs critères de sortie.
 
 Cette roadmap transforme les constats de l’[audit contenu et UI/UX](./AUDIT-CONTENU-UX.md) en
 travail livrable et vérifiable. Elle privilégie la confiance, la compréhension et la qualité du
 parcours avant une refonte graphique générale.
+
+### Déjà réalisé
+
+- Promesse d’accueil et tagline reformulées autour des informations utiles de quartier, sans
+  suggestion de vidéo en direct.
+- Onboarding raccourci à trois écrans principaux ; l’installation PWA est facultative et reste
+  disponible par accès direct depuis les réglages.
+- Mise en page de l’onboarding adaptée aux écrans courts : contenu défilant dans la zone centrale,
+  commande principale maintenue en bas.
+- Mentions de collecte de compte, de floutage et de modération ajustées au fonctionnement documenté.
+- Introduction de l’espace commerçant recentrée sur les offres locales, sans annonce de résultats ou
+  de gratuité non vérifiés.
+
+Les corrections ne remplacent pas une revue juridique. Les coordonnées de l’éditeur et les
+informations réelles des sous-traitants restent à fournir. Le suivi détaillé est dans
+[docs/PROGRESS.md](./docs/PROGRESS.md).
 
 ## Objectif produit
 

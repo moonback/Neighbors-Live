@@ -19,7 +19,7 @@ export default async function OnboardingPage({
     <Onboarding
       next={safeNext(next)}
       signedIn={Boolean(viewer)}
-      initialStep={step === 'install' ? 2 : 0}
+      initialStep={step === 'install' ? 3 : 0}
     />
   );
 }

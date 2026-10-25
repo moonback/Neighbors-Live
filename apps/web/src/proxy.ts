@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { buildCsp } from '@/lib/csp';
 import { clientEnv } from '@/lib/env';
 import { ONBOARDED_COOKIE } from '@/lib/onboarding';
-/** App screens that first-time visitors only reach after the 4-screen onboarding. */
+/** App screens that first-time visitors only reach after the core onboarding. */
 const GATED = /^\/(carte|me|u\/[^/]+|parametres|moderation|commerce|admin)?$/;
 
 /** Refreshes the Supabase session cookies and sets a per-request CSP nonce. */

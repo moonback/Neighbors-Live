@@ -7,6 +7,12 @@ confiance, commerce et premières pistes visuelles.
 
 ## Synthèse exécutive
 
+**Mise en œuvre depuis l’audit :** la promesse d’accueil a été clarifiée, le guide d’installation
+est facultatif dans l’onboarding principal, la mise en page garde l’action principale accessible,
+et les textes français de confidentialité, de modération et de floutage ont été rapprochés du
+fonctionnement documenté. Ces changements ne constituent ni une revue juridique ni une refonte
+visuelle complète ; les priorités restantes sont suivies dans [roadmap.md](./roadmap.md).
+
 Neighbors Live dispose d’un socle fonctionnel différenciant : vidéos courtes locales, feed et carte,
 publication filmée dans l’application, expiration, modération de quartier et position publique
 approximative. Le défi principal n’est pas d’ajouter davantage de fonctions : c’est de faire

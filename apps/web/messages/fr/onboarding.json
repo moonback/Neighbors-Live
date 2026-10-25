@@ -5,12 +5,12 @@
   "skip": "Passer",
   "finish": "J’ai compris, c’est parti",
   "value": {
-    "title": "Votre quartier, en direct",
-    "body": "Neighbors Live montre les courtes vidéos filmées par vos voisins, à 300 m, 1 km ou 3 km autour de vous : alertes, bons plans, événements, entraide, commerces, objets perdus.",
+    "title": "Les infos utiles, à deux pas de chez vous.",
+    "body": "Découvrez les courtes vidéos publiées par vos voisins, dans un rayon de 300 m, 1 km ou 3 km.",
     "points": [
-      "Filmées sur place, dans l’application : pas d’import depuis la galerie.",
-      "Éphémères : une alerte disparaît après 6 h, un bon plan après 48 h.",
-      "Modérées par des habitants du quartier."
+      "Alertes, entraide, événements et bons plans locaux.",
+      "Filmez sur place : les publications disparaissent selon leur catégorie.",
+      "Votre position publique est approximative. Les contenus peuvent être signalés."
     ]
   },
   "permissions": {
@@ -31,7 +31,7 @@
   "rules": {
     "title": "Les règles de la communauté",
     "points": [
-      "Filmez des faits utiles au quartier, pas des personnes : évitez les visages et les plaques (un floutage automatique existe mais il n’est pas infaillible).",
+      "Filmez des faits utiles au quartier, pas des personnes. Le floutage automatique des visages peut en manquer ; les plaques ne sont pas floutées.",
       "Pas d’adresse précise, pas de harcèlement, pas de dénonciation.",
       "En cas de danger, appelez d’abord le 112 : Neighbors Live n’est pas un service d’urgence.",
       "Signalez ce qui pose problème : à 3 signalements, la vidéo est masquée et examinée."

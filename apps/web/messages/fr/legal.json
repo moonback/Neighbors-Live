@@ -11,7 +11,7 @@
         },
         {
           "title": "Données collectées",
-          "body": "Compte : adresse e-mail (connexion par lien magique), pseudo, bio facultative, préférences. Publications : vidéo filmée dans l’application, catégorie, légende, position au moment de la publication et sa précision. Interactions : réactions « Utile », commentaires, signalements, contestations. Notifications : abonnement technique du navigateur et zone choisie (un quartier d’environ 1 km², jamais votre position exacte). Sécurité : empreintes salées et non réversibles de l’adresse IP et de l’e-mail pour limiter les abus."
+          "body": "Compte : adresse e-mail, mot de passe géré par le service d’authentification, pseudo, bio facultative et préférences. Publications : vidéo filmée dans l’application, catégorie, légende, position au moment de la publication et sa précision. Interactions : réactions « Utile », commentaires, signalements et contestations. Notifications : abonnement technique du navigateur et zone choisie (un quartier d’environ 1 km², jamais votre position exacte). Sécurité : empreintes salées et non réversibles de l’adresse IP et de l’e-mail pour limiter les abus."
         },
         {
           "title": "Ce que nous ne collectons pas",
@@ -56,7 +56,7 @@
         },
         {
           "title": "Modération",
-          "body": "Les contenus sont modérés par des habitants volontaires et par l’équipe. Toute décision est journalisée et peut être contestée une fois ; la contestation est examinée par une autre personne."
+          "body": "Les utilisateurs peuvent signaler un contenu aux modérateurs du quartier. À partir de trois signalements de personnes différentes, une vidéo est masquée dans l’attente d’un examen. Les décisions de modération sont journalisées et peuvent faire l’objet d’un recours, examiné par une autre personne. Les contenus ne sont pas vérifiés a priori."
         },
         {
           "title": "Pas un service d’urgence",

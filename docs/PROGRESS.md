@@ -5,8 +5,8 @@ l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
 Dernière mise à jour : 2026-10-25 — fondations, base, auth, capture, worker, feed, carte et
-interactions faits ; modération en cours. Audit contenu/UX et roadmap produits documentés ;
-améliorations d’interface non encore implémentées.
+interactions faits ; modération en cours. Audit contenu/UX et roadmap documentés ; première passe
+de clarification des textes et d’amélioration de l’onboarding implémentée.
 
 ## 0. Cadrage et fondations
 
@@ -101,9 +101,23 @@ améliorations d’interface non encore implémentées.
 Modération, commerces, push (envoi), onboarding, pages légales, PWA, durcissement, e2e restants :
 voir sections suivantes au fil de l'avancement.
 
+### Améliorations contenu et UI/UX
+
+| Élément                                                    | État | Notes                                                                                |
+| ---------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------ |
+| Promesse d’accueil et tagline clarifiées                   | ✅   | Texte centré sur les informations utiles en courtes vidéos, sans ambiguïté de direct |
+| Installation PWA facultative, hors du parcours principal   | ✅   | Guide d’installation accessible séparément via `/onboarding?step=install`            |
+| Action principale d’onboarding visible et contenu défilant | ✅   | Vérification E2E ajoutée au viewport mobile 375 × 500                                |
+| Textes de confidentialité, floutage et modération alignés  | ✅   | Limites du floutage et examen après signalements explicités                          |
+| Présentation commerçant améliorée                          | ✅   | Copie mise à jour ; page d’acquisition dédiée non implémentée                        |
+| Mentions juridiques finales                                | ⬜   | Coordonnées et sous-traitants réels à fournir ; validation juridique requise         |
+| Direction visuelle complète et tests utilisateurs          | ⬜   | Non réalisée ; à prototyper et tester sur appareils physiques                        |
+
 ## Limites connues
 
 - Caméra/micro et push : testés uniquement dans Chromium desktop avec périphériques simulés ;
   aucun iPhone ni Android physique dans cet environnement.
 - Le volet navigateur de l'outil de dev bloque caméra et géolocalisation : vérifications faites via
   Playwright et le paramètre `?lat=&lng=`.
+- Le guide d’installation PWA est désormais facultatif dans l’onboarding, mais reste accessible
+  directement depuis le réglage push.

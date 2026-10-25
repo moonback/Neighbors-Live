@@ -161,15 +161,20 @@ test('useful, comments (own delete only), merchant, push, appeal, admin guard, w
   expect((await r.get('/api/me/videos')).status()).toBe(401);
 });
 
-test('first visit goes through the 4-screen onboarding', async ({ browser }) => {
+test('first visit gets a concise onboarding and can skip the optional install guide', async ({
+  browser,
+}) => {
   const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
   const page = await context.newPage();
+  await page.setViewportSize({ width: 375, height: 500 });
   await page.goto('/carte');
   await expect(page).toHaveURL(/\/onboarding\?next=%2Fcarte/);
-  await expect(page.getByRole('heading', { name: 'Votre quartier, en direct' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Les infos utiles, à deux pas de chez vous.' }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Suivant' })).toBeInViewport();
   for (const title of [
     'Vos autorisations, expliquées avant d’être demandées',
-    'Installer l’application',
     'Les règles de la communauté',
   ]) {
     await page.getByRole('button', { name: 'Suivant' }).click();
@@ -179,5 +184,7 @@ test('first visit goes through the 4-screen onboarding', async ({ browser }) => 
   await expect(page).toHaveURL(/\/carte$/);
   await page.goto('/');
   await expect(page).not.toHaveURL(/onboarding/);
+  await page.goto('/onboarding?step=install');
+  await expect(page.getByRole('heading', { name: 'Installer l’application' })).toBeVisible();
   await context.close();
 });
