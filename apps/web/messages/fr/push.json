@@ -1,0 +1,21 @@
+{
+  "title": "Alertes sur cet appareil",
+  "unsupported": "Ce navigateur ne permet pas les notifications web.",
+  "iosInstall": "Sur iPhone et iPad, les notifications ne fonctionnent qu’une fois l’application ajoutée à l’écran d’accueil (Partager → « Sur l’écran d’accueil »), puis ouverte depuis l’icône.",
+  "iosInstallLink": "Voir comment installer",
+  "enabled": "Activées sur cet appareil pour un rayon de {radius} autour de la zone choisie.",
+  "disabled": "Désactivées sur cet appareil.",
+  "enable": "Activer les alertes",
+  "disable": "Désactiver sur cet appareil",
+  "radius": "Rayon de la zone d’alerte",
+  "denied": "Les notifications sont bloquées dans les réglages du navigateur. Autorisez-les pour ce site puis réessayez.",
+  "noPosition": "Impossible de déterminer votre zone. Autorisez la localisation ou réessayez à l’extérieur.",
+  "primer": {
+    "title": "Être prévenu des alertes proches",
+    "body": "Nous allons vous demander deux autorisations :",
+    "notifications": "Notifications : pour recevoir au plus une notification groupée toutes les 30 minutes quand une alerte est publiée dans votre zone.",
+    "location": "Position, une seule fois : pour choisir votre zone d’alerte (un quartier d’environ 1 km²). Votre position exacte n’est pas enregistrée et n’est pas suivie ensuite.",
+    "continue": "J’ai compris, continuer",
+    "later": "Plus tard"
+  }
+}

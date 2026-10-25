@@ -1,0 +1,66 @@
+{
+  "appName": "Neighbors Live",
+  "tagline": "Ce qui se passe à deux pas de chez vous, filmé par vos voisins.",
+  "nav": {
+    "label": "Navigation principale",
+    "feed": "Autour de moi",
+    "map": "Carte",
+    "record": "Filmer",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  },
+  "categories": {
+    "alert": "Alerte",
+    "deal": "Bon plan",
+    "event": "Événement",
+    "help": "Entraide",
+    "shop": "Commerce",
+    "lost": "Objet perdu"
+  },
+  "radius": {
+    "300": "300 m",
+    "1000": "1 km",
+    "3000": "3 km"
+  },
+  "badges": {
+    "moderator": "Modérateur",
+    "merchant": "Commerce",
+    "admin": "Admin"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "back": "Retour",
+    "continue": "Continuer",
+    "loading": "Chargement…"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Réessayez dans un instant.",
+    "network": "Connexion impossible. Vérifiez votre réseau.",
+    "rate_limited": "Trop de tentatives. Patientez quelques minutes.",
+    "unauthorized": "Connectez-vous pour continuer.",
+    "forbidden": "Action non autorisée.",
+    "banned": "Votre compte est suspendu.",
+    "not_found": "Introuvable.",
+    "conflict": "Cette valeur est déjà utilisée.",
+    "invalid_input": "Certaines informations sont invalides."
+  },
+  "footer": {
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "rules": "Règles",
+    "contact": "Contact"
+  },
+  "offline": {
+    "title": "Vous êtes hors ligne",
+    "body": "Les vidéos ne peuvent pas être chargées sans connexion. Vos enregistrements en attente seront publiés automatiquement au retour du réseau.",
+    "banner": "Hors ligne — certaines fonctions sont indisponibles."
+  },
+  "update": {
+    "available": "Une nouvelle version est disponible.",
+    "reload": "Mettre à jour"
+  },
+  "skip": "Aller au contenu"
+}

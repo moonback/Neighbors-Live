@@ -1,0 +1,22 @@
+{
+  "title": "Profil de {username}",
+  "reputation": "Réputation",
+  "memberSince": "Membre depuis {date}",
+  "activeVideos": "Vidéos en ligne",
+  "noVideos": "Aucune vidéo en ligne pour le moment.",
+  "myVideos": "Mes vidéos",
+  "status": {
+    "processing": "En traitement",
+    "active": "En ligne",
+    "hidden": "Masquée",
+    "removed": "Retirée",
+    "expired": "Expirée",
+    "rejected": "Refusée"
+  },
+  "edit": "Modifier le profil",
+  "decisions": "Décisions de modération",
+  "withdraw": "Retirer",
+  "withdrawConfirm": "Retirer définitivement cette vidéo ? Les fichiers seront supprimés.",
+  "withdrawn": "Vidéo retirée.",
+  "notFound": "Ce profil n’existe pas."
+}

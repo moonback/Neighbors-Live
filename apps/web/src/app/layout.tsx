@@ -4,12 +4,12 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import './globals.css';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('app');
+  const t = await getTranslations('common');
   return {
-    title: { default: t('name'), template: `%s · ${t('name')}` },
+    title: { default: t('appName'), template: `%s · ${t('appName')}` },
     description: t('tagline'),
-    applicationName: t('name'),
-    appleWebApp: { capable: true, title: t('name'), statusBarStyle: 'black-translucent' },
+    applicationName: t('appName'),
+    appleWebApp: { capable: true, title: t('appName'), statusBarStyle: 'black-translucent' },
     formatDetection: { telephone: false },
   };
 }

@@ -117,14 +117,13 @@ export async function parseBody<T>(req: Request, schema: ZodType<T>): Promise<T>
 }
 
 /** Salted hash of the client IP: used as a rate-limit key, never stored raw. */
+export const hashKey = (value: string): string =>
+  createHash('sha256').update(serverEnv().IP_HASH_SALT).update(value).digest('hex').slice(0, 32);
+
 export function ipKey(req: Request): string {
   const ip =
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     req.headers.get('x-real-ip') ||
     'unknown';
-  return createHash('sha256')
-    .update(serverEnv().IP_HASH_SALT)
-    .update(ip)
-    .digest('hex')
-    .slice(0, 32);
+  return hashKey(`ip:${ip}`);
 }

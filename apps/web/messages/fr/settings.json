@@ -1,0 +1,40 @@
+{
+  "title": "Paramètres",
+  "profile": {
+    "title": "Profil",
+    "username": "Pseudo",
+    "bio": "Bio (facultatif)",
+    "bioHint": "{count}/160 caractères",
+    "saved": "Profil enregistré."
+  },
+  "preferences": {
+    "title": "Préférences",
+    "radius": "Rayon par défaut",
+    "language": "Langue",
+    "languages": {
+      "fr": "Français",
+      "en": "English"
+    },
+    "saved": "Préférences enregistrées."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "alerts": "Recevoir les alertes proches",
+    "alertsHint": "Une notification groupée au plus toutes les 30 minutes."
+  },
+  "data": {
+    "title": "Mes données",
+    "export": "Exporter mes données (JSON)",
+    "exportHint": "Profil, vidéos, positions de vos publications, commentaires, signalements et abonnements."
+  },
+  "danger": {
+    "title": "Supprimer mon compte",
+    "body": "Supprime définitivement votre profil, vos vidéos et leurs fichiers, vos commentaires, réactions, signalements et abonnements aux notifications. Cette action est irréversible.",
+    "confirmLabel": "Tapez votre pseudo « {username} » pour confirmer",
+    "submit": "Supprimer définitivement",
+    "done": "Votre compte a été supprimé."
+  },
+  "merchant": "Espace commerçant",
+  "moderation": "Espace modération",
+  "admin": "Administration"
+}
