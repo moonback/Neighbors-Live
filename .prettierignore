@@ -9,3 +9,5 @@ apps/web/public/swe-worker-*.js
 supabase/.temp
 supabase/.branches
 apps/worker/models
+supabase/seed.sql
+supabase/tests

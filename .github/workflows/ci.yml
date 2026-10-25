@@ -11,7 +11,7 @@ concurrency:
 
 env:
   # Non-secret placeholders: the build only needs well-formed public config.
-  NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+  NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:56421
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key-000000
   NEXT_PUBLIC_SITE_URL: http://localhost:3000
   NEXT_PUBLIC_MAP_STYLE_URL: https://tiles.openfreemap.org/styles/liberty
