@@ -7,3 +7,7 @@ playwright-report/
 test-results/
 supabase/.temp/
 *.log
+.env.*.local
+apps/web/.env.local
+*.tsbuildinfo
+next-env.d.ts

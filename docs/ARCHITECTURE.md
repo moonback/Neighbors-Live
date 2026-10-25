@@ -23,6 +23,7 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
 ## Flux principaux
 
 **Publication**
+
 1. Client : enregistre ≤ 30 s (`MediaRecorder`, `mimeType` détecté : `video/mp4` Safari,
    `video/webm;codecs=vp9/vp8` sinon), relève la position (`enableHighAccuracy`), refuse si
    précision > 100 m.
@@ -39,6 +40,7 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
    d'origine avec une précision ≤ 100 m.
 
 **Traitement (worker)**
+
 - Boucle : `LISTEN media_jobs` + polling de secours ; prise de job via
   `UPDATE … WHERE id = (SELECT … FOR UPDATE SKIP LOCKED LIMIT 1)`.
 - Pipeline : ffmpeg décode en `rawvideo rgb24` (720p max, fps conservé) → détection (interface
@@ -54,6 +56,7 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   supprimés).
 
 **Lecture (feed / carte)**
+
 - `GET /api/feed?lat&lng&radius&category&cursor` → RPC `nearby_videos` (SECURITY DEFINER,
   `ST_DWithin` sur `geography`, `status='active' AND expires_at > now()`), tri par score
   (fraîcheur décroissante pondérée par « utile » et distance), pagination par curseur opaque
@@ -89,13 +92,13 @@ Fonctions : `nearby_videos`, `expire_videos` (pg_cron toutes les 5 min), `apply_
 
 ## Rôles et autorisations
 
-| Rôle | Mécanisme |
-|---|---|
-| anon | lecture des pages publiques uniquement ; feed via route serveur |
-| user | RLS `auth.uid()` sur ses lignes |
-| merchant | `profiles.role='merchant'` + `merchant_profiles` ; quota N/jour |
-| modérateur de zone | ligne `zone_moderators` pour la cellule H3 de la vidéo |
-| admin | `profiles.role='admin'` ; peut annuler toute décision, bannir |
+| Rôle               | Mécanisme                                                       |
+| ------------------ | --------------------------------------------------------------- |
+| anon               | lecture des pages publiques uniquement ; feed via route serveur |
+| user               | RLS `auth.uid()` sur ses lignes                                 |
+| merchant           | `profiles.role='merchant'` + `merchant_profiles` ; quota N/jour |
+| modérateur de zone | ligne `zone_moderators` pour la cellule H3 de la vidéo          |
+| admin              | `profiles.role='admin'` ; peut annuler toute décision, bannir   |
 
 Le rôle est lu en base (fonctions `is_admin()`, `is_zone_moderator(cell)`), jamais depuis un claim
 modifiable par le client.

@@ -8,19 +8,19 @@ PWA de vidéos courtes hyperlocales (rayon 300 m / 1 km / 3 km), filmées dans l
 
 ## Commandes
 
-| Commande | Effet |
-|---|---|
-| `pnpm install` | Installe le monorepo (pnpm workspaces) |
-| `pnpm db:start` | Démarre Supabase local (CLI via devDependency), applique migrations + `seed.sql`, lance le worker Docker |
-| `pnpm db:reset` | Réinitialise la base locale (migrations + seed) |
-| `pnpm db:types` | Régénère `packages/shared/src/database.types.ts` |
-| `pnpm dev` | Lance le web (Next.js) en dev |
-| `pnpm worker:dev` | Lance le worker média hors Docker (nécessite ffmpeg local) |
-| `pnpm typecheck` / `pnpm lint` / `pnpm format` | Qualité |
-| `pnpm test` | Tests unitaires Vitest (tous les packages) |
-| `pnpm test:db` | Tests SQL/RLS contre la base locale |
-| `pnpm test:e2e` | Playwright (`/tests`), nécessite Supabase local + worker |
-| `pnpm build` | Build de production |
+| Commande                                       | Effet                                                                                                    |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `pnpm install`                                 | Installe le monorepo (pnpm workspaces)                                                                   |
+| `pnpm db:start`                                | Démarre Supabase local (CLI via devDependency), applique migrations + `seed.sql`, lance le worker Docker |
+| `pnpm db:reset`                                | Réinitialise la base locale (migrations + seed)                                                          |
+| `pnpm db:types`                                | Régénère `packages/shared/src/database.types.ts`                                                         |
+| `pnpm dev`                                     | Lance le web (Next.js) en dev                                                                            |
+| `pnpm worker:dev`                              | Lance le worker média hors Docker (nécessite ffmpeg local)                                               |
+| `pnpm typecheck` / `pnpm lint` / `pnpm format` | Qualité                                                                                                  |
+| `pnpm test`                                    | Tests unitaires Vitest (tous les packages)                                                               |
+| `pnpm test:db`                                 | Tests SQL/RLS contre la base locale                                                                      |
+| `pnpm test:e2e`                                | Playwright (`/tests`), nécessite Supabase local + worker                                                 |
+| `pnpm build`                                   | Build de production                                                                                      |
 
 Boucle obligatoire après chaque bloc : `pnpm typecheck && pnpm lint && pnpm test && pnpm build`.
 
