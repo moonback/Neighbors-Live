@@ -1,0 +1,14 @@
+# Local media worker. Supabase itself runs through the Supabase CLI (`pnpm db:start`).
+services:
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    env_file: .env
+    environment:
+      # The container reaches the local Supabase stack through the host.
+      SUPABASE_URL: ${WORKER_SUPABASE_URL:-http://host.docker.internal:56421}
+      DATABASE_URL: ${WORKER_DATABASE_URL:-postgresql://postgres:postgres@host.docker.internal:56422/postgres}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped

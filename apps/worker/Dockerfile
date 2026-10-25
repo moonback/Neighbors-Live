@@ -1,0 +1,31 @@
+# Media worker: ffmpeg + onnxruntime (CPU). Build context = repository root.
+FROM node:24-bookworm-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core ca-certificates curl \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN corepack enable
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/shared/package.json packages/shared/
+COPY apps/worker/package.json apps/worker/
+# --ignore-scripts: skips the root husky hook; onnxruntime-node ships its CPU binaries.
+RUN pnpm install --frozen-lockfile --filter @nl/worker... --ignore-scripts
+
+COPY packages/shared/src packages/shared/src
+COPY apps/worker/src apps/worker/src
+COPY apps/worker/scripts apps/worker/scripts
+
+# YuNet face detector (opencv_zoo, MIT licence), pinned by checksum.
+ARG YUNET_URL=https://media.githubusercontent.com/media/opencv/opencv_zoo/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx
+ARG YUNET_SHA256=8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4
+RUN mkdir -p apps/worker/models \
+  && curl -fsSL "$YUNET_URL" -o apps/worker/models/face_detection_yunet_2023mar.onnx \
+  && echo "$YUNET_SHA256  apps/worker/models/face_detection_yunet_2023mar.onnx" | sha256sum -c -
+
+USER node
+WORKDIR /app/apps/worker
+ENV NODE_ENV=production
+CMD ["node", "src/index.ts"]

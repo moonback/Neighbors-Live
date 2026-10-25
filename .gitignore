@@ -11,3 +11,4 @@ supabase/.temp/
 apps/web/.env.local
 *.tsbuildinfo
 next-env.d.ts
+.demo-media/

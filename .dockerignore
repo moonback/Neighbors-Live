@@ -1,0 +1,12 @@
+**/node_modules
+**/.next
+.git
+.demo-media
+apps/web
+tests
+playwright-report
+test-results
+supabase
+.env
+**/.env.local
+apps/worker/models
