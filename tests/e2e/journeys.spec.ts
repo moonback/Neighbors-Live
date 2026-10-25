@@ -35,6 +35,16 @@ test('sign-up and sign-in with e-mail + password, unique pseudo', async ({ page,
 });
 
 test('feed: plays the visible video muted, preloads only the next one', async ({ page }) => {
+  await page.route('**/api/feed?**', async (route) => {
+    const response = await route.fetch();
+    const payload = (await response.json()) as {
+      items?: Array<{ caption: string }>;
+    };
+    if (payload.items?.[0]) {
+      payload.items[0].caption = 'Information importante pour le quartier. '.repeat(5).trim();
+    }
+    await route.fulfill({ response, body: JSON.stringify(payload) });
+  });
   await page.goto(`/?${BELLEVILLE}`);
   const first = page.getByTestId('feed-item').first();
   await expect(first).toBeVisible();
@@ -45,9 +55,37 @@ test('feed: plays the visible video muted, preloads only the next one', async ({
   expect(sources).toBeLessThanOrEqual(2);
   await first.getByRole('button', { name: 'Activer le son' }).click();
   await expect(first.locator('video')).toHaveJSProperty('muted', false);
+  const expandCaption = first.getByRole('button', { name: 'Lire la suite' });
+  await expect(expandCaption).toBeVisible();
+  await expect(expandCaption).toHaveAttribute('aria-expanded', 'false');
+  await expandCaption.click();
+  await expect(first.getByRole('button', { name: 'Réduire' })).toHaveAttribute(
+    'aria-expanded',
+    'true',
+  );
+  await first.getByRole('button', { name: 'Réduire' }).click();
   // Filters and radius
   await page.getByRole('button', { name: 'Alerte', exact: true }).click();
   await expect(page.getByTestId('feed-item').first()).toContainText('Alerte');
+});
+
+test('merchant introduction is public and application remains behind authentication', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+  const page = await context.newPage();
+  await page.goto('/commerces');
+  await expect(
+    page.getByRole('heading', { name: 'Faites découvrir votre commerce aux voisins.' }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Simple et local' })).toBeVisible();
+  await expect(page.getByText(/aucun résultat commercial n’est garanti/i)).toBeVisible();
+  await page
+    .context()
+    .addCookies([{ name: 'nl-onboarded', value: '1', url: 'http://localhost:3000' }]);
+  await page.getByRole('link', { name: 'Présenter mon commerce' }).first().click();
+  await expect(page).toHaveURL(/\/login\?next=\/commerce$/);
+  await context.close();
 });
 
 async function reportAs(browser: Browser, videoId: string, prefix: string) {

@@ -45,6 +45,7 @@ export function VideoCard({
   const [paused, setPaused] = useState(true);
   const [useful, setUseful] = useState({ reacted: item.reacted, count: item.usefulCount });
   const [toast, setToast] = useState<string | null>(null);
+  const [captionExpanded, setCaptionExpanded] = useState(false);
 
   useEffect(() => {
     const video = ref.current;
@@ -126,7 +127,7 @@ export function VideoCard({
       </button>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent px-4 pb-6 pt-24">
-        <div className="pointer-events-auto flex max-w-[78%] flex-col gap-2">
+        <div className="pointer-events-auto flex max-w-[calc(100%-5rem)] flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span
               className="rounded-full px-2 py-0.5 font-bold text-white"
@@ -148,7 +149,25 @@ export function VideoCard({
               · {t('expires', { when: format.relativeTime(new Date(item.expiresAt), now) })}
             </span>
           </div>
-          {item.caption && <p className="text-base font-medium leading-snug">{item.caption}</p>}
+          {item.caption && (
+            <div className="flex flex-col items-start gap-1">
+              <p
+                className={`text-base font-medium leading-snug ${captionExpanded ? '' : 'line-clamp-3'}`}
+              >
+                {item.caption}
+              </p>
+              {item.caption.length > 100 && (
+                <button
+                  type="button"
+                  aria-expanded={captionExpanded}
+                  onClick={() => setCaptionExpanded((expanded) => !expanded)}
+                  className="min-h-11 rounded-lg px-1 text-left text-sm font-semibold text-white underline underline-offset-4"
+                >
+                  {captionExpanded ? t('captionLess') : t('captionMore')}
+                </button>
+              )}
+            </div>
+          )}
           <Link
             href={`/u/${item.author.username}`}
             className="flex items-center gap-2 text-sm text-fog"

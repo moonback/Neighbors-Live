@@ -1,6 +1,37 @@
 {
   "title": "Espace commerçant",
   "intro": "Faites découvrir votre commerce aux voisins. Après validation, publiez des vidéos d’offres tournées sur place et identifiées par un badge « Commerce », dans la limite prévue pour votre compte.",
+  "learnMore": "Découvrir l’offre commerçante",
+  "landing": {
+    "eyebrow": "Pour les commerces de proximité",
+    "title": "Faites découvrir votre commerce aux voisins.",
+    "intro": "Partagez une offre locale en courte vidéo, tournée sur place et visible dans le quartier.",
+    "apply": "Présenter mon commerce",
+    "back": "Retour à Neighbors Live",
+    "howTitle": "Simple et local",
+    "steps": [
+      {
+        "title": "Présentez votre commerce",
+        "body": "Envoyez une demande avec le nom de votre établissement et une courte présentation."
+      },
+      {
+        "title": "Attendez la validation",
+        "body": "L’équipe examine la demande. Une fois votre compte approuvé, le badge « Commerce » est associé à vos offres."
+      },
+      {
+        "title": "Publiez une offre filmée sur place",
+        "body": "Filmez une courte vidéo depuis l’application, choisissez sa durée de visibilité et partagez-la avec les voisins à proximité."
+      }
+    ],
+    "detailsTitle": "Ce qu’il faut savoir",
+    "details": [
+      "Les offres sont réservées aux comptes commerce validés et doivent être filmées sur place.",
+      "La durée de visibilité se choisit parmi les options proposées, de 6 heures à 7 jours.",
+      "Un quota de publications s’applique à chaque compte ; il est indiqué dans votre espace commerçant.",
+      "La plateforme ne fournit pas encore de statistiques de portée ou de conversion : aucun résultat commercial n’est garanti."
+    ],
+    "closing": "Une offre utile, clairement présentée, aide les voisins à découvrir ce qui se passe près de chez eux."
+  },
   "apply": "Demander un compte commerce",
   "businessName": "Nom du commerce",
   "description": "Présentation courte (facultatif)",

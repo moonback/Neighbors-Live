@@ -20,6 +20,12 @@ parcours avant une refonte graphique générale.
 - Mentions de collecte de compte, de floutage et de modération ajustées au fonctionnement documenté.
 - Introduction de l’espace commerçant recentrée sur les offres locales, sans annonce de résultats ou
   de gratuité non vérifiés.
+- Page publique `/commerces` ajoutée, avec explication du parcours, des durées, du quota et des
+  limites de mesure ; demande reliée à l’espace commerçant authentifié.
+- Légendes longues du feed limitées à trois lignes, avec commande « Lire la suite / Réduire ».
+- Tests E2E ajoutés pour la présentation publique commerçante, la protection de l’espace de demande
+  et le développement/repli d’une longue légende ; ces deux parcours E2E ciblés passent, comme le
+  typecheck, le lint, les tests unitaires et le build de production.
 
 Les corrections ne remplacent pas une revue juridique. Les coordonnées de l’éditeur et les
 informations réelles des sous-traitants restent à fournir. Le suivi détaillé est dans
@@ -119,7 +125,7 @@ quand ; terminer une publication sans confusion ni promesse excessive.
 | Chantier              | Livrables                                                                                                        |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Hiérarchie du feed    | Ordre visuel cohérent entre vidéo, catégorie, auteur, distance approximative et expiration                       |
-| Légendes              | Limite visuelle et comportement de lecture étendue testés sur les légendes longues                               |
+| Légendes              | ✅ Limite visuelle à trois lignes et commande de lecture étendue ; tests E2E ajoutés                             |
 | Catégories et alertes | Différencier catégorie « Alerte » et danger immédiat ; rappeler les consignes d’urgence à l’endroit utile        |
 | Actions vidéo         | Contrôler chevauchement avec la légende, taille tactile, labels accessibles et retours d’action                  |
 | Expiration            | Libellé compréhensible et cohérent avec la durée restante réelle                                                 |
@@ -144,14 +150,14 @@ limites avant de déposer une demande.
 
 | Chantier           | Livrables                                                                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| Page d’acquisition | Page publique distincte de l’espace commerçant authentifié                                                 |
+| Page d’acquisition | ✅ Page publique `/commerces`, distincte de l’espace commerçant authentifié                                |
 | Proposition        | Bénéfice, format, rayon, durée, critères de validation et quota, exprimés sans jargon                      |
 | Processus          | États de demande soumis, en examen, accepté ou refusé, avec attentes clairement formulées                  |
 | Modèle économique  | Décision validée et formulation exacte ; ne pas laisser « gratuit dans cette version » sans contexte       |
 | Mesure             | Inventaire des indicateurs réellement existants ; ne pas afficher de vues, conversions ou portée inventées |
 | Publication        | Instructions qui aident à créer une offre utile, honnête, filmée sur place et conforme aux règles          |
 
-**Critères de sortie**
+**Critères de sortie** — page implémentée ; validation métier/utilisateur encore requise.
 
 - Des commerçants testeurs savent décrire les étapes et les règles après lecture.
 - Aucun résultat commercial ni volume d’audience n’est garanti sans donnée vérifiée.

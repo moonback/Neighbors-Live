@@ -44,6 +44,12 @@ export default async function MerchantPage() {
     <div className="mx-auto flex max-w-lg flex-col gap-4 p-4">
       <h1 className="pt-4 text-2xl font-bold">{t('title')}</h1>
       <p className="text-fog">{t('intro')}</p>
+      <Link
+        href="/commerces"
+        className="text-sm font-semibold text-accent underline underline-offset-4"
+      >
+        {t('learnMore')}
+      </Link>
       <Card className="flex flex-col gap-3">
         {!merchant && (
           <>
