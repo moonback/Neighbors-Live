@@ -78,7 +78,7 @@ run('node', ['scripts/seed-media.mjs']);
 console.log(`
 ✔ Ready.
   Web:      pnpm dev  →  http://localhost:3000
-  Mailpit:  ${status.MAILPIT_URL ?? status.INBUCKET_URL}  (magic links land here)
+  Mailpit:  ${status.MAILPIT_URL ?? status.INBUCKET_URL}  (confirmation and recovery emails)
   Studio:   ${status.STUDIO_URL ?? 'disabled'}
   Demo accounts: lea@neighbors.test, modo.belleville@neighbors.test, admin@neighbors.test,
                  boulangerie@neighbors.test (see README)

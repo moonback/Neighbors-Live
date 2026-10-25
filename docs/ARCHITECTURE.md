@@ -107,7 +107,8 @@ modifiable par le client.
 
 - Next.js App Router, TS strict, Tailwind. `next-intl` sans préfixe d'URL (locale en cookie/réglage),
   `fr` par défaut, `en` prêt.
-- `@supabase/ssr` (cookies) pour l'auth ; magic link + choix du pseudo au premier login.
+- `@supabase/ssr` (cookies) pour l'auth par e-mail et mot de passe ; pseudo à l'inscription et
+  callback PKCE pour les liens de confirmation ou de récupération.
 - Mutations sensibles par route handlers (vérif `Origin`, Zod, rate limit) ; lectures simples via
   RPC/RLS.
 - Serwist : precache de l'app shell, `NetworkFirst` pour l'API, `CacheFirst` pour les images et
@@ -122,10 +123,11 @@ modifiable par le client.
   worker (détecteur, tracker, pixellisation, retries).
 - pgTAP (`supabase test db`) : chaque policy RLS par rôle, chaque fonction SQL.
 - Playwright : Chromium avec `--use-fake-device-for-media-stream` + fichier `.y4m`, géolocalisation
-  simulée, lecture des magic links dans Mailpit (Supabase local).
+  simulée, lecture des e-mails de confirmation/récupération dans Mailpit (Supabase local).
 
 ## Local / déploiement
 
 - Local : `pnpm db:start` = Supabase CLI (Postgres, Auth, Storage, Realtime, Mailpit) + migrations +
   `seed.sql` + génération/upload des médias de démo + `docker compose up worker`. `pnpm dev` = web.
-- Prod : Supabase Cloud, web sur Vercel, worker sur Fly.io (voir `DEPLOYMENT.md`).
+- Cible de production envisagée : Supabase Cloud, web sur Vercel, worker sur Fly.io ; le guide de
+  déploiement reste à écrire et à vérifier.

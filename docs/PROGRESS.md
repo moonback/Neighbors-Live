@@ -18,7 +18,7 @@ interactions faits ; modération en cours.
 | 0.5  | TS strict, ESLint, Prettier, husky + lint-staged                                    | 🟢   | Hook pre-commit exécuté à chaque commit                                      |
 | 0.6  | GitHub Actions (typecheck, lint, test, build, e2e)                                  | ✅   | Workflow écrit ; pas encore exécuté sur GitHub (pas de remote)               |
 | 0.7  | Validation Zod des variables d'env (web + worker)                                   | 🟢   | `instrumentation.ts` (web), `loadEnv` (worker)                               |
-| 0.8  | `docker-compose.yml` worker, `.env.example`, `README.md`                            | 🟨   | README à écrire                                                              |
+| 0.8  | `docker-compose.yml` worker, `.env.example`, `README.md`                            | ✅   | README détaillé ajouté                                                       |
 | 0.9  | `docs/DECISIONS.md`                                                                 | ✅   |                                                                              |
 | 0.10 | `pnpm db:start` génère les `.env`, démarre Supabase, le worker et charge les médias | 🟢   | Ports 564xx (543xx/553xx occupés par d'autres projets sur la machine de dev) |
 
@@ -38,14 +38,14 @@ interactions faits ; modération en cours.
 
 ## 2. Comptes et profils
 
-| #   | Élément                                   | État | Notes                                    |
-| --- | ----------------------------------------- | ---- | ---------------------------------------- |
-| 2.1 | Magic link + pseudo unique                | 🟢   | Testé dans le navigateur (Mailpit) + e2e |
-| 2.2 | Avatar généré, bio                        | 🟢   |                                          |
-| 2.3 | Page profil, réputation, badges           | 🟢   |                                          |
-| 2.4 | Paramètres : rayon, langue, notifications | 🟢   | Zone d'alerte = abonnement push (10.1)   |
-| 2.5 | Export des données                        | ✅   | Route codée ; e2e à écrire               |
-| 2.6 | Suppression de compte                     | ✅   | Route codée ; e2e à écrire               |
+| #   | Élément                                   | État | Notes                                                                   |
+| --- | ----------------------------------------- | ---- | ----------------------------------------------------------------------- |
+| 2.1 | E-mail + mot de passe + pseudo unique     | ✅   | Inscription, connexion et réinitialisation du mot de passe implémentées |
+| 2.2 | Avatar généré, bio                        | 🟢   |                                                                         |
+| 2.3 | Page profil, réputation, badges           | 🟢   |                                                                         |
+| 2.4 | Paramètres : rayon, langue, notifications | 🟢   | Zone d'alerte = abonnement push (10.1)                                  |
+| 2.5 | Export des données                        | ✅   | Route codée ; e2e à écrire                                              |
+| 2.6 | Suppression de compte                     | ✅   | Route codée ; e2e à écrire                                              |
 
 ## 3. Capture et publication
 
