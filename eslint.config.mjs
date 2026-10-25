@@ -12,6 +12,7 @@ export default tseslint.config(
       'playwright-report/**',
       'test-results/**',
       'apps/web/public/sw.js',
+      'apps/web/public/maplibre-gl-worker.mjs',
       'apps/web/public/swe-worker-*.js',
       'apps/web/next-env.d.ts',
       'packages/shared/src/database.types.ts',

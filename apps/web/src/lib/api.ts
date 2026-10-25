@@ -48,11 +48,12 @@ export function fromDbError(error: { message: string; code?: string }): ApiError
 
 /** Unwraps a Supabase `{ data, error }` result, converting errors to ApiError. */
 export function unwrap<T>(result: {
-  data: T;
+  data: T | null;
   error: { message: string; code?: string } | null;
 }): T {
   if (result.error) throw fromDbError(result.error);
-  return result.data;
+  // Without an error, PostgREST returns data (void RPCs legitimately return null).
+  return result.data as T;
 }
 
 export const json = (body: unknown, status = 200, headers?: HeadersInit) =>

@@ -122,15 +122,24 @@ export const pushSubscribeSchema = z.object({
   radius: radiusSchema,
 });
 
-/** Opaque feed cursor: base64url(JSON [score, id]). */
-export const encodeCursor = (score: number, id: string): string =>
-  Buffer.from(JSON.stringify([score, id])).toString('base64url');
+export interface FeedCursor {
+  score: number;
+  id: string;
+  /** Reference time of the scores (ISO), so that pages stay consistent as time passes. */
+  ref: string;
+}
 
-const cursorTuple = z.tuple([z.number(), z.uuid()]);
-export function decodeCursor(cursor: string): { score: number; id: string } | null {
+/** Opaque feed cursor: base64url(JSON [score, id, refTime]). */
+export const encodeCursor = (c: FeedCursor): string =>
+  Buffer.from(JSON.stringify([c.score, c.id, c.ref])).toString('base64url');
+
+const cursorTuple = z.tuple([z.number(), z.uuid(), z.iso.datetime({ offset: true })]);
+export function decodeCursor(cursor: string): FeedCursor | null {
   try {
     const parsed = cursorTuple.safeParse(JSON.parse(Buffer.from(cursor, 'base64url').toString()));
-    return parsed.success ? { score: parsed.data[0], id: parsed.data[1] } : null;
+    return parsed.success
+      ? { score: parsed.data[0], id: parsed.data[1], ref: parsed.data[2] }
+      : null;
   } catch {
     return null;
   }

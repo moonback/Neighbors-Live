@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormatter, useTranslations } from 'next-intl';
+import { useFormatter, useTranslations, useNow } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Notice } from '@/components/ui';
 import { useErrorText } from '@/components/useErrorText';
@@ -33,6 +33,7 @@ export function MyVideos() {
   const t = useTranslations('profile');
   const tc = useTranslations('common.categories');
   const format = useFormatter();
+  const now = useNow({ updateInterval: 60_000 });
   const errorText = useErrorText();
   const [videos, setVideos] = useState<OwnVideo[] | null>(null);
   const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
@@ -89,7 +90,7 @@ export function MyVideos() {
                 <strong>{tc(v.category)}</strong> · {v.caption || '—'}
               </p>
               <p className="text-xs text-fog">
-                {t(`status.${v.status}`)} · {format.relativeTime(new Date(v.created_at))}
+                {t(`status.${v.status}`)} · {format.relativeTime(new Date(v.created_at), now)}
               </p>
             </div>
             {v.status !== 'removed' && (

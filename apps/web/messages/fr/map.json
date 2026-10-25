@@ -1,0 +1,7 @@
+{
+  "title": "Carte",
+  "locate": "Me localiser",
+  "open": "Ouvrir dans le fil",
+  "count": "{count, plural, =0 {Aucune vidéo} one {# vidéo} other {# vidéos}} dans ce rayon",
+  "attribution": "Positions arrondies à environ 50 m."
+}

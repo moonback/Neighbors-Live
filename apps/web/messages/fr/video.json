@@ -1,0 +1,47 @@
+{
+  "by": "par @{username}",
+  "distance": "à {distance}",
+  "km": "{value} km",
+  "m": "{value} m",
+  "expires": "expire {when}",
+  "play": "Lire la vidéo",
+  "pause": "Mettre en pause",
+  "unmute": "Activer le son",
+  "mute": "Couper le son",
+  "useful": "Utile",
+  "usefulCount": "{count, plural, =0 {Utile} one {# utile} other {# utiles}}",
+  "comments": "{count, plural, =0 {Commenter} one {# commentaire} other {# commentaires}}",
+  "share": "Partager",
+  "shared": "Lien copié.",
+  "report": "Signaler",
+  "merchant": "Commerce",
+  "commentsPanel": {
+    "title": "Commentaires",
+    "empty": "Aucun commentaire pour le moment.",
+    "placeholder": "Écrire un commentaire…",
+    "send": "Envoyer",
+    "delete": "Supprimer",
+    "more": "Voir plus",
+    "login": "Connectez-vous pour commenter."
+  },
+  "reportPanel": {
+    "title": "Signaler cette vidéo",
+    "intro": "Les signalements sont examinés par les modérateurs du quartier. À partir de 3 signalements de personnes différentes, la vidéo est masquée en attendant leur décision.",
+    "reason": "Motif",
+    "reasons": {
+      "recognizable_person": "Une personne est reconnaissable",
+      "address_or_plate": "Une adresse ou une plaque est visible",
+      "dangerous": "Contenu dangereux ou violent",
+      "harassment": "Harcèlement ou propos haineux",
+      "spam": "Publicité abusive ou spam",
+      "false_info": "Fausse information",
+      "other": "Autre"
+    },
+    "details": "Précisions (facultatif)",
+    "submit": "Envoyer le signalement",
+    "done": "Merci, votre signalement a été transmis aux modérateurs du quartier.",
+    "already": "Vous avez déjà signalé cette vidéo."
+  },
+  "unavailable": "Cette vidéo n’est plus disponible.",
+  "openFeed": "Voir autour de ce lieu"
+}

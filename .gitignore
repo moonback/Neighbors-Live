@@ -12,3 +12,4 @@ apps/web/.env.local
 *.tsbuildinfo
 next-env.d.ts
 .demo-media/
+apps/web/public/maplibre-gl-worker.mjs

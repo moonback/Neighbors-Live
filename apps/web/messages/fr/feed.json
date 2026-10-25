@@ -1,0 +1,33 @@
+{
+  "title": "Autour de moi",
+  "filters": {
+    "label": "Filtrer par catégorie",
+    "all": "Tout",
+    "radius": "Rayon"
+  },
+  "alerts": {
+    "banner": "{count, plural, one {# alerte proche} other {# alertes proches}}",
+    "new": "Nouvelle alerte : {caption}",
+    "show": "Voir les alertes"
+  },
+  "location": {
+    "primerTitle": "Voir ce qui se passe près de vous",
+    "primerBody": "Pour afficher les vidéos de votre quartier, Neighbors Live a besoin de votre position. Elle sert uniquement à cette recherche : elle n’est ni enregistrée ni partagée.",
+    "allow": "Utiliser ma position",
+    "later": "Plus tard",
+    "needed": "Activez la localisation pour voir les vidéos autour de vous.",
+    "denied": "Localisation refusée. Autorisez-la dans les réglages du navigateur pour ce site, puis réessayez.",
+    "error": "Position indisponible pour le moment.",
+    "locating": "Recherche de votre position…"
+  },
+  "empty": {
+    "title": "Rien autour de vous pour l’instant",
+    "body": "Soyez la première ou le premier à montrer ce qui se passe dans le quartier.",
+    "cta": "Filmer",
+    "wider": "Élargir à {radius}"
+  },
+  "error": "Impossible de charger les vidéos.",
+  "loadingMore": "Chargement de vidéos supplémentaires…",
+  "end": "Vous avez tout vu dans ce rayon.",
+  "deleted": "Votre compte a été supprimé. Merci d’avoir participé."
+}
