@@ -10,7 +10,7 @@ import { ApiError, json, parseBody, requireUser, route, unwrap } from '@/lib/api
 import { adminClient } from '@/lib/supabase/admin';
 
 /**
- * Step 1 of a publication: validates everything server-side (schema, accuracy ≤ 100 m,
+ * Step 1 of a publication: validates everything server-side (schema, accuracy ≤ 500 m,
  * plausible position, coherence with the previous publication, rate limit, merchant quota)
  * and reserves the video row. The client then uploads the raw file (TUS) to `uploadPath`.
  */
