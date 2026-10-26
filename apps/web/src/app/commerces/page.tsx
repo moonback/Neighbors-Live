@@ -22,6 +22,12 @@ export default async function MerchantLandingPage() {
           <Link href="/" className="text-sm font-semibold text-fog hover:text-white">
             {t('back')}
           </Link>
+          <Link
+            href="/commerces/decouvrir"
+            className="text-sm font-semibold text-accent underline underline-offset-4"
+          >
+            {t('directory.link')}
+          </Link>
         </header>
 
         <section className="grid gap-8 rounded-3xl border border-line bg-panel p-6 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
@@ -33,7 +39,7 @@ export default async function MerchantLandingPage() {
             <p className="max-w-2xl text-lg leading-relaxed text-fog">{t('intro')}</p>
             <Link
               href="/commerce"
-              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-yellow-300"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-accent/90"
             >
               {t('apply')}
             </Link>
@@ -88,7 +94,7 @@ export default async function MerchantLandingPage() {
           <p className="max-w-xl text-sm leading-relaxed text-fog">{t('closing')}</p>
           <Link
             href="/commerce"
-            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-yellow-300"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-accent/90"
           >
             {t('apply')}
           </Link>

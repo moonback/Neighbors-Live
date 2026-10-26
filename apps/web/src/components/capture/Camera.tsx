@@ -136,7 +136,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
         <div className="h-full bg-alert" style={{ width: `${progress * 100}%` }} />
       </div>
       <p
-        className="absolute left-1/2 top-4 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-sm"
+        className="absolute left-1/2 top-[calc(1rem+env(safe-area-inset-top))] -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-sm"
         aria-live="polite"
       >
         {recording ? t('remaining', { seconds: remaining }) : t('maxDuration')}
