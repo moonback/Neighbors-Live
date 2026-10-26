@@ -51,12 +51,20 @@ export default async function MerchantPage() {
           <h1 className="mt-2 text-2xl font-bold sm:text-3xl">{t('title')}</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fog">{t('intro')}</p>
         </div>
-        <Link
-          href="/commerces"
-          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-line px-4 text-sm font-semibold hover:border-accent"
-        >
-          {t('learnMore')}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/commerces"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-line px-4 text-sm font-semibold hover:border-accent"
+          >
+            {t('learnMore')}
+          </Link>
+          <Link
+            href="/commerces/decouvrir"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-line px-4 text-sm font-semibold hover:border-accent"
+          >
+            {t('landing.directory.link')}
+          </Link>
+        </div>
       </header>
       <Card className="flex max-w-3xl flex-col gap-3">
         {!merchant && (

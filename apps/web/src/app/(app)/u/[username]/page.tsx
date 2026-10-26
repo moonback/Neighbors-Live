@@ -51,11 +51,14 @@ export default async function ProfilePage({ params }: Params) {
   const since = format.dateTime(new Date(profile.created_at), { month: 'long', year: 'numeric' });
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-6 p-4">
-      <header className="flex items-center gap-4 pt-4">
+    <div className="mx-auto flex max-w-4xl flex-col gap-6 p-4 pb-8 sm:p-6">
+      <header className="flex flex-col gap-5 rounded-3xl border border-line bg-panel p-5 sm:flex-row sm:items-center sm:p-7">
         <Avatar username={profile.username} color={profile.avatar_color} size={72} />
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="truncate text-2xl font-bold">@{profile.username}</h1>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">
+            Neighbors Live
+          </p>
+          <h1 className="truncate text-2xl font-bold sm:text-3xl">@{profile.username}</h1>
           <div className="flex flex-wrap gap-2 text-xs">
             {isModerator && (
               <span className="rounded-full bg-accent px-2 py-0.5 font-semibold text-ink">
@@ -79,13 +82,23 @@ export default async function ProfilePage({ params }: Params) {
           </p>
         </div>
       </header>
-      {profile.bio && <p className="whitespace-pre-line">{profile.bio}</p>}
+      {profile.bio && (
+        <p className="whitespace-pre-line rounded-2xl border border-line bg-panel/70 p-4 leading-relaxed text-fog">
+          {profile.bio}
+        </p>
+      )}
       {isOwner && (
         <nav className="flex flex-wrap gap-2 text-sm">
-          <Link href="/parametres" className="rounded-xl border border-line px-3 py-2">
+          <Link
+            href="/parametres"
+            className="inline-flex min-h-11 items-center rounded-xl border border-line px-4 font-semibold hover:border-accent"
+          >
             {t('edit')}
           </Link>
-          <Link href="/me/decisions" className="rounded-xl border border-line px-3 py-2">
+          <Link
+            href="/me/decisions"
+            className="inline-flex min-h-11 items-center rounded-xl border border-line px-4 font-semibold hover:border-accent"
+          >
             {t('decisions')}
           </Link>
         </nav>

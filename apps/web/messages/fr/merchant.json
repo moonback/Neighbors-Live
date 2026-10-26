@@ -3,6 +3,22 @@
   "intro": "Faites découvrir votre commerce aux voisins. Après validation, publiez des vidéos d’offres tournées sur place et identifiées par un badge « Commerce », dans la limite prévue pour votre compte.",
   "learnMore": "Découvrir l’offre commerçante",
   "landing": {
+    "directory": {
+      "title": "Les commerces du quartier",
+      "intro": "Découvrez les commerces dont le compte a été validé. Consultez leur profil pour voir les vidéos actuellement publiées.",
+      "searchLabel": "Rechercher un commerce",
+      "searchPlaceholder": "Nom ou présentation",
+      "count": "{count, plural, =0 {Aucun commerce affiché} one {# commerce affiché} other {# commerces affichés}}",
+      "scope": "Jusqu’à 100 comptes commerce validés sont affichés. Les distances et catégories ne sont pas renseignées dans le profil commerce.",
+      "empty": "Aucun compte commerce validé n’est répertorié pour le moment.",
+      "noResults": "Aucun commerce ne correspond à cette recherche.",
+      "noDescription": "Aucune présentation fournie.",
+      "viewProfile": "Voir le profil et les vidéos",
+      "forMerchants": "Espace commerçant",
+      "back": "Retour à la présentation",
+      "error": "Impossible de charger les commerces. Réessayez plus tard.",
+      "link": "Découvrir les commerces"
+    },
     "eyebrow": "Pour les commerces de proximité",
     "title": "Faites découvrir votre commerce aux voisins.",
     "intro": "Partagez une offre locale en courte vidéo, tournée sur place et visible dans le quartier.",

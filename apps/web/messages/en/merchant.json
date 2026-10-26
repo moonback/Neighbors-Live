@@ -3,6 +3,22 @@
   "intro": "Introduce your business to local residents. Once approved, publish videos of offers filmed on site and marked with a Merchant badge, within your account’s quota.",
   "learnMore": "Learn about the merchant offer",
   "landing": {
+    "directory": {
+      "title": "Neighborhood businesses",
+      "intro": "Discover businesses with an approved account. Visit a profile to see currently published videos.",
+      "searchLabel": "Search businesses",
+      "searchPlaceholder": "Name or description",
+      "count": "{count, plural, =0 {No businesses listed} one {# business listed} other {# businesses listed}}",
+      "scope": "Up to 100 approved business accounts are listed. Distance and category are not available in business profiles.",
+      "empty": "No approved business accounts are listed yet.",
+      "noResults": "No businesses match this search.",
+      "noDescription": "No description provided.",
+      "viewProfile": "View profile and videos",
+      "forMerchants": "Business workspace",
+      "back": "Back to introduction",
+      "error": "Businesses could not be loaded. Please try again later.",
+      "link": "Discover businesses"
+    },
     "eyebrow": "For local businesses",
     "title": "Introduce your business to your neighbors.",
     "intro": "Share a local offer in a short video filmed on site and visible in the neighborhood.",

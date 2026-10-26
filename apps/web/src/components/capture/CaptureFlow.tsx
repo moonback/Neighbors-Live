@@ -113,7 +113,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-ink">
-      <header className="absolute inset-x-0 top-0 z-10 flex justify-end p-3">
+      <header className="absolute inset-x-0 top-0 z-10 flex justify-end px-3 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))]">
         <Link
           href="/"
           aria-label={t('close')}
@@ -180,7 +180,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
       {(step === 'form' || step === 'sending') && (
         <form
           onSubmit={submit}
-          className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-4 overflow-y-auto p-4 pt-16"
+          className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-5 overflow-y-auto px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[calc(4rem+env(safe-area-inset-top))] sm:px-6"
         >
           <h1 className="text-2xl font-bold">{t('form.title')}</h1>
           <fieldset className="flex flex-col gap-2">
@@ -273,7 +273,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
       )}
 
       {(step === 'done' || step === 'queued') && (
-        <div className="mx-auto flex max-w-md flex-1 flex-col justify-center gap-4 p-6 text-center">
+        <div className="mx-auto flex max-w-md flex-1 flex-col justify-center gap-4 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center">
           <Notice kind="success">
             {step === 'done' ? t('form.processing') : t('offline.queued')}
           </Notice>

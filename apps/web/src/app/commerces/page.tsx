@@ -22,6 +22,12 @@ export default async function MerchantLandingPage() {
           <Link href="/" className="text-sm font-semibold text-fog hover:text-white">
             {t('back')}
           </Link>
+          <Link
+            href="/commerces/decouvrir"
+            className="text-sm font-semibold text-accent underline underline-offset-4"
+          >
+            {t('directory.link')}
+          </Link>
         </header>
 
         <section className="grid gap-8 rounded-3xl border border-line bg-panel p-6 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
