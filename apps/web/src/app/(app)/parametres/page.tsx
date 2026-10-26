@@ -6,6 +6,7 @@ import { Avatar } from '@/components/Avatar';
 import { PushSettings } from '@/components/push/PushSettings';
 import { LogoutButton } from '@/components/settings/LogoutButton';
 import { ProfileImagesForm } from '@/components/settings/ProfileImagesForm';
+import { SettingsTabs } from '@/components/settings/SettingsTabs';
 import { profileImageUrl } from '@/lib/profile-image';
 import {
   DangerZone,
@@ -68,67 +69,103 @@ export default async function SettingsPage() {
           <Chevron />
         </Link>
       </header>
-      <section aria-label={t('title')} className="grid gap-4 lg:grid-cols-2">
-        <ProfileForm username={viewer.username} bio={viewer.bio} />
-        <ProfileImagesForm
-          userId={viewer.id}
-          username={viewer.username}
-          avatarColor={viewer.avatarColor}
-          avatarPath={viewer.avatarPath}
-          coverPath={viewer.coverPath}
-        />
-        <PreferencesForm
-          defaultRadius={viewer.settings.defaultRadius}
-          locale={viewer.settings.locale}
-        />
-        <PushSettings
-          notifyAlerts={viewer.settings.notifyAlerts}
-          defaultRadius={viewer.settings.defaultRadius}
-        />
-      </section>
-      <nav
-        aria-label={t('title')}
-        className="flex flex-col divide-y divide-white/[0.06] overflow-hidden rounded-3xl border border-white/[0.07] bg-panel/80 text-sm"
-      >
-        {viewer.role !== 'admin' && (
-          <SettingsLink href="/commerce" icon="M4 9l1.5-5h13L20 9M4 9v11h16V9M10 20v-5h4v5">
-            {t('merchant')}
-          </SettingsLink>
-        )}
-        {viewer.isModerator && (
-          <SettingsLink
-            href="/moderation"
-            icon="M12 3l9 4v5c0 5-3.8 8-9 9-5.2-1-9-4-9-9V7zM8 12l2.5 2.5L16 9"
-          >
-            {t('moderation')}
-          </SettingsLink>
-        )}
-        {viewer.role === 'admin' && (
-          <SettingsLink href="/admin" icon="M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z">
-            {t('admin')}
-          </SettingsLink>
-        )}
-        <SettingsLink href="/legal/regles" icon="M12 3l9 4v5c0 5-3.8 8-9 9-5.2-1-9-4-9-9V7z">
-          {tf('rules')}
-        </SettingsLink>
-        <SettingsLink
-          href="/legal/contact"
-          icon="M12 21a9 9 0 100-18 9 9 0 000 18zm0-5v.01M12 13a2 2 0 10-2-2"
-        >
-          {tf('contact')}
-        </SettingsLink>
-      </nav>
-      <section className="grid gap-4 lg:grid-cols-2">
-        <DataSection />
-        <DangerZone username={viewer.username} />
-      </section>
-      <LogoutButton />
-      <footer className="flex flex-wrap gap-3 pb-4 text-xs text-fog">
-        <Link href="/legal/confidentialite">{tf('privacy')}</Link>
-        <Link href="/legal/conditions">{tf('terms')}</Link>
-        <Link href="/legal/regles">{tf('rules')}</Link>
-        <Link href="/legal/contact">{tf('contact')}</Link>
-      </footer>
+      <SettingsTabs
+        ariaLabel={t('title')}
+        tabs={[
+          {
+            id: 'profile',
+            label: t('tabs.profile'),
+            content: (
+              <section aria-label={t('tabs.profile')} className="grid gap-4 lg:grid-cols-2">
+                <ProfileForm username={viewer.username} bio={viewer.bio} />
+                <ProfileImagesForm
+                  userId={viewer.id}
+                  username={viewer.username}
+                  avatarColor={viewer.avatarColor}
+                  avatarPath={viewer.avatarPath}
+                  coverPath={viewer.coverPath}
+                />
+              </section>
+            ),
+          },
+          {
+            id: 'preferences',
+            label: t('tabs.preferences'),
+            content: (
+              <section aria-label={t('tabs.preferences')} className="grid gap-4 lg:grid-cols-2">
+                <PreferencesForm
+                  defaultRadius={viewer.settings.defaultRadius}
+                  locale={viewer.settings.locale}
+                />
+                <PushSettings
+                  notifyAlerts={viewer.settings.notifyAlerts}
+                  defaultRadius={viewer.settings.defaultRadius}
+                />
+              </section>
+            ),
+          },
+          {
+            id: 'account',
+            label: t('tabs.account'),
+            content: (
+              <div className="flex flex-col gap-4">
+                <nav
+                  aria-label={t('tabs.account')}
+                  className="flex flex-col divide-y divide-white/[0.06] overflow-hidden rounded-3xl border border-white/[0.07] bg-panel/80 text-sm"
+                >
+                  {viewer.role !== 'admin' && (
+                    <SettingsLink
+                      href="/commerce"
+                      icon="M4 9l1.5-5h13L20 9M4 9v11h16V9M10 20v-5h4v5"
+                    >
+                      {t('merchant')}
+                    </SettingsLink>
+                  )}
+                  {viewer.isModerator && (
+                    <SettingsLink
+                      href="/moderation"
+                      icon="M12 3l9 4v5c0 5-3.8 8-9 9-5.2-1-9-4-9-9V7zM8 12l2.5 2.5L16 9"
+                    >
+                      {t('moderation')}
+                    </SettingsLink>
+                  )}
+                  {viewer.role === 'admin' && (
+                    <SettingsLink
+                      href="/admin"
+                      icon="M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z"
+                    >
+                      {t('admin')}
+                    </SettingsLink>
+                  )}
+                  <SettingsLink
+                    href="/legal/regles"
+                    icon="M12 3l9 4v5c0 5-3.8 8-9 9-5.2-1-9-4-9-9V7z"
+                  >
+                    {tf('rules')}
+                  </SettingsLink>
+                  <SettingsLink
+                    href="/legal/contact"
+                    icon="M12 21a9 9 0 100-18 9 9 0 000 18zm0-5v.01M12 13a2 2 0 10-2-2"
+                  >
+                    {tf('contact')}
+                  </SettingsLink>
+                </nav>
+                <section className="grid gap-4 lg:grid-cols-2">
+                  <DataSection />
+                  <DangerZone username={viewer.username} />
+                </section>
+                <LogoutButton />
+                <footer className="flex flex-wrap gap-3 pb-4 text-xs text-fog">
+                  <Link href="/legal/confidentialite">{tf('privacy')}</Link>
+                  <Link href="/legal/conditions">{tf('terms')}</Link>
+                  <Link href="/legal/regles">{tf('rules')}</Link>
+                  <Link href="/legal/contact">{tf('contact')}</Link>
+                </footer>
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }
