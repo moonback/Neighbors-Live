@@ -209,7 +209,7 @@ export function VideoCard({
           if (load && src) void refreshUrl();
         }}
         onClick={togglePlay}
-        className="h-full w-full object-cover"
+        className="h-full w-full object-contain"
       />
       {load && mediaState === 'loading' && (
         <p
