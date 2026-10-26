@@ -51,6 +51,12 @@ async function openCamera(target: Target): Promise<MediaStream | CamError> {
 
 /** Labels are only exposed after permission; "front"/"user"/"facetime" mark a selfie camera. */
 const looksFront = (label: string) => /front|user|facetime|avant|selfie/i.test(label);
+const lensLevel = (label: string): 0.5 | 1 | 2 | null => {
+  if (/ultra.?wide|ultra.?grand.?angle|0[.,]5\s*x|0[.,]5x/i.test(label)) return 0.5;
+  if (/tele(photo)?|2\s*x|2x|3\s*x|3x/i.test(label)) return 2;
+  if (/back|rear|environment|arrière|principale|main/i.test(label)) return 1;
+  return null;
+};
 
 /**
  * Full-screen camera: back camera by default, switch between every available camera (button or
@@ -150,6 +156,18 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   }, [switchFailed]);
 
   const canSwitch = cameras.length > 1 || cameras.length === 0;
+  const physicalLenses = cameras.flatMap((camera) => {
+    if (looksFront(camera.label)) return [];
+    const level = lensLevel(camera.label);
+    return level === null ? [] : [{ camera, level }];
+  });
+  const zoomLevels = [0.5, 1, 2].filter((level) => {
+    const hasPhysicalLens = physicalLenses.some((lens) => lens.level === level);
+    const hasDigitalRange = zoomRange
+      ? level >= zoomRange.min && level <= zoomRange.max
+      : level >= 1;
+    return hasPhysicalLens || hasDigitalRange;
+  });
 
   const setZoomLevel = useCallback(
     (value: number) => {
@@ -193,6 +211,19 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   function onPointerUp(event: PointerEvent<HTMLVideoElement>) {
     pointersRef.current.delete(event.pointerId);
     pinchRef.current = null;
+  }
+
+  function selectLens(level: number) {
+    const lens = physicalLenses.find((candidate) => candidate.level === level);
+    if (lens && lens.camera.deviceId !== current?.deviceId) {
+      setSwitchFailed(false);
+      setReady(false);
+      setZoom(1);
+      zoomRef.current = 1;
+      setTarget({ deviceId: lens.camera.deviceId, facing: 'environment' });
+      return;
+    }
+    setZoomLevel(level);
   }
 
   const switchCamera = useCallback(() => {
@@ -312,22 +343,26 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
             className="glass flex items-center gap-1 rounded-full p-1"
             aria-label={t('zoom.label')}
           >
-            {[0.5, 1, 2]
-              .filter((level) =>
-                zoomRange ? level >= zoomRange.min && level <= zoomRange.max : level >= 1,
-              )
-              .map((level) => (
+            {zoomLevels.map((level) => {
+              const lens = physicalLenses.find((candidate) => candidate.level === level);
+              const selected = lens
+                ? lens.camera.deviceId === current?.deviceId
+                : Math.abs(zoom - level) < 0.08;
+              return (
                 <button
                   key={level}
                   type="button"
-                  aria-label={t('zoom.level', { level })}
-                  aria-pressed={Math.abs(zoom - level) < 0.08}
-                  onClick={() => setZoomLevel(level)}
+                  aria-label={t(`zoom.${level === 0.5 ? 'wide' : level === 2 ? 'tele' : 'level'}`, {
+                    level,
+                  })}
+                  aria-pressed={selected}
+                  onClick={() => selectLens(level)}
                   className="min-h-11 min-w-11 rounded-full px-3 text-xs font-semibold text-white transition active:scale-95 aria-pressed:bg-white aria-pressed:text-ink"
                 >
                   {level.toLocaleString(undefined, { maximumFractionDigits: 1 })}×
                 </button>
-              ))}
+              );
+            })}
           </div>
         )}
         <p

@@ -21,7 +21,9 @@
   "switchHint": "Touchez deux fois l’image pour changer de caméra",
   "zoom": {
     "label": "Niveau de zoom",
-    "level": "Zoom {level}×"
+    "level": "Zoom {level}×",
+    "wide": "Objectif ultra grand-angle, zoom {level}×",
+    "tele": "Téléobjectif, zoom {level}×"
   },
   "front": "Caméra avant",
   "back": "Caméra arrière",

@@ -21,7 +21,9 @@
   "switchHint": "Double-tap the picture to switch cameras",
   "zoom": {
     "label": "Zoom level",
-    "level": "Zoom {level}×"
+    "level": "Zoom {level}×",
+    "wide": "Ultra wide lens, {level}× zoom",
+    "tele": "Telephoto lens, {level}× zoom"
   },
   "front": "Front camera",
   "back": "Back camera",
