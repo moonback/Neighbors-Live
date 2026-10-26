@@ -40,7 +40,7 @@ export function WelcomeHero({
 
   return (
     <section aria-labelledby="welcome-title" className="h-full overflow-y-auto overscroll-contain">
-      <div className="relative h-[44%] max-h-[26rem] min-h-64 overflow-hidden">
+      <div className="relative h-[38%] max-h-[24rem] min-h-60 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
         <img
           src="/illustrations/city-night.svg"
