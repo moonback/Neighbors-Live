@@ -1,6 +1,6 @@
 {
-  "draft": "Version de travail rédigée pour le lancement. Ces textes doivent être relus et validés par un juriste avant toute mise en production.",
-  "updated": "Dernière mise à jour : 25 octobre 2026",
+  "draft": "Document de travail incomplet : les éléments entre crochets sont à renseigner et ces textes doivent être relus et validés par un juriste avant toute mise en production.",
+  "updated": "Dernière mise à jour : 26 octobre 2026",
   "pages": {
     "confidentialite": {
       "title": "Politique de confidentialité",

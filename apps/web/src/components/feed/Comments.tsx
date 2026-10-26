@@ -124,7 +124,7 @@ export function Comments({
                 {c.mine && (
                   <button
                     type="button"
-                    className="self-start text-xs text-fog underline"
+                    className="min-h-11 self-start rounded-lg px-2 text-xs text-fog underline"
                     onClick={() => remove(c.id)}
                   >
                     {t('delete')}

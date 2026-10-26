@@ -277,7 +277,7 @@ export function VideoCard({
           )}
           <Link
             href={`/u/${item.author.username}`}
-            className="flex items-center gap-2 text-sm text-fog"
+            className="flex min-h-11 items-center gap-2 rounded-lg px-1 text-sm text-fog"
           >
             <Avatar username={item.author.username} color={item.author.color} size={28} />
             {t('by', { username: item.author.username ?? '' })}

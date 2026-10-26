@@ -295,7 +295,7 @@ function FilterChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`min-h-9 shrink-0 rounded-full border px-3 text-sm ${active ? 'border-accent bg-accent font-semibold text-ink' : 'border-line bg-black/60 text-white'}`}
+      className={`min-h-11 shrink-0 rounded-full border px-3 text-sm ${active ? 'border-accent bg-accent font-semibold text-ink' : 'border-line bg-black/60 text-white'}`}
     >
       {children}
     </button>

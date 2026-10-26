@@ -31,6 +31,8 @@ parcours avant une refonte graphique générale.
 - Le tableau de bord admin présente des indicateurs actionnables, des files et états vides explicites,
   les informations utiles des demandes commerce et un journal des décisions contextualisé ; le
   parcours admin est couvert par un test E2E.
+- L’espace commerçant indique la date de réception d’une demande en attente, explique où suivre son
+  état sans promettre de délai, et renvoie vers les critères publics après un refus.
 - La page admin liste aussi les vidéos `processing` (20 plus anciennes d’abord), leur auteur, leur
   date et le statut/compteur de tentatives du job média lorsqu’il existe. La requête ne sélectionne
   ni coordonnées exactes ni chemins de stockage ; l’E2E vérifie une réservation en traitement puis
@@ -78,14 +80,14 @@ phases s’enchaînent selon les dépendances et la capacité de l’équipe.
 **Résultat attendu :** chaque information visible est cohérente avec l’authentification, le
 traitement, la confidentialité et l’état réel du produit.
 
-| Chantier               | Livrables                                                                                                                                                |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Inventaire des textes  | Liste des écrans, e-mails, messages d’erreur et traductions liées à auth, caméra, position, floutage, modération et commerce                             |
-| Authentification       | Remplacer toute mention « lien magique » qui ne correspond plus au parcours e-mail/mot de passe                                                          |
-| Mentions légales       | Remplacer les champs entre crochets, confirmer responsable de traitement, contact, sous-traitants et hébergement ; obtenir la revue juridique nécessaire |
-| Floutage et position   | Harmoniser le message de capture et la politique : floutage des visages non infaillible, plaques non floutées, position publique approximative           |
-| Modération et urgences | Décrire clairement le signalement, le seuil d’auto-masquage, l’examen humain, le recours et l’absence de service d’urgence                               |
-| Traductions            | Comparer les contenus FR/EN et identifier les clés manquantes, anciennes ou contradictoires                                                              |
+| Chantier               | Livrables                                                                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Inventaire des textes  | Liste des écrans, e-mails, messages d’erreur et traductions liées à auth, caméra, position, floutage, modération et commerce                                                                                                   |
+| Authentification       | Remplacer toute mention « lien magique » qui ne correspond plus au parcours e-mail/mot de passe                                                                                                                                |
+| Mentions légales       | ⬜ Remplacer les champs entre crochets, confirmer responsable de traitement, contact, sous-traitants et hébergement ; obtenir la revue juridique nécessaire. Bloqué par les informations de l’éditeur et le conseil juridique. |
+| Floutage et position   | Harmoniser le message de capture et la politique : floutage des visages non infaillible, plaques non floutées, position publique approximative                                                                                 |
+| Modération et urgences | Décrire clairement le signalement, le seuil d’auto-masquage, l’examen humain, le recours et l’absence de service d’urgence                                                                                                     |
+| Traductions            | Comparer les contenus FR/EN et identifier les clés manquantes, anciennes ou contradictoires                                                                                                                                    |
 
 **Critères de sortie**
 
@@ -157,14 +159,14 @@ quand ; terminer une publication sans confusion ni promesse excessive.
 **Résultat attendu :** un commerce local comprend la valeur, l’éligibilité, le processus et les
 limites avant de déposer une demande.
 
-| Chantier           | Livrables                                                                                                  |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| Page d’acquisition | ✅ Page publique `/commerces`, distincte de l’espace commerçant authentifié                                |
-| Proposition        | Bénéfice, format, rayon, durée, critères de validation et quota, exprimés sans jargon                      |
-| Processus          | États de demande soumis, en examen, accepté ou refusé, avec attentes clairement formulées                  |
-| Modèle économique  | Décision validée et formulation exacte ; ne pas laisser « gratuit dans cette version » sans contexte       |
-| Mesure             | Inventaire des indicateurs réellement existants ; ne pas afficher de vues, conversions ou portée inventées |
-| Publication        | Instructions qui aident à créer une offre utile, honnête, filmée sur place et conforme aux règles          |
+| Chantier           | Livrables                                                                                                                           |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Page d’acquisition | ✅ Page publique `/commerces`, distincte de l’espace commerçant authentifié                                                         |
+| Proposition        | Bénéfice, format, rayon, durée, critères de validation et quota, exprimés sans jargon ; namespace commerçant disponible en FR et EN |
+| Processus          | 🟨 Statut d’attente daté et suivi dans l’espace commerçant ; refus relié aux critères publics ; règle de nouvelle demande à décider |
+| Modèle économique  | Décision validée et formulation exacte ; ne pas laisser « gratuit dans cette version » sans contexte                                |
+| Mesure             | Inventaire des indicateurs réellement existants ; ne pas afficher de vues, conversions ou portée inventées                          |
+| Publication        | Instructions qui aident à créer une offre utile, honnête, filmée sur place et conforme aux règles                                   |
 
 **Critères de sortie** — page implémentée ; validation métier/utilisateur encore requise.
 
@@ -209,15 +211,16 @@ et local du produit.
 **Résultat attendu :** les parcours principaux sont utilisables dans des conditions variées,
 notamment avec clavier, technologies d’assistance et paramètres d’affichage.
 
-| Chantier                    | Livrables                                                                                               |
-| --------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Clavier et lecteurs d’écran | Revue de navigation, dialogue modal, focus, annonces de statuts et formulaires                          |
-| Contraste et zoom           | Contrôle des contrastes, zoom navigateur et tailles de police agrandies                                 |
-| Vidéo                       | Contrôles compréhensibles, mode muet explicite, légende visible et alternatives lorsque disponibles     |
-| Mouvement                   | ✅ Autoplay du feed arrêté selon `prefers-reduced-motion`, avec lecture manuelle disponible ; E2E       |
-| i18n                        | Parité des messages FR/EN pour auth, capture, erreurs, modération et commerces                          |
-| Appareils                   | Matrice d’essai iPhone Safari, Android Chrome et navigateurs desktop supportés                          |
-| PWA/push                    | Essais réels d’installation, permissions, réception et désabonnement ; noter les limites par plateforme |
+| Chantier                    | Livrables                                                                                                            |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Clavier et lecteurs d’écran | Revue de navigation, dialogue modal, focus, annonces de statuts et formulaires                                       |
+| Contraste et zoom           | Contrôle des contrastes, zoom navigateur et tailles de police agrandies                                              |
+| Vidéo                       | Contrôles compréhensibles, mode muet explicite, légende visible et alternatives lorsque disponibles                  |
+| Cibles tactiles             | 🟨 Lien auteur, filtres et suppression de commentaire portés à 44 px minimum ; autres actions et appareils à auditer |
+| Mouvement                   | ✅ Autoplay du feed arrêté selon `prefers-reduced-motion`, avec lecture manuelle disponible ; E2E                    |
+| i18n                        | 🟨 Namespace commerçant traduit en anglais ; authentification, capture, erreurs et modération restent à traduire. Les namespaces anglais incomplets retombent sur le français |
+| Appareils                   | Matrice d’essai iPhone Safari, Android Chrome et navigateurs desktop supportés                                       |
+| PWA/push                    | Essais réels d’installation, permissions, réception et désabonnement ; noter les limites par plateforme              |
 
 **Critères de sortie**
 

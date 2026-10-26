@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getFormatter, getTranslations } from 'next-intl/server';
 import { MerchantForm } from '@/components/merchant/MerchantForm';
 import { Card, Notice } from '@/components/ui';
 import { getViewer } from '@/lib/session';
@@ -33,9 +33,10 @@ export default async function MerchantPage() {
   if (!viewer) redirect('/login?next=/commerce');
   const supabase = await createClient();
   const t = await getTranslations('merchant');
+  const format = await getFormatter();
   const { data: merchant } = await supabase
     .from('merchant_profiles')
-    .select('business_name, status')
+    .select('business_name, status, created_at')
     .eq('user_id', viewer.id)
     .maybeSingle();
   const quota = merchant?.status === 'approved' ? await merchantQuota(viewer.id) : null;
@@ -57,8 +58,29 @@ export default async function MerchantPage() {
             <MerchantForm />
           </>
         )}
-        {merchant?.status === 'pending' && <Notice>{t('pending')}</Notice>}
-        {merchant?.status === 'rejected' && <Notice kind="error">{t('rejected')}</Notice>}
+        {merchant?.status === 'pending' && (
+          <div className="flex flex-col gap-2">
+            <Notice>{t('pending')}</Notice>
+            <p className="text-sm text-fog">
+              {t('requestReceived', {
+                date: format.dateTime(new Date(merchant.created_at), {
+                  dateStyle: 'long',
+                  timeStyle: 'short',
+                }),
+              })}
+            </p>
+            <p className="text-sm text-fog">{t('pendingDetails')}</p>
+          </div>
+        )}
+        {merchant?.status === 'rejected' && (
+          <div className="flex flex-col gap-2">
+            <Notice kind="error">{t('rejected')}</Notice>
+            <p className="text-sm text-fog">{t('rejectedDetails')}</p>
+            <Link href="/commerces" className="w-fit text-sm font-semibold text-accent underline">
+              {t('learnMore')}
+            </Link>
+          </div>
+        )}
         {merchant?.status === 'approved' && quota && (
           <>
             <Notice kind="success">
