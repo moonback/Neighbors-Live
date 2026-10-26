@@ -1,0 +1,34 @@
+{
+  "title": "Around me",
+  "filters": {
+    "label": "Filter by category",
+    "all": "All",
+    "radius": "Radius"
+  },
+  "alerts": {
+    "banner": "{count, plural, one {# nearby alert} other {# nearby alerts}}",
+    "new": "New alert: {caption}",
+    "show": "Show alerts",
+    "notice": "Alerts are community posts, not official alerts. In an emergency, call 112."
+  },
+  "location": {
+    "primerTitle": "See what’s happening near you",
+    "primerBody": "Neighbors Live needs your location to show neighborhood videos. It is only used for this search; it is not stored or shared.",
+    "allow": "Use my location",
+    "later": "Not now",
+    "needed": "Turn on location to see videos near you.",
+    "denied": "Location access was denied. Allow it in this site’s browser settings, then try again.",
+    "error": "Your location is unavailable right now.",
+    "locating": "Finding your location…"
+  },
+  "empty": {
+    "title": "Nothing nearby yet",
+    "body": "Be the first to show what’s happening in the neighborhood.",
+    "cta": "Record a video",
+    "wider": "Expand to {radius}"
+  },
+  "error": "Could not load videos.",
+  "loadingMore": "Loading more videos…",
+  "end": "You’ve seen everything in this radius.",
+  "deleted": "Your account has been deleted. Thank you for taking part."
+}

@@ -1,0 +1,66 @@
+{
+  "appName": "Neighbors Live",
+  "tagline": "Useful neighborhood updates, in short videos from your neighbors.",
+  "nav": {
+    "label": "Main navigation",
+    "feed": "Around me",
+    "map": "Map",
+    "record": "Record",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "categories": {
+    "alert": "Alert",
+    "deal": "Local find",
+    "event": "Event",
+    "help": "Helping out",
+    "shop": "Business",
+    "lost": "Lost item"
+  },
+  "radius": {
+    "300": "300 m",
+    "1000": "1 km",
+    "3000": "3 km"
+  },
+  "badges": {
+    "moderator": "Moderator",
+    "merchant": "Business",
+    "admin": "Admin"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "close": "Close",
+    "back": "Back",
+    "continue": "Continue",
+    "loading": "Loading…"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again shortly.",
+    "network": "Could not connect. Check your network.",
+    "rate_limited": "Too many attempts. Please wait a few minutes.",
+    "unauthorized": "Sign in to continue.",
+    "forbidden": "This action is not allowed.",
+    "banned": "Your account is suspended.",
+    "not_found": "Not found.",
+    "conflict": "This value is already in use.",
+    "invalid_input": "Some information is invalid."
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "rules": "Community rules",
+    "contact": "Contact"
+  },
+  "offline": {
+    "title": "You’re offline",
+    "body": "Videos cannot load without a connection. Pending recordings will be sent automatically when your connection returns.",
+    "banner": "Offline — some features are unavailable."
+  },
+  "update": {
+    "available": "A new version is available.",
+    "reload": "Update"
+  },
+  "skip": "Skip to content"
+}

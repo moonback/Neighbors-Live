@@ -1,0 +1,48 @@
+{
+  "title": "Merchant space",
+  "intro": "Introduce your business to local residents. Once approved, publish videos of offers filmed on site and marked with a Merchant badge, within your account’s quota.",
+  "learnMore": "Learn about the merchant offer",
+  "landing": {
+    "eyebrow": "For local businesses",
+    "title": "Introduce your business to your neighbors.",
+    "intro": "Share a local offer in a short video filmed on site and visible in the neighborhood.",
+    "apply": "Present your business",
+    "back": "Back to Neighbors Live",
+    "howTitle": "Simple and local",
+    "steps": [
+      {
+        "title": "Tell us about your business",
+        "body": "Send a request with your business name and a short introduction."
+      },
+      {
+        "title": "Wait for approval",
+        "body": "Our team reviews your request. Once your account is approved, your offers receive a Merchant badge."
+      },
+      {
+        "title": "Publish an offer filmed on site",
+        "body": "Record a short video in the app, choose how long it stays visible, and share it with nearby residents."
+      }
+    ],
+    "detailsTitle": "What to know",
+    "details": [
+      "Offers are for approved merchant accounts and must be filmed on site.",
+      "Choose a visibility period from the available options, between 6 hours and 7 days.",
+      "Each account has a posting quota; you can see it in your merchant space.",
+      "The platform does not yet provide reach or conversion statistics, so no business results are guaranteed."
+    ],
+    "closing": "A useful, clearly presented offer helps neighbors discover what is happening nearby."
+  },
+  "apply": "Request a merchant account",
+  "businessName": "Business name",
+  "description": "Short introduction (optional)",
+  "submit": "Send request",
+  "pending": "Your request is being reviewed by our team.",
+  "requestReceived": "Request received on {date}.",
+  "pendingDetails": "You can check its status here. No response time is promised.",
+  "rejected": "Your request was not approved.",
+  "rejectedDetails": "Review the eligibility criteria and requested information before taking any further steps.",
+  "approved": "Your merchant account is active.",
+  "quota": "Offers published in the last 24 hours: {used} / {quota}",
+  "publish": "Publish an offer",
+  "rules": "One offer is one video filmed on site, in the Merchant category, with a visibility period from 6 hours to 7 days."
+}

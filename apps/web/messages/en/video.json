@@ -1,5 +1,53 @@
 {
+  "by": "by @{username}",
+  "distance": "{distance} away",
+  "km": "{value} km",
+  "m": "{value} m",
+  "expires": "expires {when}",
+  "play": "Play video",
+  "pause": "Pause video",
+  "playbackError": "Could not play the video. Tap to try again.",
+  "unmute": "Turn sound on",
+  "mute": "Mute",
+  "useful": "Useful",
+  "usefulCount": "{count, plural, =0 {Mark as useful} one {# useful vote} other {# useful votes}}",
+  "comments": "{count, plural, =0 {Comment} one {# comment} other {# comments}}",
+  "share": "Share",
+  "shared": "Link copied.",
+  "report": "Report",
+  "merchant": "Business",
+  "captionMore": "Read more",
+  "captionLess": "Show less",
+  "commentsPanel": {
+    "title": "Comments",
+    "empty": "No comments yet.",
+    "placeholder": "Write a comment…",
+    "send": "Send",
+    "delete": "Delete",
+    "more": "Show more",
+    "login": "Sign in to comment."
+  },
+  "reportPanel": {
+    "title": "Report this video",
+    "intro": "Reports are reviewed by neighborhood moderators. After reports from 3 different people, the video is hidden while they review it.",
+    "reason": "Reason",
+    "reasons": {
+      "recognizable_person": "A person can be identified",
+      "address_or_plate": "An address or license plate is visible",
+      "dangerous": "Dangerous or violent content",
+      "harassment": "Harassment or hateful speech",
+      "spam": "Abusive advertising or spam",
+      "false_info": "False information",
+      "other": "Other"
+    },
+    "details": "Additional details (optional)",
+    "submit": "Send report",
+    "done": "Thank you. Your report was sent to neighborhood moderators.",
+    "already": "You have already reported this video."
+  },
+  "unavailable": "This video is no longer available.",
   "mediaLoading": "Loading video…",
   "mediaUnavailable": "This video can’t be loaded right now.",
-  "retryMedia": "Try again"
+  "retryMedia": "Try again",
+  "openFeed": "See what’s happening near here"
 }
