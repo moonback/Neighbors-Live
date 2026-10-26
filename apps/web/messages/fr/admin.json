@@ -45,11 +45,23 @@
   "emptyProcessingVideos": "Aucune vidéo n’est actuellement en traitement.",
   "processingVideoAuthor": "Par {username}",
   "videoStatusProcessing": "Vidéo en traitement",
+  "processingProgress": "Avancement",
   "jobStatus": {
     "queued": "Tâche en file d’attente",
     "running": "Traitement en cours",
     "done": "Tâche terminée",
     "failed": "Échec de la tâche"
+  },
+  "jobPhase": {
+    "queued": "En attente",
+    "downloading": "Téléchargement de la vidéo",
+    "preparing": "Préparation",
+    "blurring": "Floutage et transcodage",
+    "uploading": "Envoi des fichiers traités",
+    "publishing": "Finalisation",
+    "retrying": "Nouvelle tentative programmée",
+    "failed": "Échec",
+    "done": "Terminé"
   },
   "jobAttempts": "Tentative {attempts}/{maxAttempts}",
   "noProcessingJob": "Aucune tâche média associée",

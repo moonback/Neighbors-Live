@@ -9,6 +9,8 @@ export interface PipelineOptions {
   detectors: Detector[];
   /** Run detectors every N frames; the tracker covers frames in between. */
   detectEvery: number;
+  expectedDurationS?: number;
+  onProgress?: (percent: number) => void;
 }
 
 export interface PipelineResult {
@@ -33,6 +35,8 @@ export async function blurAndTranscode(
   const { width, height } = targetSize(info.width, info.height, info.rotation);
   const frameBytes = width * height * 3;
   const maxFrames = MAX_DURATION_S * FPS;
+  const expectedDurationS = opts.expectedDurationS ?? (info.durationS || MAX_DURATION_S);
+  const totalFrames = Math.max(1, Math.min(maxFrames, Math.round(expectedDurationS * FPS)));
 
   // ffmpeg auto-rotates by default, so decoded frames are already upright.
   const decoder = spawn(
@@ -111,6 +115,7 @@ export async function blurAndTranscode(
   const trackers = opts.detectors.filter((d) => d.enabled).map((d) => ({ d, t: new BoxTracker() }));
   let pending: Buffer = Buffer.alloc(0);
   const result: PipelineResult = { frames: 0, detectedFrames: 0, maxBoxes: 0 };
+  let lastReportedProgress = 0;
 
   const processFrame = async (data: Buffer) => {
     const frame: Frame = { data, width, height };
@@ -123,6 +128,11 @@ export async function blurAndTranscode(
     result.maxBoxes = Math.max(result.maxBoxes, boxes.length);
     pixelate(frame, boxes);
     result.frames += 1;
+    const progress = Math.min(100, Math.floor((result.frames / totalFrames) * 100));
+    if (progress >= lastReportedProgress + 5) {
+      lastReportedProgress = progress;
+      opts.onProgress?.(progress);
+    }
     if (!encoder.stdin.write(data)) await once(encoder.stdin, 'drain');
   };
 

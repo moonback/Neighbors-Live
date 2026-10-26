@@ -9,6 +9,7 @@ import {
   NotedAction,
   type MediaSettings,
 } from '@/components/admin/AdminClient';
+import { ProcessingRefresh } from '@/components/admin/ProcessingRefresh';
 import { inputClass, Notice } from '@/components/ui';
 import { getViewer } from '@/lib/session';
 import { adminClient } from '@/lib/supabase/admin';
@@ -274,7 +275,7 @@ export default async function AdminPage({
     videoIds.length > 0
       ? admin
           .from('media_jobs')
-          .select('video_id, status, attempts, max_attempts, updated_at')
+          .select('video_id, status, attempts, max_attempts, progress, phase, updated_at')
           .eq('kind', 'process')
           .in('video_id', videoIds)
           .order('updated_at', { ascending: false })
@@ -445,52 +446,71 @@ export default async function AdminPage({
             {t('emptyProcessingVideos')}
           </p>
         ) : (
-          <ul className="flex flex-col gap-2">
-            {processingVideos.data.map((video) => {
-              const job = latestJobByVideo.get(video.id);
-              const author = profileNames.get(video.author_id);
-              return (
-                <li
-                  key={video.id}
-                  className="flex flex-col gap-2 rounded-xl border border-line bg-panel p-4 sm:flex-row sm:items-center sm:justify-between"
-                  data-testid="processing-video"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm">
-                      <strong>{tc(video.category)}</strong> · {video.caption || '—'}
-                    </p>
-                    <p className="mt-1 text-xs text-fog">
-                      {t('processingVideoAuthor', {
-                        username: author ? `@${author}` : video.author_id.slice(0, 8),
-                      })}
-                      {' · '}
-                      {format.dateTime(new Date(video.created_at), {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })}
-                    </p>
-                  </div>
-                  <div className="shrink-0 text-sm sm:text-right">
-                    <p className="font-semibold text-sky-300">{t('videoStatusProcessing')}</p>
-                    <p className="text-xs text-fog">
-                      {job ? (
-                        <>
-                          {t(`jobStatus.${job.status}`)}
-                          {' · '}
-                          {t('jobAttempts', {
-                            attempts: job.attempts,
-                            maxAttempts: job.max_attempts,
-                          })}
-                        </>
-                      ) : (
-                        t('noProcessingJob')
+          <>
+            <ProcessingRefresh />
+            <ul className="flex flex-col gap-2">
+              {processingVideos.data.map((video) => {
+                const job = latestJobByVideo.get(video.id);
+                const author = profileNames.get(video.author_id);
+                return (
+                  <li
+                    key={video.id}
+                    className="flex flex-col gap-2 rounded-xl border border-line bg-panel p-4 sm:flex-row sm:items-center sm:justify-between"
+                    data-testid="processing-video"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm">
+                        <strong>{tc(video.category)}</strong> · {video.caption || '—'}
+                      </p>
+                      <p className="mt-1 text-xs text-fog">
+                        {t('processingVideoAuthor', {
+                          username: author ? `@${author}` : video.author_id.slice(0, 8),
+                        })}
+                        {' · '}
+                        {format.dateTime(new Date(video.created_at), {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        })}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-sm sm:text-right">
+                      <p className="font-semibold text-sky-300">{t('videoStatusProcessing')}</p>
+                      <p className="text-xs text-fog">
+                        {job ? (
+                          <>
+                            {t(`jobStatus.${job.status}`)}
+                            {' · '}
+                            {t('jobAttempts', {
+                              attempts: job.attempts,
+                              maxAttempts: job.max_attempts,
+                            })}
+                            {' · '}
+                            {t(`jobPhase.${job.phase}`)}
+                          </>
+                        ) : (
+                          t('noProcessingJob')
+                        )}
+                      </p>
+                      {job && (
+                        <div className="mt-2 min-w-48">
+                          <div className="mb-1 flex justify-between text-xs text-fog">
+                            <span>{t('processingProgress')}</span>
+                            <span>{job.progress}%</span>
+                          </div>
+                          <progress
+                            aria-label={t('processingProgress')}
+                            value={job.progress}
+                            max={100}
+                            className="h-2 w-full accent-[var(--color-accent)]"
+                          />
+                        </div>
                       )}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
         )}
       </section>
 

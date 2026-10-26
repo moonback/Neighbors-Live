@@ -152,6 +152,8 @@ export type Database = {
           locked_by: string | null;
           max_attempts: number;
           payload: NonNullable<Json>;
+          phase: string;
+          progress: number;
           run_after: string;
           status: Database['public']['Enums']['job_status'];
           updated_at: string;
@@ -168,6 +170,8 @@ export type Database = {
           locked_by?: string | null;
           max_attempts?: number;
           payload?: NonNullable<Json>;
+          phase?: string;
+          progress?: number;
           run_after?: string;
           status?: Database['public']['Enums']['job_status'];
           updated_at?: string;
@@ -183,6 +187,8 @@ export type Database = {
           locked_by?: string | null;
           max_attempts?: number;
           payload?: NonNullable<Json>;
+          phase?: string;
+          progress?: number;
           run_after?: string;
           status?: Database['public']['Enums']['job_status'];
           updated_at?: string;

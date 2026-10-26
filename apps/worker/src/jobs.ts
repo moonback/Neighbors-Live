@@ -73,11 +73,26 @@ export async function claimJob(db: Pool, workerId: string): Promise<MediaJob | n
   return rows[0] ?? null;
 }
 
+function updateJobProgress(
+  deps: JobDeps,
+  jobId: number,
+  progress: number,
+  phase: string,
+): Promise<void> {
+  return deps.db
+    .query(
+      'update public.media_jobs set progress = $2, phase = $3, updated_at = now() where id = $1',
+      [jobId, Math.max(0, Math.min(99, Math.round(progress))), phase],
+    )
+    .then(() => undefined);
+}
+
 async function processVideo(job: MediaJob, deps: JobDeps): Promise<void> {
-  const { rows } = await deps.db.query<{ status: string; raw_path: string | null }>(
-    'select status, raw_path from public.videos where id = $1',
-    [job.video_id],
-  );
+  const { rows } = await deps.db.query<{
+    status: string;
+    raw_path: string | null;
+    duration_ms: number;
+  }>('select status, raw_path, duration_ms from public.videos where id = $1', [job.video_id]);
   const video = rows[0];
   if (!video || video.status !== 'processing' || !video.raw_path) {
     // Withdrawn or already handled meanwhile: nothing to do.
@@ -86,12 +101,14 @@ async function processVideo(job: MediaJob, deps: JobDeps): Promise<void> {
   }
   const dir = await mkdtemp(join(tmpdir(), 'nl-'));
   try {
+    await updateJobProgress(deps, job.id, 2, 'downloading');
     const { data, error } = await deps.storage.storage.from(RAW_BUCKET).download(video.raw_path);
     if (error || !data) throw new Error(`download failed: ${error?.message ?? 'empty'}`);
     const input = join(dir, 'input');
     const output = join(dir, 'output.mp4');
     const poster = join(dir, 'poster.jpg');
     await writeFile(input, Buffer.from(await data.arrayBuffer()));
+    await updateJobProgress(deps, job.id, 5, 'preparing');
 
     const mediaSettings = await readMediaSettings(deps);
     const detectors = deps.detectors.map((detector) => {
@@ -115,21 +132,32 @@ async function processVideo(job: MediaJob, deps: JobDeps): Promise<void> {
     });
 
     const started = Date.now();
+    let progressWrite = Promise.resolve();
     const stats = await blurAndTranscode(input, output, poster, {
       detectors,
       detectEvery: mediaSettings.detectEvery,
+      expectedDurationS: video.duration_ms / 1000,
+      onProgress: (percent) => {
+        progressWrite = progressWrite.then(() =>
+          updateJobProgress(deps, job.id, 5 + percent * 0.8, 'blurring'),
+        );
+      },
     });
+    await progressWrite;
 
     const videoPath = `${job.video_id}.mp4`;
     const posterPath = `${job.video_id}.jpg`;
-    for (const [path, file, type] of [
+    const outputs = [
       [videoPath, output, 'video/mp4'],
       [posterPath, poster, 'image/jpeg'],
-    ] as const) {
+    ] as const;
+    await updateJobProgress(deps, job.id, 88, 'uploading');
+    for (const [index, [path, file, type]] of outputs.entries()) {
       const { error: upErr } = await deps.storage.storage
         .from(VIDEO_BUCKET)
         .upload(path, await readFile(file), { contentType: type, upsert: true });
       if (upErr) throw new Error(`upload ${path}: ${upErr.message}`);
+      await updateJobProgress(deps, job.id, index === 0 ? 94 : 98, 'publishing');
     }
     await deps.db.query('select public.complete_process_job($1, $2, $3)', [
       job.id,
@@ -178,6 +206,14 @@ export async function runJob(job: MediaJob, deps: JobDeps): Promise<void> {
     const { rows } = await deps.db.query<{ fail_media_job: string }>(
       'select public.fail_media_job($1, $2)',
       [job.id, message],
+    );
+    await deps.db.query(
+      `update public.media_jobs
+       set progress = case when $2 = 'queued' then 0 else progress end,
+           phase = case when $2 = 'queued' then 'retrying' else 'failed' end,
+           updated_at = now()
+       where id = $1`,
+      [job.id, rows[0]?.fail_media_job],
     );
     deps.log('job failed', {
       job: job.id,

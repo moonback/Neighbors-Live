@@ -45,11 +45,23 @@
   "emptyProcessingVideos": "No videos are currently being processed.",
   "processingVideoAuthor": "By {username}",
   "videoStatusProcessing": "Video processing",
+  "processingProgress": "Progress",
   "jobStatus": {
     "queued": "Job queued",
     "running": "Processing",
     "done": "Job completed",
     "failed": "Job failed"
+  },
+  "jobPhase": {
+    "queued": "Queued",
+    "downloading": "Downloading video",
+    "preparing": "Preparing",
+    "blurring": "Blurring and transcoding",
+    "uploading": "Uploading processed files",
+    "publishing": "Finalizing",
+    "retrying": "Retry scheduled",
+    "failed": "Failed",
+    "done": "Complete"
   },
   "jobAttempts": "Attempt {attempts}/{maxAttempts}",
   "noProcessingJob": "No media job found",
