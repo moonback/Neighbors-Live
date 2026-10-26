@@ -1,18 +1,18 @@
 'use client';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { CATEGORIES, CATEGORY_COLORS, RADII_M, type Category } from '@nl/shared';
+import { CATEGORIES, CATEGORY_COLORS, type Category } from '@nl/shared';
 import type { ExpressionSpecification, GeoJSONSource, Map as MlMap, Marker } from 'maplibre-gl';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
-import { CategoryIcon } from '@/components/CategoryIcon';
 import { PermissionPrimer } from '@/components/PermissionPrimer';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import { clientEnv } from '@/lib/env';
 import { useLocation } from '@/lib/useLocation';
 import { circlePolygon, zoomForRadius } from './geometry';
+import { MapFiltersDialog } from './MapFiltersDialog';
 
 interface Selected {
   id: string;
@@ -40,6 +40,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   const [loaded, setLoaded] = useState(false);
   const [radius, setRadius] = useState(initialRadius);
   const [category, setCategory] = useState<Category | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [count, setCount] = useState<number | null>(null);
   const [selected, setSelected] = useState<Selected | null>(null);
   const [resultsState, setResultsState] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -69,13 +70,13 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           id: 'radius-fill',
           type: 'fill',
           source: 'radius',
-          paint: { 'fill-color': '#9b8cff', 'fill-opacity': 0.08 },
+          paint: { 'fill-color': '#2563eb', 'fill-opacity': 0.08 },
         });
         map.addLayer({
           id: 'radius-line',
           type: 'line',
           source: 'radius',
-          paint: { 'line-color': '#9b8cff', 'line-width': 2 },
+          paint: { 'line-color': '#2563eb', 'line-width': 2 },
         });
         map.addSource('videos', {
           type: 'geojson',
@@ -91,7 +92,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           filter: ['has', 'point_count'],
           paint: {
             'circle-color': '#141a2c',
-            'circle-stroke-color': '#9b8cff',
+            'circle-stroke-color': '#2563eb',
             'circle-stroke-width': 2,
             'circle-radius': ['step', ['get', 'point_count'], 16, 10, 22, 30, 28],
           },
@@ -136,7 +137,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
           map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
         }
-        markerRef.current = new maplibregl.Marker({ color: '#9b8cff' })
+        markerRef.current = new maplibregl.Marker({ color: '#2563eb' })
           .setLngLat([lng, lat])
           .addTo(map);
         setLoaded(true);
@@ -213,54 +214,60 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
         </div>
       )}
 
-      <div className="absolute inset-x-0 top-0 flex flex-col gap-2 p-3">
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          <Chip active={category === null} onClick={() => setCategory(null)}>
-            {tf('filters.all')}
-          </Chip>
-          {CATEGORIES.map((c) => (
-            <Chip key={c} active={category === c} onClick={() => setCategory(c)}>
-              <span style={{ color: category === c ? undefined : CATEGORY_COLORS[c] }}>
-                <CategoryIcon category={c} />
-              </span>
-              {tc(`categories.${c}`)}
-            </Chip>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="map-radius" className="sr-only">
-            {tf('filters.radius')}
-          </label>
-          <select
-            id="map-radius"
-            value={radius}
-            onChange={(e) => setRadius(Number(e.target.value))}
-            className="glass min-h-11 rounded-full px-4 text-sm font-semibold"
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3">
+        <Button
+          variant="secondary"
+          className="rounded-full shadow-lg"
+          onClick={() => setFiltersOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={filtersOpen}
+          aria-label={`${t('filters.button')}${category || radius !== initialRadius ? `, ${t('filters.active')}` : ''}`}
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
           >
-            {RADII_M.map((r) => (
-              <option key={r} value={r}>
-                {tc(`radius.${r}`)}
-              </option>
-            ))}
-          </select>
-          <p
-            className="glass rounded-full px-3 py-2 text-xs empty:hidden"
-            role="status"
-            aria-live="polite"
-          >
-            {resultsState === 'ready' && count !== null
-              ? t('count', { count })
-              : resultsState === 'loading'
-                ? t('loading')
-                : null}
-          </p>
-        </div>
+            <path d="M4 6h16M7 12h10m-7 6h4" />
+            <circle cx="8" cy="6" r="1.5" fill="currentColor" />
+            <circle cx="15" cy="12" r="1.5" fill="currentColor" />
+            <circle cx="11" cy="18" r="1.5" fill="currentColor" />
+          </svg>
+          {t('filters.button')}
+          {(category || radius !== initialRadius) && (
+            <span className="ml-1 h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
+          )}
+        </Button>
+        <p
+          className="glass max-w-[55%] rounded-full px-3 py-2 text-right text-xs empty:hidden"
+          role="status"
+          aria-live="polite"
+        >
+          {resultsState === 'ready' && count !== null
+            ? t('count', { count })
+            : resultsState === 'loading'
+              ? t('loading')
+              : null}
+        </p>
       </div>
+
+      <MapFiltersDialog
+        open={filtersOpen}
+        category={category}
+        radius={radius}
+        onCategoryChange={setCategory}
+        onRadiusChange={setRadius}
+        onClose={() => setFiltersOpen(false)}
+      />
 
       {resultsState === 'error' && (
         <div
           role="alert"
-          className="absolute inset-x-3 top-28 z-10 flex items-center justify-between gap-3 rounded-2xl border border-alert/50 bg-ink/95 p-3 shadow-xl"
+          className="absolute inset-x-3 top-16 z-10 flex items-center justify-between gap-3 rounded-2xl border border-alert/50 bg-ink/95 p-3 shadow-xl"
         >
           <p className="text-sm">{t('loadError')}</p>
           <Button
@@ -326,26 +333,5 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
         </div>
       )}
     </div>
-  );
-}
-
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={`flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition ${active ? 'glow bg-accent font-semibold text-white' : 'glass text-white/90 hover:text-white'}`}
-    >
-      {children}
-    </button>
   );
 }

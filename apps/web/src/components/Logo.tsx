@@ -7,9 +7,9 @@ export function LogoMark({ size = 36 }: { size?: number }) {
     <svg aria-hidden="true" viewBox="0 0 48 56" width={size} height={size * (56 / 48)}>
       <defs>
         <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ff5ec8" />
-          <stop offset="0.5" stopColor="#8b5cff" />
-          <stop offset="1" stopColor="#3d8bff" />
+          <stop offset="0" stopColor="#38bdf8" />
+          <stop offset="0.5" stopColor="#2563eb" />
+          <stop offset="1" stopColor="#0ea5e9" />
         </linearGradient>
       </defs>
       <path
@@ -17,7 +17,7 @@ export function LogoMark({ size = 36 }: { size?: number }) {
         fill={`url(#${id})`}
       />
       <circle cx="24" cy="22" r="11" fill="#fff" fillOpacity="0.95" />
-      <path d="M21 16.8v10.4l8.4-5.2z" fill="#6a5cff" />
+      <path d="M21 16.8v10.4l8.4-5.2z" fill="#2563eb" />
     </svg>
   );
 }
