@@ -4,7 +4,7 @@ Neighbors Live est une PWA de vidéos courtes hyperlocales. Elle permet aux habi
 des informations utiles à proximité (alertes, entraide, événements et offres locales) sous forme de
 vidéos éphémères, filmées directement dans l’application et modérées à l’échelle du quartier.
 
-Les rayons proposés sont **300 m, 1 km et 3 km**. L’interface est en français par défaut ; les
+Les rayons proposés sont **300 m, 1 km, 3 km, 5 km et 10 km**. L’interface est en français par défaut ; les
 messages anglais sont également prévus.
 
 > **État du projet :** application en développement actif. Une grande partie du parcours principal
