@@ -1,0 +1,6 @@
+#:schema https://openapi.vercel.sh/vercel.json
+
+[daemons.media-worker]
+root = "."
+entrypoint = "apps/worker/Dockerfile"
+instances.iad1 = 1
