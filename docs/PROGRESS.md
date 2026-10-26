@@ -11,7 +11,7 @@ lint, 47 tests unitaires, E2E ciblé et build réussis.
 
 Mise à jour 2026-10-26 : palette bleu nuit/violet, réglages et espace commerce adaptés aux grands écrans ; carte avec états de chargement, d’erreur et nouvel essai. Modifications à vérifier.
 Mise à jour 2026-10-26 : annuaire de commerces approuvés alimenté par les tables publiques, recherche nom/présentation et lien vers profils/vidéos. Limites conservées : catégories et distances absentes du modèle. Modifications à vérifier.
-Validation du lot habitants : typecheck, ESLint, 47 tests unitaires et parité FR/EN réussis ; build bloqué par SWC et E2E par Docker indisponible dans l’environnement.
+Validation mise à jour 2026-10-26 : typecheck, ESLint, Prettier, 47 tests unitaires, parité FR/EN et build Next réussis. Build exécuté après autorisation du cache natif sécurisé SWC. E2E toujours bloqués par l’absence du démon Docker. En navigateur de production locale, `/commerces/decouvrir` a rendu son état d’erreur car Supabase local n’est pas démarré ; état de résultats réels non vérifié. La capture d’écran navigateur a échoué deux fois (`FrameArrived timed out`), donc la revue visuelle reste à faire.
 
 ## 0. Cadrage et fondations
 
