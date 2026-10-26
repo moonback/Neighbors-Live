@@ -21,7 +21,7 @@ export interface Frame {
 export interface Detector {
   readonly name: string;
   readonly enabled: boolean;
-  detect(frame: Frame): Promise<Box[]>;
+  detect(frame: Frame, settings?: { minScore: number }): Promise<Box[]>;
 }
 
 /** Detector used when a capability is switched off or no reliable model is available. */

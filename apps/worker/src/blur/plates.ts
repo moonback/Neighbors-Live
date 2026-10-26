@@ -46,7 +46,7 @@ export class OnnxPlateDetector implements Detector {
     return new OnnxPlateDetector(await ort.InferenceSession.create(modelPath), minScore);
   }
 
-  async detect(frame: Frame): Promise<Box[]> {
+  async detect(frame: Frame, settings?: { minScore: number }): Promise<Box[]> {
     const { tensor, scale } = letterboxBgr(frame, INPUT);
     // YOLO models expect RGB normalised to 0..1: swap the BGR planes back and rescale.
     const plane = INPUT * INPUT;
@@ -63,7 +63,11 @@ export class OnnxPlateDetector implements Detector {
     const out = result[outputName];
     if (!out) return [];
     const anchors = out.dims[2] ?? 0;
-    const boxes = decodeYoloSingleClass(out.data as Float32Array, anchors, this.minScore);
+    const boxes = decodeYoloSingleClass(
+      out.data as Float32Array,
+      anchors,
+      settings?.minScore ?? this.minScore,
+    );
     return nms(boxes, 0.4).map((b) => ({
       x: b.x / scale,
       y: b.y / scale,

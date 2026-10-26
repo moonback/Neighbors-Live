@@ -22,7 +22,50 @@ export interface JobDeps {
   storage: SupabaseClient;
   detectors: Detector[];
   detectEvery: number;
+  faceBlurAvailable: boolean;
+  plateBlurAvailable: boolean;
   log: (msg: string, extra?: Record<string, unknown>) => void;
+}
+
+interface RuntimeMediaSettings {
+  faceBlurEnabled: boolean;
+  plateBlurEnabled: boolean;
+  detectEvery: number;
+  faceMinScore: number;
+  plateMinScore: number;
+}
+
+async function readMediaSettings(deps: JobDeps): Promise<RuntimeMediaSettings> {
+  const { rows } = await deps.db.query<{ key: string; value: unknown }>(
+    `select key, value from public.app_config where key = any($1::text[])`,
+    [
+      [
+        'media_face_blur_enabled',
+        'media_plate_blur_enabled',
+        'media_detect_every',
+        'media_face_min_score',
+        'media_plate_min_score',
+      ],
+    ],
+  );
+  const values = new Map(rows.map(({ key, value }) => [key, value]));
+  const bool = (key: string, fallback: boolean) => {
+    const value = values.get(key);
+    return typeof value === 'boolean' ? value : fallback;
+  };
+  const number = (key: string, fallback: number, min: number, max: number) => {
+    const value = values.get(key);
+    return typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max
+      ? value
+      : fallback;
+  };
+  return {
+    faceBlurEnabled: bool('media_face_blur_enabled', true),
+    plateBlurEnabled: bool('media_plate_blur_enabled', false),
+    detectEvery: number('media_detect_every', deps.detectEvery, 1, 10),
+    faceMinScore: number('media_face_min_score', 0.5, 0.05, 0.95),
+    plateMinScore: number('media_plate_min_score', 0.35, 0.05, 0.95),
+  };
 }
 
 export async function claimJob(db: Pool, workerId: string): Promise<MediaJob | null> {
@@ -50,10 +93,31 @@ async function processVideo(job: MediaJob, deps: JobDeps): Promise<void> {
     const poster = join(dir, 'poster.jpg');
     await writeFile(input, Buffer.from(await data.arrayBuffer()));
 
+    const mediaSettings = await readMediaSettings(deps);
+    const detectors = deps.detectors.map((detector) => {
+      if (detector.name === 'face-yunet') {
+        return {
+          name: detector.name,
+          enabled: mediaSettings.faceBlurEnabled && deps.faceBlurAvailable,
+          detect: (frame: Parameters<Detector['detect']>[0]) =>
+            detector.detect(frame, { minScore: mediaSettings.faceMinScore }),
+        };
+      }
+      if (detector.name === 'plate-yolo') {
+        return {
+          name: detector.name,
+          enabled: mediaSettings.plateBlurEnabled && deps.plateBlurAvailable,
+          detect: (frame: Parameters<Detector['detect']>[0]) =>
+            detector.detect(frame, { minScore: mediaSettings.plateMinScore }),
+        };
+      }
+      return detector;
+    });
+
     const started = Date.now();
     const stats = await blurAndTranscode(input, output, poster, {
-      detectors: deps.detectors,
-      detectEvery: deps.detectEvery,
+      detectors,
+      detectEvery: mediaSettings.detectEvery,
     });
 
     const videoPath = `${job.video_id}.mp4`;

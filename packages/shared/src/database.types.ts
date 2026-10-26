@@ -659,6 +659,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_set_media_settings: {
+        Args: { p_admin: string; p_settings: Json };
+        Returns: undefined;
+      };
       admin_revert_action: {
         Args: { p_action: number; p_admin: string; p_note: string };
         Returns: number;

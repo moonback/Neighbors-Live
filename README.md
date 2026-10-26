@@ -255,6 +255,12 @@ Les variables `NEXT_PUBLIC_*` sont intégrées au bundle navigateur et ne doiven
 valeurs publiques. Les variables secrètes sont validées au démarrage côté serveur et dans le worker.
 Ne publiez jamais `.env`, `.env.local` ou des clés Supabase/VAPID privées.
 
+Les administrateurs peuvent activer ou désactiver le floutage des visages et des plaques dans
+**Administration → Traitement vidéo**, puis ajuster la fréquence d’analyse et les seuils de
+confiance. Ces réglages s’appliquent aux nouveaux jobs média. Les variables `*_BLUR_ENABLED` du
+worker servent de garde-fous de disponibilité : l’option plaques dans l’admin n’est activable que
+si `PLATE_BLUR_ENABLED=true` et qu’un modèle est installé/configuré.
+
 ### Modèles du worker média
 
 L’image Docker télécharge le modèle facial YuNet `face_detection_yunet_2023mar.onnx` et vérifie son

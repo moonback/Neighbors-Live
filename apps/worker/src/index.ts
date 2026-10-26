@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import pg from 'pg';
-import { createPlateDetector } from './blur/plates.ts';
+import { OnnxPlateDetector } from './blur/plates.ts';
 import { DisabledDetector, type Detector } from './blur/types.ts';
 import { YunetFaceDetector } from './blur/yunet.ts';
 import { loadEnv } from './env.ts';
@@ -16,19 +16,24 @@ const log = (msg: string, extra: Record<string, unknown> = {}) =>
 
 async function loadDetectors(): Promise<Detector[]> {
   const detectors: Detector[] = [];
-  if (env.FACE_BLUR_ENABLED) {
-    if (!env.FACE_MODEL_PATH || !existsSync(env.FACE_MODEL_PATH))
-      throw new Error(
-        `face model missing: ${env.FACE_MODEL_PATH ?? '(FACE_MODEL_PATH is not set)'}`,
-      );
+  if (env.FACE_BLUR_ENABLED && (!env.FACE_MODEL_PATH || !existsSync(env.FACE_MODEL_PATH))) {
+    throw new Error(`face model missing: ${env.FACE_MODEL_PATH ?? '(FACE_MODEL_PATH is not set)'}`);
+  }
+  if (env.FACE_MODEL_PATH && existsSync(env.FACE_MODEL_PATH)) {
     detectors.push(await YunetFaceDetector.load(env.FACE_MODEL_PATH));
   } else {
     detectors.push(new DisabledDetector('face'));
   }
-  if (env.PLATE_BLUR_ENABLED && env.PLATE_MODEL_PATH && !existsSync(env.PLATE_MODEL_PATH)) {
-    throw new Error(`plate model missing: ${env.PLATE_MODEL_PATH}`);
+  if (env.PLATE_BLUR_ENABLED && (!env.PLATE_MODEL_PATH || !existsSync(env.PLATE_MODEL_PATH))) {
+    throw new Error(
+      `plate model missing: ${env.PLATE_MODEL_PATH ?? '(PLATE_MODEL_PATH is not set)'}`,
+    );
   }
-  detectors.push(await createPlateDetector(env.PLATE_BLUR_ENABLED, env.PLATE_MODEL_PATH));
+  if (env.PLATE_MODEL_PATH && existsSync(env.PLATE_MODEL_PATH)) {
+    detectors.push(await OnnxPlateDetector.load(env.PLATE_MODEL_PATH));
+  } else {
+    detectors.push(new DisabledDetector('plate'));
+  }
   return detectors;
 }
 
@@ -39,6 +44,8 @@ async function main() {
     storage: storageClient(env),
     detectors: await loadDetectors(),
     detectEvery: env.DETECT_EVERY,
+    faceBlurAvailable: env.FACE_BLUR_ENABLED,
+    plateBlurAvailable: env.PLATE_BLUR_ENABLED,
     log,
   };
   log('worker started', {

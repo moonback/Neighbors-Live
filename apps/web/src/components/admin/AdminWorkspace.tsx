@@ -22,6 +22,10 @@ const sections = [
 
 const tools = [
   {
+    key: 'mediaSettings',
+    icon: 'M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1M16 12a4 4 0 11-8 0 4 4 0 018 0z',
+  },
+  {
     key: 'zones',
     icon: 'M12 21s-7-6.1-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.9 12 21 12 21zm0-8.5a3 3 0 100-6 3 3 0 000 6z',
   },
@@ -184,13 +188,22 @@ export function AdminWorkspace({
                 </Link>
               ))}
               {isAdmin && (
-                <Link
-                  href="/admin#users"
-                  className="glass flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/90"
-                >
-                  <Icon d={tools[1].icon} />
-                  {t('users')}
-                </Link>
+                <>
+                  <Link
+                    href="/admin#users"
+                    className="glass flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/90"
+                  >
+                    <Icon d={tools[2].icon} />
+                    {t('users')}
+                  </Link>
+                  <Link
+                    href="/admin#mediaSettings"
+                    className="glass flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/90"
+                  >
+                    <Icon d={tools[0].icon} />
+                    {t('mediaSettings')}
+                  </Link>
+                </>
               )}
             </nav>
           </div>

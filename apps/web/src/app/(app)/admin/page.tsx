@@ -3,7 +3,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { z } from 'zod';
-import { MerchantReview, NotedAction } from '@/components/admin/AdminClient';
+import {
+  MediaProcessingSettings,
+  MerchantReview,
+  NotedAction,
+  type MediaSettings,
+} from '@/components/admin/AdminClient';
 import { inputClass, Notice } from '@/components/ui';
 import { getViewer } from '@/lib/session';
 import { adminClient } from '@/lib/supabase/admin';
@@ -38,6 +43,22 @@ const statsSchema = z.object({
     }),
   ),
 });
+
+const mediaSettingsSchema = z.object({
+  faceBlurEnabled: z.boolean(),
+  plateBlurEnabled: z.boolean(),
+  detectEvery: z.number().int().min(1).max(10),
+  faceMinScore: z.number().min(0.05).max(0.95),
+  plateMinScore: z.number().min(0.05).max(0.95),
+});
+
+const MEDIA_CONFIG_KEYS = [
+  'media_face_blur_enabled',
+  'media_plate_blur_enabled',
+  'media_detect_every',
+  'media_face_min_score',
+  'media_plate_min_score',
+] as const;
 
 const STAT_KEYS = [
   'users',
@@ -160,8 +181,8 @@ export default async function AdminPage({
   }
   auditQuery = auditQuery.range(auditOffset, auditOffset + pageSize - 1);
 
-  const [stats, processingVideos, merchants, users, actions, t, tk, tc, format] = await Promise.all(
-    [
+  const [stats, processingVideos, merchants, users, actions, mediaConfig, t, tk, tc, format] =
+    await Promise.all([
       admin.rpc('admin_stats', { p_admin: viewer.id }),
       admin
         .from('videos')
@@ -195,21 +216,34 @@ export default async function AdminPage({
             .order('username')
             .range(userOffset, userOffset + pageSize - 1),
       auditQuery,
+      admin
+        .from('app_config')
+        .select('key, value')
+        .in('key', [...MEDIA_CONFIG_KEYS]),
       getTranslations('admin'),
       getTranslations('moderation.decisions.kinds'),
       getTranslations('common.categories'),
       getFormatter(),
-    ],
-  );
+    ]);
 
   const parsedStats = statsSchema.safeParse(stats.data);
+  const config = new Map((mediaConfig.data ?? []).map((item) => [item.key, item.value]));
+  const parsedMediaSettings = mediaSettingsSchema.safeParse({
+    faceBlurEnabled: config.get('media_face_blur_enabled'),
+    plateBlurEnabled: config.get('media_plate_blur_enabled'),
+    detectEvery: config.get('media_detect_every'),
+    faceMinScore: config.get('media_face_min_score'),
+    plateMinScore: config.get('media_plate_min_score'),
+  });
   if (
     stats.error ||
     processingVideos.error ||
     merchants.error ||
     users.error ||
     actions.error ||
-    !parsedStats.success
+    mediaConfig.error ||
+    !parsedStats.success ||
+    !parsedMediaSettings.success
   ) {
     return (
       <div className="mx-auto flex max-w-5xl flex-col gap-5 p-4 sm:p-6">
@@ -268,6 +302,7 @@ export default async function AdminPage({
     }
   }
   const { zones } = parsedStats.data;
+  const initialMediaSettings: MediaSettings = parsedMediaSettings.data;
   const auditParams = new URLSearchParams({
     ...(search ? { q: search } : {}),
     ...(auditKind ? { action: auditKind } : {}),
@@ -306,18 +341,36 @@ export default async function AdminPage({
         aria-label={t('navigation')}
         className="sticky top-0 z-20 -mx-4 flex gap-2 overflow-x-auto border-b border-line bg-ink/95 px-4 py-2 backdrop-blur sm:static sm:mx-0 sm:flex-wrap sm:overflow-visible sm:border-0 sm:bg-transparent sm:p-0"
       >
-        {(['overview', 'processingVideos', 'zones', 'merchants', 'users', 'actions'] as const).map(
-          (key) => (
-            <a
-              key={key}
-              href={`#${key}`}
-              className="min-h-10 shrink-0 rounded-full border border-line px-3 py-2 text-sm font-medium hover:border-accent focus-visible:outline-accent"
-            >
-              {t(key)}
-            </a>
-          ),
-        )}
+        {(
+          [
+            'overview',
+            'mediaSettings',
+            'processingVideos',
+            'zones',
+            'merchants',
+            'users',
+            'actions',
+          ] as const
+        ).map((key) => (
+          <a
+            key={key}
+            href={`#${key}`}
+            className="min-h-10 shrink-0 rounded-full border border-line px-3 py-2 text-sm font-medium hover:border-accent focus-visible:outline-accent"
+          >
+            {t(key)}
+          </a>
+        ))}
       </nav>
+
+      <MediaProcessingSettings
+        initial={initialMediaSettings}
+        availability={{
+          faces: process.env.FACE_BLUR_ENABLED !== 'false',
+          plates:
+            process.env.PLATE_BLUR_ENABLED === 'true' &&
+            Boolean(process.env.PLATE_MODEL_PATH?.trim()),
+        }}
+      />
 
       <section
         id="overview"

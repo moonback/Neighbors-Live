@@ -86,19 +86,20 @@ export class YunetFaceDetector implements Detector {
    * Whole frame plus overlapping tiles along the long side: downscaling a 1280 px frame to
    * 640 px halves small faces below YuNet's ~10 px floor, tiles keep them near full size.
    */
-  async detect(frame: Frame): Promise<Box[]> {
-    const boxes = await this.detectOnce(frame);
+  async detect(frame: Frame, settings?: { minScore: number }): Promise<Box[]> {
+    const minScore = settings?.minScore ?? this.minScore;
+    const boxes = await this.detectOnce(frame, minScore);
     const long = Math.max(frame.width, frame.height);
     if (long > INPUT * 1.25) {
       for (const tile of tiles(frame, 2, 64)) {
-        for (const b of await this.detectOnce(tile.frame))
+        for (const b of await this.detectOnce(tile.frame, minScore))
           boxes.push({ ...b, x: b.x + tile.x, y: b.y + tile.y });
       }
     }
     return nms(boxes, 0.3);
   }
 
-  private async detectOnce(frame: Frame): Promise<Box[]> {
+  private async detectOnce(frame: Frame, minScore: number): Promise<Box[]> {
     const { tensor, scale } = letterboxBgr(frame, INPUT);
     const result = await this.session.run({
       input: new ort.Tensor('float32', tensor, [1, 3, INPUT, INPUT]),
@@ -110,7 +111,7 @@ export class YunetFaceDetector implements Detector {
         obj: STRIDES.map((s) => pick(`obj_${s}`)),
         bbox: STRIDES.map((s) => pick(`bbox_${s}`)),
       },
-      this.minScore,
+      minScore,
     );
     return nms(boxes, 0.3).map((b) => ({
       x: b.x / scale,

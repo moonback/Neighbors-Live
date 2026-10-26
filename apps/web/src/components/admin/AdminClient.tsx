@@ -10,7 +10,16 @@ import { api } from '@/lib/client-api';
 type Body =
   | { type: 'ban'; userId: string; banned: boolean; note: string }
   | { type: 'revert'; actionId: number; note: string }
-  | { type: 'merchant'; userId: string; approve: boolean };
+  | { type: 'merchant'; userId: string; approve: boolean }
+  | { type: 'mediaSettings'; settings: MediaSettings };
+
+export interface MediaSettings {
+  faceBlurEnabled: boolean;
+  plateBlurEnabled: boolean;
+  detectEvery: number;
+  faceMinScore: number;
+  plateMinScore: number;
+}
 
 function useAdminAction() {
   const t = useTranslations('admin');
@@ -30,7 +39,9 @@ function useAdminAction() {
             text:
               res.error === 'review_conflict'
                 ? t('review_conflict')
-                : (errorText(res.error) ?? t('actionError')),
+                : res.error === 'media_model_unavailable'
+                  ? t('mediaProcessing.modelUnavailable')
+                  : (errorText(res.error) ?? t('actionError')),
           },
     );
     if (res.ok) router.refresh();
@@ -79,6 +90,142 @@ export function MerchantReview({
       </div>
       {status && <Notice kind={status.kind}>{status.text}</Notice>}
     </div>
+  );
+}
+
+export function MediaProcessingSettings({
+  initial,
+  availability,
+}: {
+  initial: MediaSettings;
+  availability: { faces: boolean; plates: boolean };
+}) {
+  const t = useTranslations('admin.mediaProcessing');
+  const { run, status, pending } = useAdminAction();
+  const [settings, setSettings] = useState({
+    ...initial,
+    faceBlurEnabled: initial.faceBlurEnabled && availability.faces,
+    plateBlurEnabled: initial.plateBlurEnabled && availability.plates,
+    detectEvery: String(initial.detectEvery),
+    faceMinScore: String(initial.faceMinScore),
+    plateMinScore: String(initial.plateMinScore),
+  });
+  const parsed = {
+    detectEvery: Number(settings.detectEvery),
+    faceMinScore: Number(settings.faceMinScore),
+    plateMinScore: Number(settings.plateMinScore),
+  };
+  const valid =
+    Number.isInteger(parsed.detectEvery) &&
+    parsed.detectEvery >= 1 &&
+    parsed.detectEvery <= 10 &&
+    Number.isFinite(parsed.faceMinScore) &&
+    parsed.faceMinScore >= 0.05 &&
+    parsed.faceMinScore <= 0.95 &&
+    Number.isFinite(parsed.plateMinScore) &&
+    parsed.plateMinScore >= 0.05 &&
+    parsed.plateMinScore <= 0.95;
+
+  return (
+    <section id="mediaSettings" aria-labelledby="media-settings-title" className="scroll-mt-20">
+      <div className="flex flex-col gap-4 rounded-3xl border border-line bg-panel/80 p-5">
+        <div>
+          <h2 id="media-settings-title" className="text-lg font-semibold">
+            {t('title')}
+          </h2>
+          <p className="mt-1 text-sm text-fog">{t('hint')}</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="flex min-h-12 items-center gap-3 rounded-xl border border-line px-3">
+            <input
+              type="checkbox"
+              checked={settings.faceBlurEnabled}
+              disabled={!availability.faces}
+              onChange={(event) =>
+                setSettings((current) => ({ ...current, faceBlurEnabled: event.target.checked }))
+              }
+              className="h-5 w-5 accent-[var(--color-accent)]"
+            />
+            <span className="text-sm font-medium">{t('faces')}</span>
+          </label>
+          <label className="flex min-h-12 items-center gap-3 rounded-xl border border-line px-3">
+            <input
+              type="checkbox"
+              checked={settings.plateBlurEnabled}
+              disabled={!availability.plates}
+              onChange={(event) =>
+                setSettings((current) => ({ ...current, plateBlurEnabled: event.target.checked }))
+              }
+              className="h-5 w-5 accent-[var(--color-accent)]"
+            />
+            <span className="text-sm font-medium">{t('plates')}</span>
+          </label>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t('detectEvery')}</span>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              step={1}
+              value={settings.detectEvery}
+              onChange={(event) =>
+                setSettings((current) => ({ ...current, detectEvery: event.target.value }))
+              }
+              className={inputClass}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t('faceMinScore')}</span>
+            <input
+              type="number"
+              min={0.05}
+              max={0.95}
+              step={0.05}
+              value={settings.faceMinScore}
+              onChange={(event) =>
+                setSettings((current) => ({ ...current, faceMinScore: event.target.value }))
+              }
+              className={inputClass}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t('plateMinScore')}</span>
+            <input
+              type="number"
+              min={0.05}
+              max={0.95}
+              step={0.05}
+              value={settings.plateMinScore}
+              onChange={(event) =>
+                setSettings((current) => ({ ...current, plateMinScore: event.target.value }))
+              }
+              className={inputClass}
+            />
+          </label>
+        </div>
+        <p className="text-xs text-fog">{t('modelNote')}</p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button
+            disabled={pending || !valid}
+            onClick={() =>
+              void run({
+                type: 'mediaSettings',
+                settings: {
+                  faceBlurEnabled: settings.faceBlurEnabled,
+                  plateBlurEnabled: settings.plateBlurEnabled,
+                  ...parsed,
+                },
+              })
+            }
+          >
+            {pending ? t('saving') : t('save')}
+          </Button>
+          {status && <Notice kind={status.kind}>{status.text}</Notice>}
+        </div>
+      </div>
+    </section>
   );
 }
 
