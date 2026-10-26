@@ -21,6 +21,18 @@
     "error": "Position indisponible pour le moment.",
     "locating": "Recherche de votre position…"
   },
+  "hero": {
+    "title": "Ce qui se passe à deux pas de chez vous",
+    "body": "Vidéos, commerces, événements et bons plans du quartier, filmés par vos voisins.",
+    "features": [
+      { "title": "Vidéos locales", "body": "La vie du quartier en temps réel" },
+      { "title": "Carte interactive", "body": "Tout ce qui se passe autour de vous" },
+      { "title": "Commerces de proximité", "body": "Soutenez les acteurs locaux" },
+      { "title": "Événements & bons plans", "body": "Ne ratez plus rien près de chez vous" }
+    ],
+    "shops": "Voir les commerces",
+    "login": "Se connecter"
+  },
   "empty": {
     "title": "Rien autour de vous pour l’instant",
     "body": "Soyez la première ou le premier à montrer ce qui se passe dans le quartier.",

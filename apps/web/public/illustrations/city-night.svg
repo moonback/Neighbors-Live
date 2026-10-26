@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b1a63"/>
+      <stop offset="0.55" stop-color="#151b48"/>
+      <stop offset="1" stop-color="#070a1c"/>
+    </linearGradient>
+    <radialGradient id="glowV">
+      <stop offset="0" stop-color="#8b5cff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#8b5cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowP">
+      <stop offset="0" stop-color="#ff5ec8" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ff5ec8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB">
+      <stop offset="0" stop-color="#3d8bff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#3d8bff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff5ec8"/>
+      <stop offset="0.5" stop-color="#8b5cff"/>
+      <stop offset="1" stop-color="#3d8bff"/>
+    </linearGradient>
+    <pattern id="winWarm" width="9" height="11" patternUnits="userSpaceOnUse">
+      <rect x="2" y="2" width="3.5" height="4.5" rx="0.5" fill="#ffd27a" fill-opacity="0.85"/>
+    </pattern>
+    <pattern id="winCool" width="13" height="15" patternUnits="userSpaceOnUse">
+      <rect x="3" y="3" width="4" height="5" rx="0.5" fill="#9ab8ff" fill-opacity="0.6"/>
+    </pattern>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#070a1c" stop-opacity="0"/>
+      <stop offset="1" stop-color="#070a1c"/>
+    </linearGradient>
+    <path id="p" d="M12 0C5.4 0 0 5.2 0 11.6 0 20 12 30 12 30s12-10 12-18.4C24 5.2 18.6 0 12 0z"/>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#sky)"/>
+  <circle cx="200" cy="170" r="190" fill="url(#glowV)"/>
+  <circle cx="70" cy="120" r="110" fill="url(#glowP)"/>
+  <circle cx="340" cy="110" r="120" fill="url(#glowB)"/>
+
+  <g fill="#fff">
+    <circle cx="30" cy="30" r="1"/><circle cx="80" cy="55" r="0.8"/><circle cx="140" cy="22" r="1.2"/>
+    <circle cx="190" cy="48" r="0.7"/><circle cx="250" cy="18" r="1"/><circle cx="285" cy="62" r="0.8"/>
+    <circle cx="370" cy="28" r="1.1"/><circle cx="110" cy="85" r="0.6"/><circle cx="220" cy="80" r="0.7"/>
+    <circle cx="390" cy="75" r="0.7"/><circle cx="15" cy="90" r="0.8"/>
+  </g>
+  <circle cx="318" cy="52" r="22" fill="#fff" fill-opacity="0.08"/>
+  <circle cx="318" cy="52" r="12" fill="#f4f1ff"/>
+
+  <!-- far skyline -->
+  <g fill="#1f2760">
+    <rect x="0" y="175" width="30" height="125"/>
+    <rect x="26" y="150" width="22" height="150"/>
+    <rect x="58" y="185" width="28" height="115"/>
+    <rect x="150" y="160" width="26" height="140"/>
+    <rect x="182" y="135" width="20" height="165"/>
+    <rect x="232" y="170" width="30" height="130"/>
+    <rect x="290" y="150" width="24" height="150"/>
+    <rect x="352" y="165" width="48" height="135"/>
+    <path d="M200 135 L206 112 L212 135z"/>
+  </g>
+  <g fill="url(#winCool)">
+    <rect x="26" y="150" width="22" height="150"/>
+    <rect x="182" y="135" width="20" height="165"/>
+    <rect x="290" y="150" width="24" height="150"/>
+  </g>
+
+  <!-- cathedral -->
+  <g fill="#141a46">
+    <path d="M96 300V196l14-22 14 22v104z"/>
+    <path d="M104 178V128l6-26 6 26v50z"/>
+    <rect x="109.2" y="88" width="1.6" height="12"/>
+    <rect x="106" y="92" width="8" height="1.6"/>
+    <path d="M124 300v-70l18-18 18 18v70z"/>
+  </g>
+  <circle cx="110" cy="200" r="5" fill="#ffd27a" fill-opacity="0.75"/>
+
+  <!-- near skyline -->
+  <g fill="#10153b">
+    <rect x="0" y="215" width="44" height="85"/>
+    <rect x="40" y="200" width="34" height="100"/>
+    <rect x="160" y="205" width="40" height="95"/>
+    <rect x="196" y="185" width="32" height="115"/>
+    <rect x="226" y="215" width="44" height="85"/>
+    <rect x="266" y="195" width="36" height="105"/>
+    <rect x="300" y="222" width="40" height="78"/>
+    <rect x="336" y="200" width="64" height="100"/>
+  </g>
+  <g fill="url(#winWarm)">
+    <rect x="44" y="206" width="26" height="90"/>
+    <rect x="200" y="190" width="24" height="106"/>
+    <rect x="270" y="200" width="28" height="96"/>
+    <rect x="342" y="206" width="52" height="90"/>
+  </g>
+
+  <!-- neighbourhood pins -->
+  <g>
+    <ellipse cx="62" cy="196" rx="12" ry="3" fill="#ff5ec8" fill-opacity="0.35"/>
+    <use href="#p" x="50" y="160" fill="url(#pin)"/>
+    <circle cx="62" cy="171.5" r="4.5" fill="#fff"/>
+  </g>
+  <g>
+    <ellipse cx="212" cy="181" rx="16" ry="4" fill="#8b5cff" fill-opacity="0.4"/>
+    <use href="#p" x="200" y="145" fill="url(#pin)"/>
+    <path d="M209.5 152.5v8l7-4z" fill="#fff"/>
+  </g>
+  <g>
+    <ellipse cx="318" cy="190" rx="12" ry="3" fill="#3d8bff" fill-opacity="0.4"/>
+    <use href="#p" x="306" y="154" fill="url(#pin)"/>
+    <circle cx="318" cy="165.5" r="4.5" fill="#fff"/>
+  </g>
+
+  <rect y="200" width="400" height="100" fill="url(#fade)"/>
+</svg>

@@ -6,6 +6,7 @@ import type { ExpressionSpecification, GeoJSONSource, Map as MlMap, Marker } fro
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
+import { CategoryIcon } from '@/components/CategoryIcon';
 import { PermissionPrimer } from '@/components/PermissionPrimer';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
@@ -218,12 +219,10 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             {tf('filters.all')}
           </Chip>
           {CATEGORIES.map((c) => (
-            <Chip
-              key={c}
-              active={category === c}
-              onClick={() => setCategory(c)}
-              color={CATEGORY_COLORS[c]}
-            >
+            <Chip key={c} active={category === c} onClick={() => setCategory(c)}>
+              <span style={{ color: category === c ? undefined : CATEGORY_COLORS[c] }}>
+                <CategoryIcon category={c} />
+              </span>
               {tc(`categories.${c}`)}
             </Chip>
           ))}
@@ -236,7 +235,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             id="map-radius"
             value={radius}
             onChange={(e) => setRadius(Number(e.target.value))}
-            className="min-h-11 rounded-full border border-line bg-ink/95 px-3 text-sm"
+            className="glass min-h-11 rounded-full px-4 text-sm font-semibold"
           >
             {RADII_M.map((r) => (
               <option key={r} value={r}>
@@ -245,7 +244,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             ))}
           </select>
           <p
-            className="rounded-full border border-line bg-ink/95 px-3 py-2 text-xs"
+            className="glass rounded-full px-3 py-2 text-xs empty:hidden"
             role="status"
             aria-live="polite"
           >
@@ -297,7 +296,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
 
       {selected && (
         <div
-          className="absolute inset-x-3 bottom-20 flex items-start gap-3 rounded-2xl border border-line bg-panel p-3 shadow-xl"
+          className="glass absolute inset-x-3 bottom-20 flex items-start gap-3 rounded-3xl p-3 shadow-2xl shadow-black/40"
           role="dialog"
           aria-label={tc(`categories.${selected.category}`)}
         >
@@ -333,12 +332,10 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
 function Chip({
   active,
   onClick,
-  color,
   children,
 }: {
   active: boolean;
   onClick: () => void;
-  color?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -346,15 +343,8 @@ function Chip({
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm ${active ? 'border-accent bg-accent font-semibold text-ink' : 'border-line bg-black/80'}`}
+      className={`flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition ${active ? 'glow bg-accent font-semibold text-white' : 'glass text-white/90 hover:text-white'}`}
     >
-      {color && (
-        <span
-          className="h-2.5 w-2.5 rounded-full"
-          style={{ backgroundColor: color }}
-          aria-hidden="true"
-        />
-      )}
       {children}
     </button>
   );

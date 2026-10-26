@@ -21,6 +21,18 @@
     "error": "Your location is unavailable right now.",
     "locating": "Finding your location…"
   },
+  "hero": {
+    "title": "What’s happening right around the corner",
+    "body": "Videos, shops, events and deals from your neighborhood, filmed by your neighbors.",
+    "features": [
+      { "title": "Local videos", "body": "Neighborhood life, live" },
+      { "title": "Interactive map", "body": "Everything happening around you" },
+      { "title": "Local shops", "body": "Support the businesses nearby" },
+      { "title": "Events & deals", "body": "Never miss what’s on near you" }
+    ],
+    "shops": "Browse shops",
+    "login": "Sign in"
+  },
   "empty": {
     "title": "Nothing nearby yet",
     "body": "Be the first to show what’s happening in the neighborhood.",

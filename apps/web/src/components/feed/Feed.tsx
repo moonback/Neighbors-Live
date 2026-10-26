@@ -6,14 +6,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { CategoryIcon } from '@/components/CategoryIcon';
 import { Logo } from '@/components/Logo';
-import { PermissionPrimer } from '@/components/PermissionPrimer';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
 import { useLocation } from '@/lib/useLocation';
 import { AlertsBanner } from './AlertsBanner';
 import { VideoCard } from './VideoCard';
+import { WelcomeHero } from './WelcomeHero';
 
 // Sheets are only needed once opened.
 const Comments = dynamic(() => import('./Comments').then((m) => m.Comments), { ssr: false });
@@ -150,120 +151,92 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
 
   return (
     <div className="relative h-[calc(100dvh-4.5rem)] w-full">
-      <PermissionPrimer
-        open={location.status === 'primer'}
-        title={t('location.primerTitle')}
-        confirmLabel={t('location.allow')}
-        cancelLabel={t('location.later')}
-        onConfirm={() => void locate()}
-        onCancel={dismiss}
-      >
-        <p>{t('location.primerBody')}</p>
-      </PermissionPrimer>
+      {!coords && (
+        <WelcomeHero
+          status={location.status}
+          signedIn={signedIn}
+          notice={notice}
+          onLocate={() => void locate()}
+          onLater={dismiss}
+        />
+      )}
 
-      <header className="absolute inset-x-0 top-0 z-20 flex flex-col gap-3 bg-gradient-to-b from-ink/95 via-ink/60 to-transparent px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-8">
-        <h1 className="sr-only">{t('title')}</h1>
-        <div className="flex items-center justify-between gap-3">
-          <Logo name={tc('appName')} size={26} />
-          <label className="sr-only" htmlFor="feed-radius">
-            {t('filters.radius')}
-          </label>
-          <div className="glass flex items-center gap-1.5 rounded-full pl-3">
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-4 w-4 text-accent"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 21s-7-6.1-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.9 12 21 12 21z" />
-              <circle cx="12" cy="9.5" r="2.5" />
-            </svg>
-            <select
-              id="feed-radius"
-              value={radius}
-              onChange={(e) => setRadius(Number(e.target.value))}
-              className="min-h-10 appearance-none rounded-full bg-transparent pr-4 text-sm font-semibold focus:outline-none"
-            >
-              {RADII_M.map((r) => (
-                <option key={r} value={r} className="bg-panel">
-                  {tc(`radius.${r}`)}
-                </option>
-              ))}
-            </select>
+      {coords && (
+        <header className="absolute inset-x-0 top-0 z-20 flex flex-col gap-3 bg-gradient-to-b from-ink/95 via-ink/60 to-transparent px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-8">
+          <h1 className="sr-only">{t('title')}</h1>
+          <div className="flex items-center justify-between gap-3">
+            <Logo name={tc('appName')} size={26} />
+            <label className="sr-only" htmlFor="feed-radius">
+              {t('filters.radius')}
+            </label>
+            <div className="glass flex items-center gap-1.5 rounded-full pl-3">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-4 w-4 text-accent"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M12 21s-7-6.1-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.9 12 21 12 21z" />
+                <circle cx="12" cy="9.5" r="2.5" />
+              </svg>
+              <select
+                id="feed-radius"
+                value={radius}
+                onChange={(e) => setRadius(Number(e.target.value))}
+                className="min-h-10 appearance-none rounded-full bg-transparent pr-4 text-sm font-semibold focus:outline-none"
+              >
+                {RADII_M.map((r) => (
+                  <option key={r} value={r} className="bg-panel">
+                    {tc(`radius.${r}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
-        <nav
-          aria-label={t('filters.label')}
-          className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]"
-        >
-          <FilterChip active={category === null} onClick={() => setCategory(null)}>
-            {t('filters.all')}
-          </FilterChip>
-          {CATEGORIES.map((c) => (
-            <FilterChip key={c} active={category === c} onClick={() => setCategory(c)}>
-              {tc(`categories.${c}`)}
+          <nav
+            aria-label={t('filters.label')}
+            className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]"
+          >
+            <FilterChip active={category === null} onClick={() => setCategory(null)}>
+              {t('filters.all')}
             </FilterChip>
-          ))}
-        </nav>
-        {category === 'alert' && (
-          <p className="rounded-xl border border-alert/50 bg-black/80 px-3 py-2 text-sm text-white">
-            {t('alerts.notice')}
-          </p>
-        )}
-        {coords && (
+            {CATEGORIES.map((c) => (
+              <FilterChip key={c} active={category === c} onClick={() => setCategory(c)}>
+                <CategoryIcon category={c} />
+                {tc(`categories.${c}`)}
+              </FilterChip>
+            ))}
+          </nav>
+          {category === 'alert' && (
+            <p className="rounded-xl border border-alert/50 bg-black/80 px-3 py-2 text-sm text-white">
+              {t('alerts.notice')}
+            </p>
+          )}
           <AlertsBanner
             lat={coords.lat}
             lng={coords.lng}
             radius={radius}
             onShow={() => setCategory('alert')}
           />
-        )}
-        {notice && <Notice kind="success">{notice}</Notice>}
-      </header>
-
-      {location.status !== 'ok' && location.status !== 'primer' && (
-        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
-          {location.status === 'locating' || location.status === 'unknown' ? (
-            <p role="status" className="text-fog">
-              {t('location.locating')}
-            </p>
-          ) : (
-            <>
-              <Notice kind={location.status === 'denied' ? 'error' : 'info'}>
-                {location.status === 'denied' ? t('location.denied') : t('location.needed')}
-              </Notice>
-              <Button onClick={() => void locate()}>{t('location.allow')}</Button>
-            </>
-          )}
-        </div>
+          {notice && <Notice kind="success">{notice}</Notice>}
+        </header>
       )}
 
       {coords && status === 'loading' && items.length === 0 && <FeedSkeleton />}
 
       {coords && status === 'error' && (
-        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
+        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 pt-36 text-center">
+          <Illustration dim />
           <Notice kind="error">{t('error')}</Notice>
           <Button onClick={() => setReloadKey((k) => k + 1)}>{tc('actions.retry')}</Button>
         </div>
       )}
 
       {coords && status === 'ready' && items.length === 0 && (
-        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
-          <span className="glass mb-2 flex h-20 w-20 items-center justify-center rounded-3xl">
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-9 w-9 text-accent"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinejoin="round"
-            >
-              <path d="M3 7h12v10H3zM15 10l6-3v10l-6-3" />
-            </svg>
-          </span>
+        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 pt-36 text-center">
+          <Illustration />
           <h2 className="text-2xl font-bold">{t('empty.title')}</h2>
           <p className="max-w-xs text-fog">{t('empty.body')}</p>
           <Link
@@ -330,22 +303,41 @@ function FilterChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`min-h-11 shrink-0 rounded-full px-4 text-sm font-medium transition ${active ? 'glow bg-accent font-semibold text-white' : 'glass text-white/90 hover:text-white'}`}
+      className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition ${active ? 'glow bg-accent font-semibold text-white' : 'glass text-white/90 hover:text-white'}`}
     >
       {children}
     </button>
   );
 }
 
+function Illustration({ dim = false }: { dim?: boolean }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- static decorative SVG
+    <img
+      src="/illustrations/radar.svg"
+      alt=""
+      width={176}
+      height={176}
+      className={`mb-2 h-44 w-44 ${dim ? 'opacity-50 grayscale' : ''}`}
+    />
+  );
+}
+
 function FeedSkeleton() {
   return (
     <div
-      className="flex h-full flex-col justify-end gap-3 bg-panel p-4 pb-8 motion-safe:animate-pulse"
+      className="relative flex h-full flex-col items-center justify-center bg-gradient-to-b from-panel to-ink"
       aria-hidden="true"
     >
-      <div className="h-5 w-24 rounded-full bg-line" />
-      <div className="h-5 w-3/4 rounded bg-line" />
-      <div className="h-4 w-1/2 rounded bg-line" />
+      <Illustration />
+      <div className="absolute inset-x-4 bottom-8 flex flex-col gap-3 motion-safe:animate-pulse">
+        <div className="flex items-center gap-2.5">
+          <div className="h-9 w-9 rounded-full bg-white/10" />
+          <div className="h-4 w-28 rounded-full bg-white/10" />
+        </div>
+        <div className="h-4 w-3/4 rounded-full bg-white/10" />
+        <div className="h-4 w-1/2 rounded-full bg-white/10" />
+      </div>
     </div>
   );
 }
