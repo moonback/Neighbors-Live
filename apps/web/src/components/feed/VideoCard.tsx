@@ -49,6 +49,8 @@ export function VideoCard({
   const [mediaReloadKey, setMediaReloadKey] = useState(0);
   const [paused, setPaused] = useState(true);
   const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [usefulPending, setUsefulPending] = useState(false);
+  const [progress, setProgress] = useState(0);
   const mediaRetries = useRef(0);
   const mediaRequest = useRef<{
     generation: number;
@@ -147,6 +149,8 @@ export function VideoCard({
 
   async function toggleUseful() {
     if (!signedIn) return onAuthRequired();
+    if (usefulPending) return;
+    setUsefulPending(true);
     const res = await api<{ reacted: boolean; usefulCount: number }>(
       `/api/videos/${item.id}/useful`,
       {
@@ -154,7 +158,13 @@ export function VideoCard({
         body: {},
       },
     );
-    if (res.ok) setUseful({ reacted: res.data.reacted, count: res.data.usefulCount });
+    if (res.ok) {
+      setUseful({ reacted: res.data.reacted, count: res.data.usefulCount });
+    } else {
+      setToast(t('usefulError'));
+      setTimeout(() => setToast(null), 3000);
+    }
+    setUsefulPending(false);
   }
 
   async function share() {
@@ -208,12 +218,31 @@ export function VideoCard({
           mediaRetries.current = 0;
           setMediaState('ready');
         }}
+        onTimeUpdate={(event) => {
+          const video = event.currentTarget;
+          if (Number.isFinite(video.duration) && video.duration > 0) {
+            setProgress((video.currentTime / video.duration) * 100);
+          }
+        }}
         onError={() => {
           if (load && src) void refreshUrl();
         }}
         onClick={togglePlay}
         className={`h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`}
       />
+      <div
+        role="progressbar"
+        aria-label={t('playbackProgress')}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(progress)}
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-0.5 bg-white/30"
+      >
+        <div
+          className="h-full bg-white/90 transition-[width] duration-200"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
       <button
         type="button"
         onClick={onToggleFit}
@@ -315,6 +344,7 @@ export function VideoCard({
           label={t('usefulCount', { count: useful.count })}
           pressed={useful.reacted}
           onClick={toggleUseful}
+          disabled={usefulPending}
           icon="M7 11v9H4v-9zm2 9h8.5a2 2 0 002-1.6l1.4-6A2 2 0 0019 10h-5V6a2 2 0 00-2-2l-3 7z"
         />
         <ActionButton
@@ -359,18 +389,21 @@ function ActionButton({
   icon,
   onClick,
   pressed,
+  disabled = false,
 }: {
   label: string;
   icon: string;
   onClick: () => void;
   pressed?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={pressed}
-      className="flex w-16 flex-col items-center gap-1 text-center"
+      disabled={disabled}
+      className="flex w-16 flex-col items-center gap-1 text-center disabled:opacity-60"
     >
       <span
         className={`flex h-12 w-12 items-center justify-center rounded-full transition active:scale-90 ${pressed ? 'glow bg-accent text-white' : 'glass text-white'}`}

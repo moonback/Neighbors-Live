@@ -311,3 +311,22 @@ limites non validées sont explicitement documentées.
 - Promettre un floutage infaillible ou des plaques automatiquement masquées.
 - Stocker une position de navigation précise pour analyser les usages.
 - Lancer une refonte graphique générale avant d’avoir testé les prototypes et parcours prioritaires.
+
+# Priorités issues de l’audit — 2026-10-26
+
+## P0 — fiabilité avant terrain
+
+- Appliquer et vérifier la migration `20261026000400_restore_accuracy_limit_100m.sql` sur Supabase local et dans pgTAP ; le test unitaire du schéma confirme le seuil, mais la base locale n’a pas pu être démarrée dans cet environnement.
+- Rétablir une configuration SWC native sûre, puis exécuter le build et les E2E. Les commandes ont été lancées, mais l’environnement a refusé le cache SWC et l’accès Docker.
+- Faire une revue visuelle des vues principales sur petit écran et ordinateur, puis un essai caméra/localisation sur appareil physique.
+
+## P1 — parcours et confiance
+
+- Couvrir par E2E les réactions, commentaires, signalements, suppression de compte et rôles modération/commerce ; une page existante n’est pas une preuve de parcours complet.
+- Revoir les échecs et reprises réseau de publication, lecture, carte et commentaires avec Supabase/worker locaux actifs.
+- Valider le rendu et la qualité des traductions anglaises, ainsi que les contenus légaux avant toute diffusion publique.
+
+## P2 — expérience produit
+
+- Auditer les cibles tactiles, la navigation et la lisibilité du feed sur appareils réels ; le progrès de lecture est maintenant perceptible et annoncé aux technologies d’assistance.
+- Prioriser sous-titres, économie de données et partage public sécurisé après mesure des besoins ; éviter abonnements ou recommandation complexe avant données d’usage.

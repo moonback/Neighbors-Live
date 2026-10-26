@@ -9,6 +9,8 @@
   "showEntireVideo": "Voir la vidéo entière",
   "fillScreen": "Remplir l’écran",
   "playbackError": "Lecture impossible. Touchez pour réessayer.",
+  "playbackProgress": "Progression de la vidéo",
+  "usefulError": "Votre réaction n’a pas pu être enregistrée. Réessayez.",
   "unmute": "Activer le son",
   "mute": "Couper le son",
   "useful": "Utile",

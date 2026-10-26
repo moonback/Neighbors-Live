@@ -13,6 +13,8 @@ Mise à jour 2026-10-26 : palette bleu nuit/violet, réglages et espace commerce
 Mise à jour 2026-10-26 : annuaire de commerces approuvés alimenté par les tables publiques, recherche nom/présentation et lien vers profils/vidéos. Limites conservées : catégories et distances absentes du modèle. Modifications à vérifier.
 Validation mise à jour 2026-10-26 : typecheck, ESLint, Prettier, 47 tests unitaires, parité FR/EN et build Next réussis. Build exécuté après autorisation du cache natif sécurisé SWC. E2E toujours bloqués par l’absence du démon Docker. En navigateur de production locale, `/commerces/decouvrir` a rendu son état d’erreur car Supabase local n’est pas démarré ; état de résultats réels non vérifié. La capture d’écran navigateur a échoué deux fois (`FrameArrived timed out`), donc la revue visuelle reste à faire.
 
+Mise à jour 2026-10-26 : le lecteur du feed expose une progression accessible et empêche les réactions « utile » en double pendant la requête ; un échec côté serveur affiche un retour explicite. Limite de précision GPS rétablie à 100 m dans le schéma partagé, les textes et une nouvelle migration SQL (l’ancienne migration n’a pas été modifiée). Validation de ce lot : `pnpm typecheck`, `pnpm lint`, `pnpm format:check` et `pnpm test` réussis (47 tests unitaires). `pnpm build` et Playwright bloqués par le binding natif SWC/cache refusé ; `pnpm test:db` bloqué par l’écriture de télémétrie Supabase hors workspace et l’accès refusé au daemon Docker. Aucune revue visuelle effectuée pour ce lot.
+
 ## 0. Cadrage et fondations
 
 | #    | Élément                                                                             | État | Notes                                                                        |

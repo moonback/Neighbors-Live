@@ -5,7 +5,7 @@ export const RADII_M = [300, 1000, 3000, 5000, 10000] as const;
 export type Radius = (typeof RADII_M)[number];
 
 export const MAX_RECORDING_MS = 30_000;
-export const MAX_ACCURACY_M = 500;
+export const MAX_ACCURACY_M = 100;
 export const CAPTION_MAX = 140;
 export const COMMENT_MAX = 280;
 export const BIO_MAX = 160;

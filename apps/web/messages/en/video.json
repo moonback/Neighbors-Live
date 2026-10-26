@@ -9,6 +9,8 @@
   "showEntireVideo": "Show the entire video",
   "fillScreen": "Fill the screen",
   "playbackError": "Could not play the video. Tap to try again.",
+  "playbackProgress": "Video progress",
+  "usefulError": "Your reaction could not be saved. Please try again.",
   "unmute": "Turn sound on",
   "mute": "Mute",
   "useful": "Useful",
