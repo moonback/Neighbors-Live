@@ -247,9 +247,24 @@ export function VideoCard({
         type="button"
         onClick={onToggleFit}
         aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
-        className="absolute right-4 top-[10.5rem] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-xl text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="absolute right-4 top-[10.5rem] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-black/80 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
-        <span aria-hidden="true">{fit === 'cover' ? '⤢' : '⤡'}</span>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {fit === 'cover' ? (
+            <path d="M8 3H5a2 2 0 00-2 2v3m13-5h3a2 2 0 012 2v3M3 16v3a2 2 0 002 2h3m13-5v3a2 2 0 01-2 2h-3" />
+          ) : (
+            <path d="M8 3v5H3m13-5v5h5M3 16h5v5m13-5h-5v5" />
+          )}
+        </svg>
       </button>
       {load && mediaState === 'loading' && (
         <p
@@ -267,7 +282,7 @@ export function VideoCard({
           <button
             type="button"
             onClick={retryMedia}
-            className="min-h-11 rounded-xl bg-white px-4 py-2 font-semibold text-ink"
+            className="min-h-11 rounded-xl bg-white px-4 py-2 font-semibold text-ink transition-[transform,background-color] duration-200 ease-out hover:scale-[1.02] hover:bg-white/90 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             {t('retryMedia')}
           </button>
@@ -278,9 +293,11 @@ export function VideoCard({
         onClick={togglePlay}
         aria-label={paused ? t('play') : t('pause')}
         disabled={mediaState !== 'ready'}
-        className={`glass absolute left-1/2 top-1/2 flex h-18 w-18 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-3xl transition-opacity disabled:hidden ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
+        className={`glass absolute left-1/2 top-1/2 flex h-18 w-18 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-[opacity,transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:hidden ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
       >
-        <span aria-hidden="true">{paused ? '▶' : '❚❚'}</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor">
+          {paused ? <path d="M7 4.5v15l12-7.5z" /> : <path d="M6 5h4v14H6zm8 0h4v14h-4z" />}
+        </svg>
       </button>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink via-ink/50 to-transparent px-4 pb-6 pt-28">
@@ -329,7 +346,7 @@ export function VideoCard({
                   type="button"
                   aria-expanded={captionExpanded}
                   onClick={() => setCaptionExpanded((expanded) => !expanded)}
-                  className="min-h-11 rounded-lg px-1 text-left text-sm font-semibold text-white underline underline-offset-4"
+                  className="min-h-11 rounded-lg px-1 text-left text-sm font-semibold text-white underline underline-offset-4 transition-colors duration-200 ease-out hover:text-white/75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {captionExpanded ? t('captionLess') : t('captionMore')}
                 </button>
@@ -403,15 +420,15 @@ function ActionButton({
       onClick={onClick}
       aria-pressed={pressed}
       disabled={disabled}
-      className="flex w-16 flex-col items-center gap-1 text-center disabled:opacity-60"
+      className="group flex w-16 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60"
     >
       <span
-        className={`flex h-12 w-12 items-center justify-center rounded-full transition active:scale-90 ${pressed ? 'glow bg-accent text-white' : 'glass text-white'}`}
+        className={`flex h-12 w-12 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-hover:bg-white/20 group-hover:text-white group-active:scale-95 ${pressed ? 'glow bg-accent text-white group-hover:bg-accent/80' : 'glass text-white'}`}
       >
         <svg
           aria-hidden="true"
           viewBox="0 0 24 24"
-          className="h-6 w-6"
+          className="h-6 w-6 transition-transform duration-200 ease-out group-hover:scale-110"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"

@@ -82,6 +82,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   const { state: location, locate, dismiss } = useLocation();
   const [radius, setRadius] = useState(initialRadius);
   const [category, setCategory] = useState<Category | null>(initialCategory);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>('idle');
@@ -101,7 +102,26 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   const [reportFor, setReportFor] = useState<string | null>(null);
   const autoplay = !prefersReducedMotion;
   const listRef = useRef<HTMLDivElement>(null);
+  const categoryMenuRef = useRef<HTMLDivElement>(null);
   const loadingMore = useRef(false);
+
+  useEffect(() => {
+    if (!isCategoryMenuOpen) return;
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!categoryMenuRef.current?.contains(event.target as Node)) {
+        setIsCategoryMenuOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsCategoryMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isCategoryMenuOpen]);
 
   const lat = location.status === 'ok' ? location.lat : null;
   const lng = location.status === 'ok' ? location.lng : null;
@@ -244,20 +264,76 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
               </select>
             </div>
           </div>
-          <nav
-            aria-label={t('filters.label')}
-            className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]"
-          >
-            <FilterChip active={category === null} onClick={() => setCategory(null)}>
-              {t('filters.all')}
-            </FilterChip>
-            {CATEGORIES.map((c) => (
-              <FilterChip key={c} active={category === c} onClick={() => setCategory(c)}>
-                <CategoryIcon category={c} />
-                {tc(`categories.${c}`)}
-              </FilterChip>
-            ))}
-          </nav>
+          <div ref={categoryMenuRef} className="relative w-fit max-w-full">
+            <button
+              type="button"
+              aria-label={`${t('filters.label')}: ${category ? tc(`categories.${category}`) : t('filters.all')}`}
+              aria-expanded={isCategoryMenuOpen}
+              aria-controls="feed-category-options"
+              onClick={() => setIsCategoryMenuOpen((open) => !open)}
+              className="glass inline-flex min-h-11 max-w-full items-center gap-2 rounded-full px-4 text-sm font-semibold text-white"
+            >
+              {category ? (
+                <CategoryIcon category={category} />
+              ) : (
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  className="h-4 w-4 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M4 6h16l-6.5 7.5V19l-3 1v-6.5L4 6z" />
+                </svg>
+              )}
+              <span className="truncate">
+                {category ? tc(`categories.${category}`) : t('filters.all')}
+              </span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                className={`h-4 w-4 shrink-0 transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="m5 7 5 5 5-5" />
+              </svg>
+            </button>
+            {isCategoryMenuOpen && (
+              <nav
+                id="feed-category-options"
+                aria-label={t('filters.label')}
+                className="glass absolute left-0 top-full z-30 mt-2 grid max-h-[min(60svh,24rem)] w-[min(20rem,calc(100vw-2rem))] grid-cols-2 gap-2 overflow-y-auto rounded-2xl p-3 shadow-xl"
+              >
+                <FilterChip
+                  active={category === null}
+                  onClick={() => {
+                    setCategory(null);
+                    setIsCategoryMenuOpen(false);
+                  }}
+                  className="w-full justify-start rounded-xl px-3"
+                >
+                  {t('filters.all')}
+                </FilterChip>
+                {CATEGORIES.map((c) => (
+                  <FilterChip
+                    key={c}
+                    active={category === c}
+                    onClick={() => {
+                      setCategory(c);
+                      setIsCategoryMenuOpen(false);
+                    }}
+                    className="w-full justify-start rounded-xl px-3"
+                  >
+                    <CategoryIcon category={c} />
+                    {tc(`categories.${c}`)}
+                  </FilterChip>
+                ))}
+              </nav>
+            )}
+          </div>
           {category === 'alert' && (
             <p className="rounded-xl border border-alert/50 bg-black/80 px-3 py-2 text-sm text-white">
               {t('alerts.notice')}
@@ -348,10 +424,12 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
 function FilterChip({
   active,
   onClick,
+  className = '',
   children,
 }: {
   active: boolean;
   onClick: () => void;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -359,7 +437,7 @@ function FilterChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition ${active ? 'glow bg-accent font-semibold text-white' : 'glass text-white/90 hover:text-white'}`}
+      className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition ${active ? 'glow bg-accent font-semibold text-white' : 'glass text-white/90 hover:text-white'} ${className}`}
     >
       {children}
     </button>
