@@ -4,7 +4,9 @@ services:
     build:
       context: .
       dockerfile: apps/worker/Dockerfile
-    env_file: .env
+    # The root .env may belong to a linked hosted project; inject the local web stack's
+    # generated credentials into the local worker instead.
+    env_file: apps/web/.env.local
     environment:
       # The container reaches the local Supabase stack through the host.
       SUPABASE_URL: ${WORKER_SUPABASE_URL:-http://host.docker.internal:56421}

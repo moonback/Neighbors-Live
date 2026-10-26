@@ -316,9 +316,9 @@ limites non validées sont explicitement documentées.
 
 ## P0 — fiabilité avant terrain
 
-- Appliquer et vérifier la migration `20261026000600_restore_accuracy_limit_100m.sql` sur Supabase local et dans pgTAP ; le test unitaire du schéma confirme le seuil, mais la base locale n’a pas pu être démarrée dans cet environnement.
-- Rétablir une configuration SWC native sûre, puis exécuter le build et les E2E. Les commandes ont été lancées, mais l’environnement a refusé le cache SWC et l’accès Docker.
-- Faire une revue visuelle des vues principales sur petit écran et ordinateur, puis un essai caméra/localisation sur appareil physique.
+- ✅ Appliquer et vérifier la migration `20261026000600_restore_accuracy_limit_100m.sql` sur Supabase local : 213 assertions pgTAP passent après réinitialisation locale.
+- ✅ Corriger la configuration du worker local, puis exécuter le build et les E2E : build réussi, 18/18 scénarios Playwright réussis, dont navigation Découvrir et publication traitée par le worker.
+- 🟨 Revue visuelle ciblée de Découvrir faite sur mobile et ordinateur ; poursuivre l’audit des vues principales, puis faire un essai caméra/localisation sur appareil physique.
 
 ## P1 — parcours et confiance
 

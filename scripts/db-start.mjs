@@ -71,7 +71,17 @@ if (!existsSync(webEnv) || !existsSync(rootEnv)) {
 
 if (process.env.SKIP_WORKER !== '1') {
   console.log('▶ Building and starting the media worker (first build takes a few minutes)…');
-  run('docker', ['compose', 'up', '-d', '--build', 'worker']);
+  const workerSupabaseUrl = new URL(status.API_URL);
+  workerSupabaseUrl.hostname = 'host.docker.internal';
+  const workerDatabaseUrl = new URL(status.DB_URL);
+  workerDatabaseUrl.hostname = 'host.docker.internal';
+  run('docker', ['compose', 'up', '-d', '--build', 'worker'], {
+    env: {
+      ...process.env,
+      WORKER_SUPABASE_URL: workerSupabaseUrl.toString(),
+      WORKER_DATABASE_URL: workerDatabaseUrl.toString(),
+    },
+  });
 }
 
 console.log('▶ Uploading demo media…');

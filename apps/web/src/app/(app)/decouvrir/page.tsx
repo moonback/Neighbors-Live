@@ -27,17 +27,17 @@ export default async function DiscoverPage() {
           <h2 id="discover-categories" className="text-xl font-semibold">
             {t('categoriesTitle')}
           </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
             {CATEGORIES.map((category) => (
               <Link
                 key={category}
                 href={`/?category=${category}`}
-                className="group flex min-h-32 flex-col justify-between rounded-2xl border border-line bg-panel p-4 transition hover:border-accent/60 hover:bg-panel/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="group flex min-h-20 flex-col justify-between rounded-2xl border border-line bg-panel p-3 transition hover:border-accent/60 hover:bg-panel/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent">
-                  <CategoryIcon category={category} className="h-5 w-5" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-accent">
+                  <CategoryIcon category={category} className="h-4 w-4" />
                 </span>
-                <span className="mt-5 font-semibold">{tc(`categories.${category}`)}</span>
+                <span className="mt-2 font-semibold">{tc(`categories.${category}`)}</span>
               </Link>
             ))}
           </div>

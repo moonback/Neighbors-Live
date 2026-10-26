@@ -34,6 +34,27 @@ test('sign-up and sign-in with e-mail + password, unique pseudo', async ({ page,
   await other.close();
 });
 
+test('discover: topic links and nearby shortcuts lead to existing features', async ({ page }) => {
+  await page.goto('/decouvrir');
+  await expect(page.getByRole('heading', { name: 'Découvrir près de chez vous' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Découvrir' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await expect(page.getByRole('link', { name: 'Alerte' })).toHaveAttribute(
+    'href',
+    '/?category=alert',
+  );
+  await expect(page.getByRole('link', { name: 'Commerces du quartier' })).toHaveAttribute(
+    'href',
+    '/commerces/decouvrir',
+  );
+  await expect(page.getByRole('link', { name: 'Carte des publications' })).toHaveAttribute(
+    'href',
+    '/carte',
+  );
+});
+
 test('feed: plays the visible video muted, preloads only the next one', async ({ page }) => {
   await page.route('**/api/feed?**', async (route) => {
     const response = await route.fetch();
@@ -65,6 +86,8 @@ test('feed: plays the visible video muted, preloads only the next one', async ({
   );
   await first.getByRole('button', { name: 'Réduire' }).click();
   // Filters and radius
+  // The remaining active demo alert is several kilometres from the test location.
+  await page.getByRole('combobox', { name: 'Rayon' }).selectOption('10000');
   await page.getByRole('button', { name: 'Alerte', exact: true }).click();
   await expect(page.getByTestId('feed-item').first()).toContainText('Alerte');
   await expect(
