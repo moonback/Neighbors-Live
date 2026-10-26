@@ -34,7 +34,11 @@ const supportedMime = () =>
 
 async function openCamera(target: Target): Promise<MediaStream | CamError> {
   if (!navigator.mediaDevices?.getUserMedia || !supportedMime()) return 'unsupported';
-  const size = { width: { ideal: 720 }, height: { ideal: 1280 } };
+  const size = {
+    width: { ideal: 1080 },
+    height: { ideal: 1920 },
+    aspectRatio: { ideal: 9 / 16 },
+  };
   try {
     return await navigator.mediaDevices.getUserMedia({
       video: target.deviceId

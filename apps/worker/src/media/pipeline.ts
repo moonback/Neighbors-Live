@@ -20,7 +20,7 @@ export interface PipelineResult {
 }
 
 /**
- * raw (WebM/MP4, any codec) → decoded RGB frames at 30 fps (≤720p, rotation applied) →
+ * raw (WebM/MP4, any codec) → decoded RGB frames at 30 fps (1080×1920 portrait canvas) →
  * detection + tracking + pixelation in memory → H.264/AAC MP4 (+faststart) and a JPEG poster
  * taken from the blurred output. The unblurred pixels never reach the output file.
  */
@@ -47,7 +47,7 @@ export async function blurAndTranscode(
       '-i',
       input,
       '-vf',
-      `fps=${FPS},scale=${width}:${height}:flags=bicubic,format=rgb24`,
+      `fps=${FPS},scale=${width}:${height}:force_original_aspect_ratio=decrease:flags=bicubic,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2,setsar=1,format=rgb24`,
       '-f',
       'rawvideo',
       '-pix_fmt',

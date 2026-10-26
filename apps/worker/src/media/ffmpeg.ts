@@ -62,18 +62,13 @@ export async function probe(path: string): Promise<Probe> {
   };
 }
 
-/** Output size: at most 720p on the short side, even dimensions (H.264 requirement). */
+/** Published video canvas: portrait 9:16 at 1080 × 1920 (even H.264 dimensions). */
 export function targetSize(
-  width: number,
-  height: number,
-  rotation: number,
+  _width: number,
+  _height: number,
+  _rotation: number,
 ): { width: number; height: number } {
-  const rotated = Math.abs(rotation) % 180 === 90;
-  const w = rotated ? height : width;
-  const h = rotated ? width : height;
-  const scale = Math.min(1, 720 / Math.min(w, h), 1280 / Math.max(w, h));
-  const even = (n: number) => Math.max(2, Math.round((n * scale) / 2) * 2);
-  return { width: even(w), height: even(h) };
+  return { width: 1080, height: 1920 };
 }
 
 export const FPS = 30;

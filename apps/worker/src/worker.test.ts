@@ -152,10 +152,10 @@ describe('pixelate', () => {
 });
 
 describe('media helpers', () => {
-  it('caps output at 720p with even dimensions and honours rotation', () => {
-    expect(targetSize(1920, 1080, 0)).toEqual({ width: 1280, height: 720 });
-    expect(targetSize(1920, 1080, 90)).toEqual({ width: 720, height: 1280 });
-    expect(targetSize(641, 361, 0)).toEqual({ width: 642, height: 362 });
+  it('uses a fixed 1080×1920 portrait output canvas', () => {
+    expect(targetSize(1920, 1080, 0)).toEqual({ width: 1080, height: 1920 });
+    expect(targetSize(1920, 1080, 90)).toEqual({ width: 1080, height: 1920 });
+    expect(targetSize(641, 361, 0)).toEqual({ width: 1080, height: 1920 });
   });
 
   it('routes paths to buckets and protects demo media', () => {
