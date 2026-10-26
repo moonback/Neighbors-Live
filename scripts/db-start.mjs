@@ -54,8 +54,10 @@ if (!existsSync(webEnv) || !existsSync(rootEnv)) {
     `IP_HASH_SALT=${randomBytes(24).toString('hex')}`,
     'WORKER_CONCURRENCY=1',
     'FACE_BLUR_ENABLED=true',
+    'FACE_MODEL_PATH=models/face_detection_yunet_2023mar.onnx',
     'PLATE_BLUR_ENABLED=false',
-    'PLATE_MODEL_PATH=',
+    'PLATE_MODEL_DIR=./models/plates',
+    'PLATE_MODEL_PATH=../../models/plates/model.onnx',
   ];
   const content = lines.join('\n') + '\n';
   if (!existsSync(webEnv)) writeFileSync(webEnv, content);

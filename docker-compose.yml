@@ -9,6 +9,10 @@ services:
       # The container reaches the local Supabase stack through the host.
       SUPABASE_URL: ${WORKER_SUPABASE_URL:-http://host.docker.internal:56421}
       DATABASE_URL: ${WORKER_DATABASE_URL:-postgresql://postgres:postgres@host.docker.internal:56422/postgres}
+      FACE_MODEL_PATH: ${FACE_MODEL_PATH:-models/face_detection_yunet_2023mar.onnx}
+      PLATE_MODEL_PATH: ${PLATE_MODEL_PATH:-../../models/plates/model.onnx}
+    volumes:
+      - ${PLATE_MODEL_DIR:-./models/plates}:/app/models/plates:ro
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     restart: unless-stopped

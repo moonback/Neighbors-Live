@@ -134,9 +134,9 @@ terrain avant un lancement public.
 - **Docker** avec le moteur démarré, requis pour Supabase local et le worker média.
 - **Git** pour récupérer le dépôt.
 
-Le worker Docker embarque ffmpeg et télécharge le modèle YuNet pendant sa construction. Une
-installation locale de ffmpeg n’est nécessaire que pour lancer le worker directement avec
-`pnpm worker:dev`.
+Le worker Docker embarque ffmpeg et télécharge le modèle YuNet pendant sa construction. Pour lancer
+le worker directement avec `pnpm worker:dev`, installez aussi le modèle YuNet avec
+`pnpm --filter @nl/worker models:download` ; ffmpeg doit alors être installé localement.
 
 ## Démarrage local
 
@@ -245,14 +245,35 @@ manuelle ou un déploiement :
 | `WORKER_CONCURRENCY`                      | Nombre de traitements simultanés du worker (1 à 8)                  |
 | `WORKER_ID`                               | Identifiant du worker ; par défaut le nom d’hôte                    |
 | `DETECT_EVERY`                            | Intervalle d’échantillonnage de la détection des visages            |
-| `FACE_BLUR_ENABLED` / `FACE_MODEL_PATH`   | Activation et chemin du modèle de détection des visages             |
-| `PLATE_BLUR_ENABLED` / `PLATE_MODEL_PATH` | Détection des plaques, désactivée par défaut                        |
+| `FACE_BLUR_ENABLED` / `FACE_MODEL_PATH`   | Active YuNet (actif par défaut) et indique le chemin du modèle ONNX |
+| `PLATE_BLUR_ENABLED` / `PLATE_MODEL_PATH` | Active le modèle ONNX de plaques, désactivé par défaut              |
+| `PLATE_MODEL_DIR`                         | Dossier local monté en lecture seule dans le worker Docker          |
 | `POLL_INTERVAL_MS`                        | Intervalle de polling de secours des jobs                           |
 | `OUTBOX_INTERVAL_MS`                      | Intervalle de traitement de la file de notifications                |
 
 Les variables `NEXT_PUBLIC_*` sont intégrées au bundle navigateur et ne doivent contenir que des
 valeurs publiques. Les variables secrètes sont validées au démarrage côté serveur et dans le worker.
 Ne publiez jamais `.env`, `.env.local` ou des clés Supabase/VAPID privées.
+
+### Modèles du worker média
+
+L’image Docker télécharge le modèle facial YuNet `face_detection_yunet_2023mar.onnx` et vérifie son
+SHA-256 pendant la construction. `FACE_MODEL_PATH` est relatif au dossier de travail du worker dans
+le conteneur (`/app/apps/worker`) ; gardez sa valeur par défaut sauf si vous fournissez une autre
+copie compatible. Pour une exécution locale, la commande `pnpm --filter @nl/worker models:download`
+télécharge ce même modèle vers le chemin `FACE_MODEL_PATH` (par défaut `apps/worker/models/…`) et
+vérifie le même SHA-256 avant de l’écrire.
+
+Aucun modèle de plaques n’est inclus. Pour l’activer, placez un modèle ONNX compatible dans
+`models/plates/` à la racine du dépôt, puis configurez `PLATE_BLUR_ENABLED=true` et
+`PLATE_MODEL_PATH=../../models/plates/votre-modele.onnx` dans `.env`. Ce chemin relatif fonctionne
+avec le worker direct et Docker ; `PLATE_MODEL_DIR` permet de changer le dossier hôte monté en
+lecture seule dans le conteneur. Le détecteur attend un modèle YOLO à une classe, entrée
+640 × 640, sortie de détections de forme `[1, 5, N]`, avec coordonnées centre/largeur/hauteur et
+score. Le modèle doit traiter l’entrée RGB normalisée de 0 à 1. Le worker refuse de démarrer si un
+détecteur activé n’a pas de chemin configuré ou si le fichier est absent. Vérifiez la licence et la
+couverture du modèle choisi avant de l’utiliser ; l’activation seule ne garantit pas la détection
+fiable de toutes les plaques.
 
 ## Tests
 

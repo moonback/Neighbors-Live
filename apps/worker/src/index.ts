@@ -17,11 +17,16 @@ const log = (msg: string, extra: Record<string, unknown> = {}) =>
 async function loadDetectors(): Promise<Detector[]> {
   const detectors: Detector[] = [];
   if (env.FACE_BLUR_ENABLED) {
-    if (!existsSync(env.FACE_MODEL_PATH))
-      throw new Error(`face model missing: ${env.FACE_MODEL_PATH}`);
+    if (!env.FACE_MODEL_PATH || !existsSync(env.FACE_MODEL_PATH))
+      throw new Error(
+        `face model missing: ${env.FACE_MODEL_PATH ?? '(FACE_MODEL_PATH is not set)'}`,
+      );
     detectors.push(await YunetFaceDetector.load(env.FACE_MODEL_PATH));
   } else {
     detectors.push(new DisabledDetector('face'));
+  }
+  if (env.PLATE_BLUR_ENABLED && env.PLATE_MODEL_PATH && !existsSync(env.PLATE_MODEL_PATH)) {
+    throw new Error(`plate model missing: ${env.PLATE_MODEL_PATH}`);
   }
   detectors.push(await createPlateDetector(env.PLATE_BLUR_ENABLED, env.PLATE_MODEL_PATH));
   return detectors;
