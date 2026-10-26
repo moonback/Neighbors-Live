@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Logo } from '@/components/Logo';
 import { Button, Notice } from '@/components/ui';
@@ -31,6 +31,49 @@ interface Props {
 }
 
 type Status = 'idle' | 'loading' | 'ready' | 'error';
+type VideoFit = 'cover' | 'contain';
+
+const VIDEO_FIT_KEY = 'nl-video-fit';
+const VIDEO_FIT_EVENT = 'nl-video-fit-change';
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+
+function getVideoFitSnapshot(): VideoFit {
+  if (typeof window === 'undefined') return 'cover';
+  try {
+    const savedFit = window.localStorage.getItem(VIDEO_FIT_KEY);
+    return savedFit === 'contain' ? 'contain' : 'cover';
+  } catch {
+    return 'cover';
+  }
+}
+
+function subscribeToVideoFit(onChange: () => void) {
+  window.addEventListener(VIDEO_FIT_EVENT, onChange);
+  window.addEventListener('storage', onChange);
+  return () => {
+    window.removeEventListener(VIDEO_FIT_EVENT, onChange);
+    window.removeEventListener('storage', onChange);
+  };
+}
+
+function saveVideoFit(fit: VideoFit) {
+  try {
+    window.localStorage.setItem(VIDEO_FIT_KEY, fit);
+  } catch {
+    // Keep the in-memory preference usable when browser storage is unavailable.
+  }
+  window.dispatchEvent(new Event(VIDEO_FIT_EVENT));
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
+function subscribeToReducedMotion(onChange: () => void) {
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+  mediaQuery.addEventListener('change', onChange);
+  return () => mediaQuery.removeEventListener('change', onChange);
+}
 
 export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice }: Props) {
   const t = useTranslations('feed');
@@ -44,22 +87,21 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   const [status, setStatus] = useState<Status>('idle');
   const [active, setActive] = useState(0);
   const [muted, setMuted] = useState(true);
+  const videoFit = useSyncExternalStore(
+    subscribeToVideoFit,
+    getVideoFitSnapshot,
+    (): VideoFit => 'cover',
+  );
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    () => false,
+  );
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
   const [reportFor, setReportFor] = useState<string | null>(null);
-  const [autoplay, setAutoplay] = useState(true);
+  const autoplay = !prefersReducedMotion;
   const listRef = useRef<HTMLDivElement>(null);
   const loadingMore = useRef(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const apply = () => setAutoplay(!mq.matches);
-    const timer = setTimeout(apply, 0);
-    mq.addEventListener('change', apply);
-    return () => {
-      clearTimeout(timer);
-      mq.removeEventListener('change', apply);
-    };
-  }, []);
 
   const lat = location.status === 'ok' ? location.lat : null;
   const lng = location.status === 'ok' ? location.lng : null;
@@ -150,7 +192,14 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   const wider = RADII_M.find((r) => r > radius);
 
   return (
-    <div className="relative h-[calc(100dvh-4.5rem)] w-full">
+    <div
+      className="relative w-full"
+      style={{
+        height:
+          'calc(100svh - 4.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))',
+        marginTop: 'env(safe-area-inset-top, 0px)',
+      }}
+    >
       {!coords && (
         <WelcomeHero
           status={location.status}
@@ -266,6 +315,8 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
                 active={index === active}
                 load={index === active || index === active + 1}
                 muted={muted}
+                fit={videoFit}
+                onToggleFit={() => saveVideoFit(videoFit === 'cover' ? 'contain' : 'cover')}
                 autoplay={autoplay}
                 onToggleMute={() => setMuted((m) => !m)}
                 onComments={(i) => setCommentsFor(i.id)}

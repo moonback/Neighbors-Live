@@ -15,6 +15,8 @@ interface Props {
   /** Only the visible video and the next one get a source (preload next only). */
   load: boolean;
   muted: boolean;
+  fit: 'cover' | 'contain';
+  onToggleFit: () => void;
   autoplay: boolean;
   onToggleMute: () => void;
   onComments: (item: FeedItem) => void;
@@ -28,6 +30,8 @@ export function VideoCard({
   active,
   load,
   muted,
+  fit,
+  onToggleFit,
   autoplay,
   onToggleMute,
   onComments,
@@ -53,7 +57,6 @@ export function VideoCard({
   const [useful, setUseful] = useState({ reacted: item.reacted, count: item.usefulCount });
   const [toast, setToast] = useState<string | null>(null);
   const [captionExpanded, setCaptionExpanded] = useState(false);
-
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
@@ -209,8 +212,16 @@ export function VideoCard({
           if (load && src) void refreshUrl();
         }}
         onClick={togglePlay}
-        className="h-full w-full object-contain"
+        className={`h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`}
       />
+      <button
+        type="button"
+        onClick={onToggleFit}
+        aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
+        className="absolute right-4 top-[10.5rem] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-xl text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      >
+        <span aria-hidden="true">{fit === 'cover' ? '⤢' : '⤡'}</span>
+      </button>
       {load && mediaState === 'loading' && (
         <p
           role="status"

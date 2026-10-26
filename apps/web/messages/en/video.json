@@ -6,6 +6,8 @@
   "expires": "expires {when}",
   "play": "Play video",
   "pause": "Pause video",
+  "showEntireVideo": "Show the entire video",
+  "fillScreen": "Fill the screen",
   "playbackError": "Could not play the video. Tap to try again.",
   "unmute": "Turn sound on",
   "mute": "Mute",

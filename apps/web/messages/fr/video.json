@@ -6,6 +6,8 @@
   "expires": "expire {when}",
   "play": "Lire la vidéo",
   "pause": "Mettre en pause",
+  "showEntireVideo": "Voir la vidéo entière",
+  "fillScreen": "Remplir l’écran",
   "playbackError": "Lecture impossible. Touchez pour réessayer.",
   "unmute": "Activer le son",
   "mute": "Couper le son",

@@ -15,7 +15,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       >
         {t('skip')}
       </a>
-      <main id="main" className="min-h-dvh pb-24">
+      <main
+        id="main"
+        className="min-h-dvh"
+        style={{ paddingBottom: 'calc(4.5rem + env(safe-area-inset-bottom, 0px))' }}
+      >
         <AdminWorkspace
           enabled={Boolean(viewer?.isModerator)}
           isAdmin={viewer?.role === 'admin'}
