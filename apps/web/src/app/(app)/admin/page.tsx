@@ -8,11 +8,13 @@ import {
   MerchantReview,
   NotedAction,
   type MediaSettings,
+  type MediaSettingsAuditEntry,
 } from '@/components/admin/AdminClient';
 import { ProcessingRefresh } from '@/components/admin/ProcessingRefresh';
 import { inputClass, Notice } from '@/components/ui';
 import { getViewer } from '@/lib/session';
 import { adminClient } from '@/lib/supabase/admin';
+import { mediaModelAvailability } from '@/lib/media-model-availability';
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('admin'))('title') };
@@ -182,50 +184,68 @@ export default async function AdminPage({
   }
   auditQuery = auditQuery.range(auditOffset, auditOffset + pageSize - 1);
 
-  const [stats, processingVideos, merchants, users, actions, mediaConfig, t, tk, tc, format] =
-    await Promise.all([
-      admin.rpc('admin_stats', { p_admin: viewer.id }),
-      admin
-        .from('videos')
-        .select('id, author_id, category, caption, created_at', { count: 'exact' })
-        .eq('status', 'processing')
-        .order('created_at', { ascending: true })
-        .limit(20),
-      admin
-        .from('merchant_profiles')
-        .select('user_id, business_name, description, created_at')
-        .eq('status', 'pending')
-        .order('created_at', { ascending: true })
-        .limit(20),
-      search
-        ? /^[0-9a-f-]{36}$/i.test(search)
-          ? admin
-              .from('profiles')
-              .select(userColumns)
-              .eq('id', search)
-              .range(userOffset, userOffset + pageSize - 1)
-          : admin
-              .from('profiles')
-              .select(userColumns, { count: 'exact' })
-              .ilike('username', `%${search}%`)
-              .order('username')
-              .range(userOffset, userOffset + pageSize - 1)
+  const [
+    stats,
+    processingVideos,
+    merchants,
+    users,
+    actions,
+    mediaConfig,
+    t,
+    tk,
+    tc,
+    format,
+    workerStatus,
+    mediaAudit,
+  ] = await Promise.all([
+    admin.rpc('admin_stats', { p_admin: viewer.id }),
+    admin
+      .from('videos')
+      .select('id, author_id, category, caption, created_at', { count: 'exact' })
+      .eq('status', 'processing')
+      .order('created_at', { ascending: true })
+      .limit(20),
+    admin
+      .from('merchant_profiles')
+      .select('user_id, business_name, description, created_at')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true })
+      .limit(20),
+    search
+      ? /^[0-9a-f-]{36}$/i.test(search)
+        ? admin
+            .from('profiles')
+            .select(userColumns)
+            .eq('id', search)
+            .range(userOffset, userOffset + pageSize - 1)
         : admin
             .from('profiles')
             .select(userColumns, { count: 'exact' })
-            .not('banned_at', 'is', null)
+            .ilike('username', `%${search}%`)
             .order('username')
-            .range(userOffset, userOffset + pageSize - 1),
-      auditQuery,
-      admin
-        .from('app_config')
-        .select('key, value')
-        .in('key', [...MEDIA_CONFIG_KEYS]),
-      getTranslations('admin'),
-      getTranslations('moderation.decisions.kinds'),
-      getTranslations('common.categories'),
-      getFormatter(),
-    ]);
+            .range(userOffset, userOffset + pageSize - 1)
+      : admin
+          .from('profiles')
+          .select(userColumns, { count: 'exact' })
+          .not('banned_at', 'is', null)
+          .order('username')
+          .range(userOffset, userOffset + pageSize - 1),
+    auditQuery,
+    admin
+      .from('app_config')
+      .select('key, value')
+      .in('key', [...MEDIA_CONFIG_KEYS]),
+    getTranslations('admin'),
+    getTranslations('moderation.decisions.kinds'),
+    getTranslations('common.categories'),
+    getFormatter(),
+    admin.from('media_worker_status').select('detectors, last_seen'),
+    admin
+      .from('media_settings_audit')
+      .select('id, actor_id, previous_settings, new_settings, created_at')
+      .order('created_at', { ascending: false })
+      .limit(10),
+  ]);
 
   const parsedStats = statsSchema.safeParse(stats.data);
   const config = new Map((mediaConfig.data ?? []).map((item) => [item.key, item.value]));
@@ -242,6 +262,7 @@ export default async function AdminPage({
     merchants.error ||
     users.error ||
     actions.error ||
+    mediaAudit.error ||
     mediaConfig.error ||
     !parsedStats.success ||
     !parsedMediaSettings.success
@@ -275,7 +296,9 @@ export default async function AdminPage({
     videoIds.length > 0
       ? admin
           .from('media_jobs')
-          .select('video_id, status, attempts, max_attempts, progress, phase, updated_at')
+          .select(
+            'video_id, status, attempts, max_attempts, progress, phase, updated_at, last_error, settings_snapshot',
+          )
           .eq('kind', 'process')
           .in('video_id', videoIds)
           .order('updated_at', { ascending: false })
@@ -304,6 +327,11 @@ export default async function AdminPage({
   }
   const { zones } = parsedStats.data;
   const initialMediaSettings: MediaSettings = parsedMediaSettings.data;
+  const availability = mediaModelAvailability(
+    process.env,
+    workerStatus.error ? [] : workerStatus.data,
+  );
+  const mediaSettingsAudit = (mediaAudit.data ?? []) as MediaSettingsAuditEntry[];
   const auditParams = new URLSearchParams({
     ...(search ? { q: search } : {}),
     ...(auditKind ? { action: auditKind } : {}),
@@ -365,12 +393,8 @@ export default async function AdminPage({
 
       <MediaProcessingSettings
         initial={initialMediaSettings}
-        availability={{
-          faces: process.env.FACE_BLUR_ENABLED !== 'false',
-          plates:
-            process.env.PLATE_BLUR_ENABLED === 'true' &&
-            Boolean(process.env.PLATE_MODEL_PATH?.trim()),
-        }}
+        availability={availability}
+        audit={mediaSettingsAudit}
       />
 
       <section
@@ -451,6 +475,9 @@ export default async function AdminPage({
             <ul className="flex flex-col gap-2">
               {processingVideos.data.map((video) => {
                 const job = latestJobByVideo.get(video.id);
+                const snapshot = job
+                  ? z.record(z.string(), z.unknown()).safeParse(job.settings_snapshot)
+                  : null;
                 const author = profileNames.get(video.author_id);
                 return (
                   <li
@@ -503,6 +530,20 @@ export default async function AdminPage({
                             max={100}
                             className="h-2 w-full accent-[var(--color-accent)]"
                           />
+                          {snapshot?.success && (
+                            <p className="mt-1 text-left text-xs text-fog">
+                              {t('jobSettings', {
+                                detectEvery: String(snapshot.data.detect_every ?? '—'),
+                                faceThreshold: String(snapshot.data.face_min_score ?? '—'),
+                                plateThreshold: String(snapshot.data.plate_min_score ?? '—'),
+                              })}
+                            </p>
+                          )}
+                          {job.last_error && (
+                            <p className="mt-1 max-w-80 text-left text-xs text-rose-300">
+                              {t('jobError', { error: job.last_error.slice(0, 300) })}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>

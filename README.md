@@ -258,8 +258,11 @@ Ne publiez jamais `.env`, `.env.local` ou des clés Supabase/VAPID privées.
 Les administrateurs peuvent activer ou désactiver le floutage des visages et des plaques dans
 **Administration → Traitement vidéo**, puis ajuster la fréquence d’analyse et les seuils de
 confiance. Ces réglages s’appliquent aux nouveaux jobs média. Les variables `*_BLUR_ENABLED` du
-worker servent de garde-fous de disponibilité : l’option plaques dans l’admin n’est activable que
-si `PLATE_BLUR_ENABLED=true` et qu’un modèle est installé/configuré.
+worker servent de garde-fous de disponibilité : l’admin indique si un worker actif a chargé le
+modèle requis. Chaque job conserve les réglages présents lors de sa mise en file d’attente ; les
+tentatives suivantes gardent le même instantané. Les changements sont inscrits dans l’historique
+admin. Une fréquence d’analyse plus basse augmente le temps de traitement ; un seuil plus élevé
+peut laisser davantage de visages ou de plaques non floutés.
 
 ### Modèles du worker média
 

@@ -155,6 +155,7 @@ export type Database = {
           phase: string;
           progress: number;
           run_after: string;
+          settings_snapshot: Json | null;
           status: Database['public']['Enums']['job_status'];
           updated_at: string;
           video_id: string | null;
@@ -173,6 +174,7 @@ export type Database = {
           phase?: string;
           progress?: number;
           run_after?: string;
+          settings_snapshot?: Json | null;
           status?: Database['public']['Enums']['job_status'];
           updated_at?: string;
           video_id?: string | null;
@@ -190,10 +192,41 @@ export type Database = {
           phase?: string;
           progress?: number;
           run_after?: string;
+          settings_snapshot?: Json | null;
           status?: Database['public']['Enums']['job_status'];
           updated_at?: string;
           video_id?: string | null;
         };
+        Relationships: [];
+      };
+      media_settings_audit: {
+        Row: {
+          actor_id: string | null;
+          created_at: string;
+          id: number;
+          new_settings: Json;
+          previous_settings: Json;
+        };
+        Insert: {
+          actor_id?: string | null;
+          created_at?: string;
+          id?: never;
+          new_settings: Json;
+          previous_settings: Json;
+        };
+        Update: {
+          actor_id?: string | null;
+          created_at?: string;
+          id?: never;
+          new_settings?: Json;
+          previous_settings?: Json;
+        };
+        Relationships: [];
+      };
+      media_worker_status: {
+        Row: { detectors: Json; last_seen: string; worker_id: string };
+        Insert: { detectors: Json; last_seen?: string; worker_id: string };
+        Update: { detectors?: Json; last_seen?: string; worker_id?: string };
         Relationships: [];
       };
       merchant_profiles: {
