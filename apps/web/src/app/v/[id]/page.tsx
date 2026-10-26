@@ -48,7 +48,7 @@ export default async function VideoPage({ params }: Params) {
             autoPlay
             loop
             aria-label={item.caption}
-            className="aspect-[9/16] w-full rounded-2xl bg-black object-cover"
+            className="aspect-[9/16] max-h-[70dvh] w-full rounded-2xl bg-black object-contain"
           />
           <p className="text-sm font-semibold">{tc(`categories.${item.category}`)}</p>
           {item.caption && <p className="text-lg">{item.caption}</p>}
