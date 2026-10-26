@@ -86,6 +86,11 @@ body {
   border-color: rgb(255 255 255 / 0.2);
 }
 
+:root[data-theme='light'] .bottom-nav.glass {
+  background-color: rgb(7 10 28 / 0.86);
+  border-color: rgb(255 255 255 / 0.16);
+}
+
 :root[data-theme='light'] .video-card {
   --color-ink: #070a1c;
 }

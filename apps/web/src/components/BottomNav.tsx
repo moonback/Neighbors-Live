@@ -33,7 +33,7 @@ export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
   return (
     <nav
       aria-label={t('label')}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-ink/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+      className="bottom-nav glass fixed inset-x-0 bottom-0 z-40 rounded-t-3xl pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="mx-auto flex max-w-lg items-center justify-around px-2">
         {items.map((item) => {

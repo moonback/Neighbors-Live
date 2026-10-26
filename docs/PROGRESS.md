@@ -23,6 +23,8 @@ Mise à jour 2026-10-27 — suite à l’audit parcours : cache de navigation li
 
 Mise à jour 2026-10-27 — direction glass appliquée au feed : barre de filtres en panneau translucide givré, métadonnées de la vidéo dans une surface vitrée et boutons média avec flou/saturation cohérents; fallback opaque si `backdrop-filter` n’est pas supporté. Typecheck, lint et Prettier passent. La capture demandée du site Vercel n’a pas pu être obtenue : Windows Graphics Capture a échoué deux fois par timeout, et l’outil web ne peut pas ouvrir ce domaine. Le rendu du site en ligne et la revue visuelle après changement restent donc non vérifiés.
 
+Complément visuel 2026-10-27 après capture fournie par l’utilisateur : la vidéo est affichée en mode « ajuster » avec de grandes bandes noires; ajout d’un fond flou dérivé du poster lorsque ce mode est choisi, pour garder la vidéo entière sans laisser des aplats noirs. Navigation inférieure passée en verre avec fond sombre conservé aussi dans le thème clair. Typecheck, lint et Prettier passent; le rendu modifié reste à vérifier dans un navigateur.
+
 ## 0. Cadrage et fondations
 
 | #    | Élément                                                                             | État | Notes                                                                        |

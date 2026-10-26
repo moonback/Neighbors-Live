@@ -203,6 +203,16 @@ export function VideoCard({
       data-testid="feed-item"
       data-video-id={item.id}
     >
+      {fit === 'contain' && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-[-2rem] z-0 bg-black bg-cover bg-center transition-opacity duration-300"
+          style={{
+            backgroundImage: item.posterUrl ? `url("${item.posterUrl}")` : undefined,
+            filter: 'blur(28px) brightness(0.42)',
+          }}
+        />
+      )}
       <video
         key={`${item.id}:${mediaReloadKey}`}
         ref={ref}
@@ -228,7 +238,7 @@ export function VideoCard({
           if (load && src) void refreshUrl();
         }}
         onClick={togglePlay}
-        className={`h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`}
+        className={`relative z-10 h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`}
       />
       <div
         role="progressbar"
