@@ -208,7 +208,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
           <Field
             label={t('form.caption')}
             htmlFor="caption"
-            hint={t('form.captionHint', { count: caption.length })}
+            hint={`${t(`form.captionGuide.${category}`)} ${t('form.captionHint', { count: caption.length })}`}
           >
             <textarea
               id="caption"
@@ -216,6 +216,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
               maxLength={CAPTION_MAX}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
+              placeholder={t(`form.captionPlaceholder.${category}`)}
             />
           </Field>
           {category === 'event' && (
@@ -248,6 +249,30 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
               </select>
             </Field>
           )}
+          <section
+            aria-live="polite"
+            aria-label={t('form.preview.title')}
+            className="rounded-2xl border border-white/10 bg-white/5 p-4"
+          >
+            <h2 className="text-sm font-semibold">{t('form.preview.title')}</h2>
+            <p className="mt-2 text-xs text-accent">{tc(category)}</p>
+            <p className="mt-1 whitespace-pre-wrap text-sm">
+              {caption.trim() || t('form.preview.emptyCaption')}
+            </p>
+            {category === 'event' && eventEnd && (
+              <p className="mt-2 text-xs text-fog">
+                {t('form.preview.eventEnd', {
+                  date: new Intl.DateTimeFormat(undefined, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  }).format(new Date(eventEnd)),
+                })}
+              </p>
+            )}
+            {category === 'shop' && (
+              <p className="mt-2 text-xs text-fog">{t('form.hours', { count: merchantHours })}</p>
+            )}
+          </section>
           {error && <Notice kind="error">{error}</Notice>}
           {step === 'sending' && (
             <div role="status" className="flex flex-col gap-2">

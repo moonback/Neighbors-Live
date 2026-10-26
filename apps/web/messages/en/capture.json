@@ -48,6 +48,27 @@
     "category": "Category",
     "caption": "Caption",
     "captionHint": "{count}/140 characters",
+    "captionGuide": {
+      "alert": "Say what is happening and where.",
+      "deal": "Include the price or benefit and any conditions.",
+      "event": "Say what, when, and where to meet.",
+      "help": "Explain what kind of help you need.",
+      "lost": "Describe the item and where you saw it.",
+      "shop": "Describe the offer and its conditions."
+    },
+    "captionPlaceholder": {
+      "alert": "E.g. Roadworks on …, traffic is slow near …",
+      "deal": "E.g. Lunch menu for €…, available until …",
+      "event": "E.g. Neighborhood fair Saturday at …, meet at …",
+      "help": "E.g. Looking for a hand with … near …",
+      "lost": "E.g. Tabby cat spotted near … around …",
+      "shop": "E.g. …% off … until …"
+    },
+    "preview": {
+      "title": "Post preview",
+      "emptyCaption": "Your caption will appear here.",
+      "eventEnd": "Ends: {date}"
+    },
     "eventEnd": "Event ends",
     "eventEndHint": "Within the next 7 days.",
     "merchantDuration": "Offer duration",

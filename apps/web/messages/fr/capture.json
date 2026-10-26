@@ -52,6 +52,27 @@
     "category": "Catégorie",
     "caption": "Légende",
     "captionHint": "{count}/140 caractères",
+    "captionGuide": {
+      "alert": "Indique ce qui se passe et où.",
+      "deal": "Précise le prix ou l’avantage et les conditions.",
+      "event": "Précise quoi, quand et où se retrouver.",
+      "help": "Explique de quelle aide tu as besoin.",
+      "lost": "Décris l’objet et indique où tu l’as vu.",
+      "shop": "Présente l’offre et ses conditions."
+    },
+    "captionPlaceholder": {
+      "alert": "Ex. : Travaux sur la rue …, circulation ralentie près de …",
+      "deal": "Ex. : Menu du midi à … €, valable jusqu’à …",
+      "event": "Ex. : Fête de quartier samedi à …, rendez-vous à …",
+      "help": "Ex. : Je cherche un coup de main pour … à …",
+      "lost": "Ex. : Chat tigré aperçu près de … vers …",
+      "shop": "Ex. : … % de réduction sur … jusqu’à …"
+    },
+    "preview": {
+      "title": "Aperçu de la publication",
+      "emptyCaption": "Ta légende apparaîtra ici.",
+      "eventEnd": "Fin : {date}"
+    },
     "eventEnd": "Fin de l’événement",
     "eventEndHint": "Dans les 7 prochains jours.",
     "merchantDuration": "Durée de l’offre",
