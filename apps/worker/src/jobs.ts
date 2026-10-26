@@ -15,6 +15,7 @@ export interface MediaJob {
   payload: { raw_path?: string; paths?: string[] };
   attempts: number;
   max_attempts: number;
+  settings_snapshot?: Record<string, unknown> | null;
 }
 
 export interface JobDeps {
@@ -35,7 +36,10 @@ interface RuntimeMediaSettings {
   plateMinScore: number;
 }
 
-async function readMediaSettings(deps: JobDeps): Promise<RuntimeMediaSettings> {
+async function readMediaSettings(
+  deps: JobDeps,
+  snapshot?: Record<string, unknown> | null,
+): Promise<RuntimeMediaSettings> {
   const { rows } = await deps.db.query<{ key: string; value: unknown }>(
     `select key, value from public.app_config where key = any($1::text[])`,
     [
@@ -49,6 +53,16 @@ async function readMediaSettings(deps: JobDeps): Promise<RuntimeMediaSettings> {
     ],
   );
   const values = new Map(rows.map(({ key, value }) => [key, value]));
+  const snapshotKeys: Record<string, string> = {
+    media_face_blur_enabled: 'face_blur_enabled',
+    media_plate_blur_enabled: 'plate_blur_enabled',
+    media_detect_every: 'detect_every',
+    media_face_min_score: 'face_min_score',
+    media_plate_min_score: 'plate_min_score',
+  };
+  for (const [key, snapshotKey] of Object.entries(snapshotKeys)) {
+    if (snapshot && snapshot[snapshotKey] !== undefined) values.set(key, snapshot[snapshotKey]);
+  }
   const bool = (key: string, fallback: boolean) => {
     const value = values.get(key);
     return typeof value === 'boolean' ? value : fallback;
@@ -110,7 +124,7 @@ async function processVideo(job: MediaJob, deps: JobDeps): Promise<void> {
     await writeFile(input, Buffer.from(await data.arrayBuffer()));
     await updateJobProgress(deps, job.id, 5, 'preparing');
 
-    const mediaSettings = await readMediaSettings(deps);
+    const mediaSettings = await readMediaSettings(deps, job.settings_snapshot);
     const detectors = deps.detectors.map((detector) => {
       if (detector.name === 'face-yunet') {
         return {

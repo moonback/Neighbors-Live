@@ -17,14 +17,26 @@
   "mediaSettings": "Video processing",
   "mediaProcessing": {
     "title": "Video processing",
-    "hint": "Settings applied to new videos by the media worker.",
+    "hint": "Each video keeps the settings that were active when its job entered the queue.",
     "faces": "Blur faces",
     "plates": "Blur license plates",
     "detectEvery": "Run detection every N frames",
     "faceMinScore": "Face detection threshold",
     "plateMinScore": "Plate detection threshold",
+    "detectEveryHelp": "A lower value analyzes more frames and increases processing time.",
+    "thresholdHelp": "A higher threshold requires more confidence, but may leave more faces or plates unblurred.",
     "modelNote": "Models and their paths remain configured on the server. An option is available only when the media worker is configured for that model; install and configure a plate model before enabling plate blur.",
     "modelUnavailable": "This option is unavailable. Check the media worker configuration and model.",
+    "availability": {
+      "ready": "Model is ready.",
+      "disabled": "Detection is disabled in the worker configuration.",
+      "not_configured": "The model path is not configured.",
+      "worker_offline": "No media worker has checked in recently.",
+      "model_unavailable": "The active worker has not loaded this model. Check its path and logs."
+    },
+    "auditTitle": "Settings change history",
+    "auditActor": "admin {actor}",
+    "auditChange": "detection /{detectEvery}, faces {faces}, plates {plates}, thresholds {faceThreshold}/{plateThreshold}",
     "save": "Save settings",
     "saving": "Saving…"
   },
@@ -65,6 +77,8 @@
     "done": "Complete"
   },
   "jobAttempts": "Attempt {attempts}/{maxAttempts}",
+  "jobSettings": "Job settings: every {detectEvery} frames · faces {faceThreshold} · plates {plateThreshold}",
+  "jobError": "Error: {error}",
   "noProcessingJob": "No media job found",
   "zones": "Neighborhoods",
   "zonesHint": "The 15 most active zones are shown. Open a zone to review its moderation queue.",

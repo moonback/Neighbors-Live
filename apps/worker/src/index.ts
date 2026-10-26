@@ -51,6 +51,18 @@ async function main() {
   log('worker started', {
     detectors: deps.detectors.map((d) => `${d.name}:${d.enabled ? 'on' : 'off'}`),
   });
+  const writeWorkerStatus = () =>
+    db.query(
+      `insert into public.media_worker_status (worker_id, detectors, last_seen)
+       values ($1, $2::jsonb, now())
+       on conflict (worker_id) do update
+       set detectors = excluded.detectors, last_seen = excluded.last_seen`,
+      [
+        env.WORKER_ID,
+        JSON.stringify(Object.fromEntries(deps.detectors.map((d) => [d.name, d.enabled]))),
+      ],
+    );
+  await writeWorkerStatus();
 
   let wake: (() => void) | undefined;
   const nap = (ms: number) =>
@@ -90,6 +102,18 @@ async function main() {
   };
 
   const notifier = new Notifier(db, env, log);
+  const heartbeat = async () => {
+    while (!stopping) {
+      await new Promise((r) => setTimeout(r, 30_000));
+      if (!stopping) {
+        try {
+          await writeWorkerStatus();
+        } catch (error) {
+          log('worker status heartbeat failed', { error: String(error) });
+        }
+      }
+    }
+  };
   const outboxLoop = async () => {
     while (!stopping) {
       try {
@@ -106,6 +130,7 @@ async function main() {
   await Promise.all([
     ...Array.from({ length: env.WORKER_CONCURRENCY }, (_, i) => jobLoop(i)),
     outboxLoop(),
+    heartbeat(),
   ]);
   await listener.end();
   await db.end();

@@ -13,12 +13,23 @@ type Body =
   | { type: 'merchant'; userId: string; approve: boolean }
   | { type: 'mediaSettings'; settings: MediaSettings };
 
+type AvailabilityReason =
+  'ready' | 'disabled' | 'not_configured' | 'worker_offline' | 'model_unavailable';
+
 export interface MediaSettings {
   faceBlurEnabled: boolean;
   plateBlurEnabled: boolean;
   detectEvery: number;
   faceMinScore: number;
   plateMinScore: number;
+}
+
+export interface MediaSettingsAuditEntry {
+  id: number;
+  actor_id: string | null;
+  previous_settings: Record<string, unknown>;
+  new_settings: Record<string, unknown>;
+  created_at: string;
 }
 
 function useAdminAction() {
@@ -96,16 +107,19 @@ export function MerchantReview({
 export function MediaProcessingSettings({
   initial,
   availability,
+  audit,
 }: {
   initial: MediaSettings;
-  availability: { faces: boolean; plates: boolean };
+  availability: {
+    faces: { available: boolean; reason: AvailabilityReason };
+    plates: { available: boolean; reason: AvailabilityReason };
+  };
+  audit: MediaSettingsAuditEntry[];
 }) {
   const t = useTranslations('admin.mediaProcessing');
   const { run, status, pending } = useAdminAction();
   const [settings, setSettings] = useState({
     ...initial,
-    faceBlurEnabled: initial.faceBlurEnabled && availability.faces,
-    plateBlurEnabled: initial.plateBlurEnabled && availability.plates,
     detectEvery: String(initial.detectEvery),
     faceMinScore: String(initial.faceMinScore),
     plateMinScore: String(initial.plateMinScore),
@@ -140,7 +154,7 @@ export function MediaProcessingSettings({
             <input
               type="checkbox"
               checked={settings.faceBlurEnabled}
-              disabled={!availability.faces}
+              disabled={!availability.faces.available && !settings.faceBlurEnabled}
               onChange={(event) =>
                 setSettings((current) => ({ ...current, faceBlurEnabled: event.target.checked }))
               }
@@ -148,11 +162,14 @@ export function MediaProcessingSettings({
             />
             <span className="text-sm font-medium">{t('faces')}</span>
           </label>
+          {!availability.faces.available && (
+            <p className="text-xs text-fog">{t(`availability.${availability.faces.reason}`)}</p>
+          )}
           <label className="flex min-h-12 items-center gap-3 rounded-xl border border-line px-3">
             <input
               type="checkbox"
               checked={settings.plateBlurEnabled}
-              disabled={!availability.plates}
+              disabled={!availability.plates.available && !settings.plateBlurEnabled}
               onChange={(event) =>
                 setSettings((current) => ({ ...current, plateBlurEnabled: event.target.checked }))
               }
@@ -160,7 +177,11 @@ export function MediaProcessingSettings({
             />
             <span className="text-sm font-medium">{t('plates')}</span>
           </label>
+          {!availability.plates.available && (
+            <p className="text-xs text-fog">{t(`availability.${availability.plates.reason}`)}</p>
+          )}
         </div>
+        <p className="text-xs text-fog">{t('detectEveryHelp')}</p>
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="flex flex-col gap-1 text-sm">
             <span>{t('detectEvery')}</span>
@@ -205,6 +226,7 @@ export function MediaProcessingSettings({
             />
           </label>
         </div>
+        <p className="text-xs text-fog">{t('thresholdHelp')}</p>
         <p className="text-xs text-fog">{t('modelNote')}</p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <Button
@@ -224,6 +246,27 @@ export function MediaProcessingSettings({
           </Button>
           {status && <Notice kind={status.kind}>{status.text}</Notice>}
         </div>
+        {audit.length > 0 && (
+          <details className="rounded-xl border border-line px-4 py-3">
+            <summary className="cursor-pointer text-sm font-semibold">{t('auditTitle')}</summary>
+            <ul className="mt-3 flex flex-col gap-2 text-xs text-fog">
+              {audit.map((entry) => (
+                <li key={entry.id}>
+                  {new Date(entry.created_at).toLocaleString()} ·{' '}
+                  {t('auditActor', { actor: entry.actor_id?.slice(0, 8) ?? '—' })}
+                  {' · '}
+                  {t('auditChange', {
+                    detectEvery: String(entry.new_settings.detect_every ?? '—'),
+                    faces: String(entry.new_settings.face_blur_enabled ?? '—'),
+                    plates: String(entry.new_settings.plate_blur_enabled ?? '—'),
+                    faceThreshold: String(entry.new_settings.face_min_score ?? '—'),
+                    plateThreshold: String(entry.new_settings.plate_min_score ?? '—'),
+                  })}
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
       </div>
     </section>
   );

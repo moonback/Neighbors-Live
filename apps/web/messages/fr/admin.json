@@ -17,14 +17,26 @@
   "mediaSettings": "Traitement vidéo",
   "mediaProcessing": {
     "title": "Traitement vidéo",
-    "hint": "Réglages appliqués aux nouvelles vidéos par le worker média.",
+    "hint": "Chaque vidéo conserve les réglages actifs au moment de sa mise en file d’attente.",
     "faces": "Flouter les visages",
     "plates": "Flouter les plaques",
     "detectEvery": "Détecter toutes les N images",
     "faceMinScore": "Seuil de détection des visages",
     "plateMinScore": "Seuil de détection des plaques",
+    "detectEveryHelp": "Une valeur plus basse analyse plus d’images et augmente le temps de traitement.",
+    "thresholdHelp": "Un seuil plus élevé demande une détection plus sûre, mais peut laisser davantage de visages ou de plaques non floutés.",
     "modelNote": "Les modèles et leurs chemins restent configurés côté serveur. Une option est disponible seulement si le worker est configuré pour ce modèle ; installez et configurez le modèle de plaques avant son activation.",
     "modelUnavailable": "Cette option n’est pas disponible : vérifiez la configuration et le modèle du worker média.",
+    "availability": {
+      "ready": "Modèle prêt.",
+      "disabled": "Détection désactivée dans la configuration du worker.",
+      "not_configured": "Chemin du modèle non configuré.",
+      "worker_offline": "Aucun worker média actif récemment.",
+      "model_unavailable": "Le worker actif n’a pas chargé ce modèle. Vérifiez son chemin et ses journaux."
+    },
+    "auditTitle": "Historique des changements",
+    "auditActor": "admin {actor}",
+    "auditChange": "détection /{detectEvery}, visages {faces}, plaques {plates}, seuils {faceThreshold}/{plateThreshold}",
     "save": "Enregistrer les réglages",
     "saving": "Enregistrement…"
   },
@@ -65,6 +77,8 @@
     "done": "Terminé"
   },
   "jobAttempts": "Tentative {attempts}/{maxAttempts}",
+  "jobSettings": "Réglages du job : toutes les {detectEvery} images · visages {faceThreshold} · plaques {plateThreshold}",
+  "jobError": "Erreur : {error}",
   "noProcessingJob": "Aucune tâche média associée",
   "zones": "Zones",
   "zonesHint": "Les 15 zones les plus actives sont affichées ; ouvrez une zone pour accéder à sa file de modération.",
