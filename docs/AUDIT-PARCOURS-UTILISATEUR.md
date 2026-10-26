@@ -291,14 +291,14 @@ Les constats de cette section proviennent de la lecture du code et des tests ; *
 - **Priorité : P1 avant publication des conditions. Confiance : moyenne.**
 - **Preuve/emplacement :** `messages/fr/legal.json` et `en/legal.json` disent que le service est gratuit/de free of charge ; les conditions commerciales définitives ne sont pas établies par les éléments audités.
 - **Conséquence :** une promesse tarifaire peut devenir inexacte si le modèle évolue.
-- **Correction/acceptation :** confirmer la politique commerciale ; garder un texte identique et exact en FR/EN ou retirer la promesse tant qu’elle n’est pas décidée.
+- **Correction au 27/10/2026 :** remplacé en FR/EN par une affirmation limitée au dépôt actuel : l’application ne propose actuellement ni paiement ni facturation. Confirmer cette formulation avant diffusion et la réviser si le produit évolue.
 
 ### DOC-001 — Référence à une politique de confidentialité absente
 
 - **Priorité : P2. Confiance : certaine.**
-- **Preuve/emplacement :** `CLAUDE.md` et des notes de progression mentionnent `PRIVACY.md` ; aucun `PRIVACY.md` n’existe dans le dépôt. Les informations associées sont dispersées entre `README.md`, messages légaux et architecture.
+- **Preuve/emplacement initial :** `CLAUDE.md` et les notes de progression mentionnaient `PRIVACY.md`, absent lors de l’audit. `docs/PRIVACY.md` a depuis été créé comme état technique de travail.
 - **Conséquence :** les limites techniques et engagements de confidentialité risquent de diverger entre documents.
-- **Correction/acceptation :** créer/renommer une source de référence cohérente ou corriger les renvois ; vérifier qu’elle décrit exactement position, floutage, stockage, rétention, notifications et suppression.
+- **Correction/acceptation :** document technique créé. Les faits exacts de l’éditeur, des sous-traitants, des durées, des transferts et les clauses juridiques demandent toujours validation.
 
 ### TEST-001 — Absence d’E2E de reprise après rupture TUS
 
