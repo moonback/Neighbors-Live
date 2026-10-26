@@ -430,7 +430,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         style={{ transform: `${mirrored ? 'scaleX(-1) ' : ''}scale(${zoomRange ? 1 : zoom})` }}
-        className={`h-full w-full touch-none object-cover transition-opacity duration-300 ${ready ? 'opacity-100' : 'opacity-0'}`}
+        className={`h-full w-full touch-none object-contain transition-opacity duration-300 ${ready ? 'opacity-100' : 'opacity-0'}`}
       />
       {!ready && (
         <p
