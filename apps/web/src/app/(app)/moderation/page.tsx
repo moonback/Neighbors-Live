@@ -51,10 +51,11 @@ export default async function ModerationPage({
     .from('videos')
     .select('h3_cell')
     .or('status.eq.hidden,and(status.eq.active,report_count.gt.0)');
-  const { data: pendingRows } =
+  const pendingResult =
     viewer.role === 'admin'
       ? await pendingQuery
       : await pendingQuery.in('h3_cell', viewer.moderatedCells);
+  const { data: pendingRows } = pendingResult;
   const pending = new Map<string, number>();
   for (const r of pendingRows ?? []) pending.set(r.h3_cell, (pending.get(r.h3_cell) ?? 0) + 1);
   const cells = [...new Set([...pending.keys(), ...viewer.moderatedCells])].sort(
@@ -120,6 +121,11 @@ export default async function ModerationPage({
           </Link>
         ))}
       </nav>
+      {(pendingResult.error || queueRes?.error) && (
+        <p role="alert" className="rounded-xl border border-alert p-3 text-sm text-alert">
+          {t('loadError')}
+        </p>
+      )}
       <section aria-labelledby="queue-title" className="flex flex-col gap-3">
         <h2 id="queue-title" className="text-lg font-semibold">
           {t('queue')}
@@ -134,6 +140,11 @@ export default async function ModerationPage({
         <h2 id="appeals-title" className="text-lg font-semibold">
           {t('appeals')}
         </h2>
+        {appealsRes.error && (
+          <p role="alert" className="rounded-xl border border-alert p-3 text-sm text-alert">
+            {t('loadError')}
+          </p>
+        )}
         <AppealsQueue items={appeals} />
       </section>
     </div>

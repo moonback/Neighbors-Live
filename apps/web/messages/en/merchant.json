@@ -49,6 +49,7 @@
     "closing": "A useful, clearly presented offer helps neighbors discover what is happening nearby."
   },
   "apply": "Request a merchant account",
+  "loadError": "Could not load your merchant account. Please try again later.",
   "businessName": "Business name",
   "description": "Short introduction (optional)",
   "submit": "Send request",

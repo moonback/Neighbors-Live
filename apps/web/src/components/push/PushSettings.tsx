@@ -48,7 +48,9 @@ export function PushSettings({
 
   useEffect(() => {
     let alive = true;
-    void detectState().then((s) => alive && setState(s));
+    void detectState()
+      .then((s) => alive && setState(s))
+      .catch(() => alive && setState('unsupported'));
     return () => {
       alive = false;
     };
@@ -84,6 +86,8 @@ export function PushSettings({
       });
       if (!res.ok) return setError(errorText(res.error));
       setState('on');
+    } catch {
+      setError(errorText('generic'));
     } finally {
       setBusy(false);
     }
@@ -91,20 +95,39 @@ export function PushSettings({
 
   async function disable() {
     setBusy(true);
-    const reg = await swRegistration();
-    const sub = await reg?.pushManager.getSubscription();
-    if (sub) {
-      await api('/api/push/subscribe', { method: 'DELETE', body: { endpoint: sub.endpoint } });
-      await sub.unsubscribe();
+    setError(null);
+    try {
+      const reg = await swRegistration();
+      const sub = await reg?.pushManager.getSubscription();
+      if (sub) {
+        const res = await api('/api/push/subscribe', {
+          method: 'DELETE',
+          body: { endpoint: sub.endpoint },
+        });
+        if (!res.ok) return setError(errorText(res.error));
+        await sub.unsubscribe();
+      }
+      setState('off');
+    } catch {
+      setError(errorText('generic'));
+    } finally {
+      setBusy(false);
     }
-    setState('off');
-    setBusy(false);
   }
 
   async function toggleAlerts(value: boolean) {
+    setError(null);
     setAlerts(value);
-    const res = await api('/api/me/settings', { method: 'PATCH', body: { notifyAlerts: value } });
-    if (!res.ok) setAlerts(!value);
+    try {
+      const res = await api('/api/me/settings', { method: 'PATCH', body: { notifyAlerts: value } });
+      if (!res.ok) {
+        setAlerts(!value);
+        setError(errorText(res.error));
+      }
+    } catch {
+      setAlerts(!value);
+      setError(errorText('generic'));
+    }
   }
 
   return (

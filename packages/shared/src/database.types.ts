@@ -591,6 +591,7 @@ export type Database = {
           author_id: string;
           caption: string;
           category: Database['public']['Enums']['video_category'];
+          client_request_id: string | null;
           comment_count: number;
           created_at: string;
           duration_ms: number;
@@ -617,6 +618,7 @@ export type Database = {
           author_id: string;
           caption?: string;
           category: Database['public']['Enums']['video_category'];
+          client_request_id?: string | null;
           comment_count?: number;
           created_at?: string;
           duration_ms: number;
@@ -642,6 +644,7 @@ export type Database = {
           author_id?: string;
           caption?: string;
           category?: Database['public']['Enums']['video_category'];
+          client_request_id?: string | null;
           comment_count?: number;
           created_at?: string;
           duration_ms?: number;
@@ -815,6 +818,7 @@ export type Database = {
           p_lng: number;
           p_mime: string;
           p_realtime_cell: string;
+          p_request_id: string;
         };
         Returns: string;
       };

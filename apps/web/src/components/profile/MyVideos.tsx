@@ -23,9 +23,9 @@ const statusColor: Record<OwnVideo['status'], string> = {
   rejected: 'bg-alert',
 };
 
-async function fetchOwnVideos(): Promise<OwnVideo[] | null> {
+async function fetchOwnVideos(): Promise<{ videos: OwnVideo[] } | { error: string }> {
   const res = await api<{ videos: OwnVideo[] }>('/api/me/videos');
-  return res.ok ? res.data.videos : null;
+  return res.ok ? { videos: res.data.videos } : { error: res.error };
 }
 
 /** Owner view: status of every publication (processing → active / rejected) and withdrawal. */
@@ -36,17 +36,29 @@ export function MyVideos() {
   const now = useNow({ updateInterval: 60_000 });
   const errorText = useErrorText();
   const [videos, setVideos] = useState<OwnVideo[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
 
-  const load = useCallback(() => fetchOwnVideos().then((list) => list && setVideos(list)), []);
+  const load = useCallback(async () => {
+    const result = await fetchOwnVideos();
+    if ('error' in result) setLoadError(errorText(result.error));
+    else {
+      setVideos(result.videos);
+      setLoadError(null);
+    }
+  }, [errorText]);
 
   useEffect(() => {
     let alive = true;
-    void fetchOwnVideos().then((list) => alive && list && setVideos(list));
+    void fetchOwnVideos().then((result) => {
+      if (!alive) return;
+      if ('error' in result) setLoadError(errorText(result.error));
+      else setVideos(result.videos);
+    });
     return () => {
       alive = false;
     };
-  }, []);
+  }, [errorText]);
 
   // Poll while something is processing so the status flips to active/rejected without reload.
   useEffect(() => {
@@ -66,6 +78,7 @@ export function MyVideos() {
     if (res.ok) void load();
   }
 
+  if (loadError) return <Notice kind="error">{loadError}</Notice>;
   if (!videos || videos.length === 0) return null;
   return (
     <section aria-labelledby="my-videos" className="flex flex-col gap-3">

@@ -49,6 +49,7 @@
     "closing": "Une offre utile, clairement présentée, aide les voisins à découvrir ce qui se passe près de chez eux."
   },
   "apply": "Demander un compte commerce",
+  "loadError": "Impossible de charger votre espace commerce. Réessayez plus tard.",
   "businessName": "Nom du commerce",
   "description": "Présentation courte (facultatif)",
   "submit": "Envoyer la demande",

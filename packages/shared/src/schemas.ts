@@ -77,6 +77,7 @@ export const createVideoSchema = z
       .positive()
       .max(MAX_RECORDING_MS + 1_000),
     sizeBytes: z.number().int().positive().max(MAX_UPLOAD_BYTES),
+    requestId: z.uuid().optional(),
     eventEndsAt: z.iso.datetime({ offset: true }).optional(),
     merchantHours: z.union(MERCHANT_DURATIONS_H.map((h) => z.literal(h))).optional(),
   })

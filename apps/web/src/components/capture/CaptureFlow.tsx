@@ -92,17 +92,26 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
       ...(category === 'event' && eventEnd && { eventEndsAt: new Date(eventEnd).toISOString() }),
       ...(category === 'shop' && { merchantHours }),
     };
-    const keepForLater = async () => {
-      await enqueue({ id: crypto.randomUUID(), blob: rec.blob, meta, fix, createdAt: Date.now() });
+    const requestId = crypto.randomUUID();
+    const keepForLater = async (error?: unknown) => {
+      const reserved = error instanceof PublishError ? error.reserved : undefined;
+      await enqueue({
+        id: requestId,
+        blob: rec.blob,
+        meta,
+        fix,
+        createdAt: Date.now(),
+        reserved,
+      });
       setStep('queued');
     };
     if (!navigator.onLine) return keepForLater();
     setStep('sending');
     try {
-      await publish(rec.blob, meta, fix, setProgress);
+      await publish(rec.blob, meta, fix, setProgress, undefined, requestId);
       setStep('done');
     } catch (err) {
-      if (err instanceof PublishError && err.retryable) return keepForLater();
+      if (err instanceof PublishError && err.retryable) return keepForLater(err);
       setStep('form');
       const code = err instanceof PublishError ? err.code : 'generic';
       setError(t.has(`errorsPublish.${code}`) ? t(`errorsPublish.${code}`) : errorText(code));

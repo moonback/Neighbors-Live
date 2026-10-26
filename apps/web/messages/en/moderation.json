@@ -5,6 +5,8 @@
   "zone": "Area {short}",
   "queue": "Moderation queue",
   "empty": "Nothing to review in this area.",
+  "loadError": "Could not load this queue. Please try again later.",
+  "loadError": "Could not load this queue. Please try again later.",
   "reasons": "Reported reasons",
   "reports": "{count, plural, one {# report} other {# reports}}",
   "hiddenAuto": "Hidden automatically",

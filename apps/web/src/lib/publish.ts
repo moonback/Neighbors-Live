@@ -24,10 +24,16 @@ export interface Fix {
 export class PublishError extends Error {
   readonly code: string;
   readonly retryable: boolean;
-  constructor(code: string, retryable: boolean) {
+  readonly reserved?: { videoId: string; uploadPath: string };
+  constructor(
+    code: string,
+    retryable: boolean,
+    reserved?: { videoId: string; uploadPath: string },
+  ) {
     super(code);
     this.code = code;
     this.retryable = retryable;
+    this.reserved = reserved;
   }
 }
 
@@ -69,22 +75,23 @@ export async function publish(
   fix: Fix,
   onProgress: (percent: number) => void,
   existing?: { videoId: string; uploadPath: string },
+  requestId = crypto.randomUUID(),
 ): Promise<{ videoId: string }> {
   let target = existing;
   if (!target) {
     const res = await api<{ videoId: string; uploadPath: string }>('/api/videos', {
-      body: { ...meta, ...fix, sizeBytes: file.size },
+      body: { ...meta, ...fix, sizeBytes: file.size, requestId },
     });
     if (!res.ok) throw new PublishError(res.error, res.status === 0);
     target = res.data;
   }
   const { data } = await browserClient().auth.getSession();
   const token = data.session?.access_token;
-  if (!token) throw new PublishError('unauthorized', false);
+  if (!token) throw new PublishError('unauthorized', true, target);
   try {
     await tusUpload(file, target.uploadPath, meta.mimeType, token, onProgress);
   } catch {
-    throw new PublishError('network', true);
+    throw new PublishError('network', true, target);
   }
   const done = await api(`/api/videos/${target.videoId}/uploaded`, { body: {} });
   if (!done.ok) throw new PublishError(done.error, done.status === 0);

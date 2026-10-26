@@ -10,6 +10,8 @@ import { isIos, isStandalone } from '@/lib/platform';
 
 import { ONBOARDED_COOKIE } from '@/lib/onboarding';
 
+const ONBOARDING_STEP_KEY = 'neighbors-onboarding-step';
+
 interface InstallPrompt extends Event {
   prompt: () => Promise<void>;
 }
@@ -38,10 +40,11 @@ export function Onboarding({
       setPrompt(e as InstallPrompt);
     };
     window.addEventListener('beforeinstallprompt', onPrompt);
-    const timer = setTimeout(
-      () => setPlatform(isStandalone() ? 'installed' : isIos() ? 'ios' : 'other'),
-      0,
-    );
+    const timer = setTimeout(() => {
+      setPlatform(isStandalone() ? 'installed' : isIos() ? 'ios' : 'other');
+      const saved = Number(window.localStorage.getItem(ONBOARDING_STEP_KEY));
+      if (Number.isInteger(saved) && saved >= 0 && saved <= INSTALL_STEP) setStep(saved);
+    }, 0);
     return () => {
       window.removeEventListener('beforeinstallprompt', onPrompt);
       clearTimeout(timer);
@@ -49,6 +52,7 @@ export function Onboarding({
   }, []);
 
   async function finish() {
+    window.localStorage.removeItem(ONBOARDING_STEP_KEY);
     // Non-sensitive preference cookie read by src/proxy.ts (no tracking, no personal data).
     document.cookie = `${ONBOARDED_COOKIE}=1; path=/; max-age=31536000; samesite=lax`;
     if (signedIn) await api('/api/me/settings', { method: 'PATCH', body: { onboarded: true } });
@@ -57,6 +61,11 @@ export function Onboarding({
 
   const key = step === INSTALL_STEP ? 'install' : (STEPS[step] ?? 'value');
   const list = (k: string) => t.raw(k) as string[];
+  const changeStep = (nextStep: number) => {
+    const bounded = Math.max(0, Math.min(INSTALL_STEP, nextStep));
+    window.localStorage.setItem(ONBOARDING_STEP_KEY, String(bounded));
+    setStep(bounded);
+  };
 
   return (
     <main
@@ -167,12 +176,12 @@ export function Onboarding({
 
       <div className="flex shrink-0 gap-3 border-t border-line bg-ink pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {step > 0 && (
-          <Button variant="secondary" className="flex-1" onClick={() => setStep(step - 1)}>
+          <Button variant="secondary" className="flex-1" onClick={() => changeStep(step - 1)}>
             {t('back')}
           </Button>
         )}
         {step < STEPS.length - 1 ? (
-          <Button className="flex-1" onClick={() => setStep(step + 1)}>
+          <Button className="flex-1" onClick={() => changeStep(step + 1)}>
             {t('next')}
           </Button>
         ) : (

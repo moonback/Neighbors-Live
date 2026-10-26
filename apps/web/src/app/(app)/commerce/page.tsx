@@ -34,7 +34,7 @@ export default async function MerchantPage() {
   const supabase = await createClient();
   const t = await getTranslations('merchant');
   const format = await getFormatter();
-  const { data: merchant } = await supabase
+  const { data: merchant, error: merchantError } = await supabase
     .from('merchant_profiles')
     .select('business_name, status, created_at')
     .eq('user_id', viewer.id)
@@ -65,7 +65,8 @@ export default async function MerchantPage() {
         </div>
       </header>
       <Card className="flex max-w-3xl flex-col gap-3">
-        {!merchant && (
+        {merchantError && <Notice kind="error">{t('loadError')}</Notice>}
+        {!merchant && !merchantError && (
           <>
             <h2 className="text-lg font-semibold">{t('apply')}</h2>
             <MerchantForm />

@@ -247,7 +247,6 @@ export function ForgotForm() {
 export function NewPasswordForm() {
   const t = useTranslations('auth');
   const authError = useAuthError();
-  const router = useRouter();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -261,7 +260,6 @@ export function NewPasswordForm() {
     const res = await api('/api/auth/password', { body: { password } });
     if (!res.ok) return setError(res.status === 401 ? t('reset.expired') : authError(res.error));
     setDone(true);
-    router.replace('/');
   }
 
   if (done) return <Notice kind="success">{t('reset.done')}</Notice>;

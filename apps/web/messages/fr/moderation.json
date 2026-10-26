@@ -5,6 +5,7 @@
   "zone": "Zone {short}",
   "queue": "File de modération",
   "empty": "Rien à examiner dans cette zone.",
+  "loadError": "Impossible de charger cette file. Réessayez plus tard.",
   "reasons": "Motifs signalés",
   "reports": "{count, plural, one {# signalement} other {# signalements}}",
   "hiddenAuto": "Masquée automatiquement",

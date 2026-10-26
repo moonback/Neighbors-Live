@@ -53,10 +53,15 @@ export function OfflineQueueRunner() {
           continue;
         }
         try {
-          await publish(item.blob, item.meta, item.fix, () => undefined);
+          await publish(item.blob, item.meta, item.fix, () => undefined, item.reserved, item.id);
           await removeQueued(item.id);
           setMessage(t('sent'));
         } catch (error) {
+          if (error instanceof PublishError && error.reserved) {
+            item.reserved = error.reserved;
+            const { enqueue } = await import('@/lib/offline-queue');
+            await enqueue(item);
+          }
           if (error instanceof PublishError && error.retryable) {
             setMessage(t('retryable'));
             setCanRetry(true);

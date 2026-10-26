@@ -58,15 +58,34 @@ const serwist = new Serwist({
         plugins: [new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 30 * 24 * 3600 })],
       }),
     },
-    // Pages: network first with a short timeout, offline page as fallback.
+    // Only explicitly public pages may be retained for offline navigation. Authenticated
+    // pages contain account data and must never fall back to a previous user's HTML.
+    {
+      matcher: ({ request, url }) =>
+        request.mode === 'navigate' &&
+        url.origin === self.location.origin &&
+        [
+          '/commerces',
+          '/commerces/decouvrir',
+          '/legal',
+          '/legal/regles',
+          '/legal/confidentialite',
+        ].includes(url.pathname),
+      handler: new NetworkFirst({ cacheName: 'public-pages', networkTimeoutSeconds: 4 }),
+    },
     {
       matcher: ({ request }) => request.mode === 'navigate',
-      handler: new NetworkFirst({ cacheName: 'pages', networkTimeoutSeconds: 4 }),
+      handler: new NetworkOnly(),
     },
   ],
   fallbacks: {
     entries: [{ url: '/offline', matcher: ({ request }) => request.destination === 'document' }],
   },
+});
+
+// Remove pages cached by older service worker versions, which cached every navigation.
+self.addEventListener('activate', (event) => {
+  event.waitUntil(caches.delete('pages'));
 });
 
 interface PushPayload {
