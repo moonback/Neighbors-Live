@@ -5,6 +5,7 @@
   "skip": "Skip",
   "finish": "Got it, let’s go",
   "value": {
+    "eyebrow": "Welcome to Voisino",
     "title": "Useful updates, just around the corner.",
     "body": "Discover short videos posted by your neighbors within 300 m, 1 km, or 3 km.",
     "points": [
@@ -22,7 +23,7 @@
   },
   "install": {
     "title": "Install the app",
-    "body": "Add Neighbors Live to your Home Screen for a full-screen experience, faster access, and optional notifications.",
+    "body": "Add Voisino to your Home Screen for a full-screen experience, faster access, and optional notifications.",
     "ios": "On iPhone or iPad (Safari): tap Share, then “Add to Home Screen.” On iOS, notifications only work after installing the app and opening it from its icon.",
     "android": "On Android (Chrome): use the button below or the ⋮ menu, then “Install app.”",
     "button": "Install",
@@ -33,7 +34,7 @@
     "points": [
       "Record useful neighborhood events, not people. Automatic face blurring may miss someone; license plates are not blurred.",
       "No precise addresses, harassment, or public shaming.",
-      "In an emergency, call 112 first. Neighbors Live is not an emergency service.",
+      "In an emergency, call 112 first. Voisino is not an emergency service.",
       "Report concerning content. After 3 reports, a video is hidden for review."
     ],
     "link": "Read the full rules"

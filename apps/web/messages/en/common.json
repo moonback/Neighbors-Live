@@ -1,11 +1,13 @@
 {
-  "appName": "Neighbors Live",
+  "appName": "Voisino",
   "tagline": "Useful neighborhood updates, in short videos from your neighbors.",
+  "slogan": "Your neighborhood, live",
   "nav": {
     "label": "Main navigation",
-    "feed": "Around me",
+    "feed": "Home",
     "map": "Map",
     "record": "Record",
+    "shops": "Shops",
     "profile": "Profile",
     "settings": "Settings"
   },

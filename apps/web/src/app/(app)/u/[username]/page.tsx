@@ -52,73 +52,106 @@ export default async function ProfilePage({ params }: Params) {
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6 p-4 pb-8 sm:p-6">
-      <header className="flex flex-col gap-5 rounded-3xl border border-line bg-panel p-5 sm:flex-row sm:items-center sm:p-7">
-        <Avatar username={profile.username} color={profile.avatar_color} size={72} />
-        <div className="flex min-w-0 flex-col gap-1">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">
-            Neighbors Live
-          </p>
-          <h1 className="truncate text-2xl font-bold sm:text-3xl">@{profile.username}</h1>
-          <div className="flex flex-wrap gap-2 text-xs">
-            {isModerator && (
-              <span className="rounded-full bg-accent px-2 py-0.5 font-semibold text-ink">
-                {tc('badges.moderator')}
-              </span>
-            )}
-            {profile.role === 'merchant' && (
-              <span className="rounded-full bg-amber-500 px-2 py-0.5 font-semibold text-ink">
-                {tc('badges.merchant')}
-              </span>
-            )}
-            {profile.role === 'admin' && (
-              <span className="rounded-full bg-fog px-2 py-0.5 font-semibold text-ink">
-                {tc('badges.admin')}
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-fog">
-            {t('reputation')} : <strong className="text-white">{profile.reputation}</strong> ·{' '}
-            {t('memberSince', { date: since })}
-          </p>
-        </div>
-      </header>
-      {profile.bio && (
-        <p className="whitespace-pre-line rounded-2xl border border-line bg-panel/70 p-4 leading-relaxed text-fog">
-          {profile.bio}
-        </p>
-      )}
-      {isOwner && (
-        <nav className="flex flex-wrap gap-2 text-sm">
+      <header className="relative flex flex-col items-center gap-3 overflow-hidden rounded-3xl border border-white/[0.07] bg-panel/80 px-5 pt-8 pb-6 text-center">
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-28 bg-accent opacity-25 blur-2xl"
+        />
+        {isOwner && (
           <Link
             href="/parametres"
-            className="inline-flex min-h-11 items-center rounded-xl border border-line px-4 font-semibold hover:border-accent"
+            aria-label={tc('nav.settings')}
+            className="glass absolute top-3 right-3 flex h-11 w-11 items-center justify-center rounded-full text-white"
           >
-            {t('edit')}
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 12a7.4 7.4 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14.5 3h-5l-.4 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6a7.4 7.4 0 000 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 002 1.2l.4 2.6h5l.4-2.6a7 7 0 002-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z" />
+            </svg>
           </Link>
-          <Link
-            href="/me/decisions"
-            className="inline-flex min-h-11 items-center rounded-xl border border-line px-4 font-semibold hover:border-accent"
-          >
-            {t('decisions')}
-          </Link>
-        </nav>
-      )}
+        )}
+        <span className="glow relative rounded-full bg-accent p-1">
+          <span className="block rounded-full bg-ink p-0.5">
+            <Avatar username={profile.username} color={profile.avatar_color} size={88} />
+          </span>
+        </span>
+        <h1 className="relative max-w-full truncate text-2xl font-bold">@{profile.username}</h1>
+        <div className="relative flex flex-wrap justify-center gap-2 text-xs">
+          {isModerator && (
+            <span className="rounded-full bg-accent px-2.5 py-1 font-semibold text-ink">
+              {tc('badges.moderator')}
+            </span>
+          )}
+          {profile.role === 'merchant' && (
+            <span className="rounded-full bg-amber-400 px-2.5 py-1 font-semibold text-ink">
+              {tc('badges.merchant')}
+            </span>
+          )}
+          {profile.role === 'admin' && (
+            <span className="rounded-full bg-fog px-2.5 py-1 font-semibold text-ink">
+              {tc('badges.admin')}
+            </span>
+          )}
+        </div>
+        <dl className="relative mt-2 grid w-full max-w-sm grid-cols-2 divide-x divide-white/10">
+          <div className="flex flex-col-reverse">
+            <dt className="text-xs text-fog">{t('activeVideos')}</dt>
+            <dd className="text-xl font-bold tabular-nums">{list.length}</dd>
+          </div>
+          <div className="flex flex-col-reverse">
+            <dt className="text-xs text-fog">{t('reputation')}</dt>
+            <dd className="text-xl font-bold tabular-nums">{profile.reputation}</dd>
+          </div>
+        </dl>
+        <p className="relative text-xs text-fog">{t('memberSince', { date: since })}</p>
+        {profile.bio && (
+          <p className="relative max-w-md whitespace-pre-line text-sm leading-relaxed text-white/85">
+            {profile.bio}
+          </p>
+        )}
+        {isOwner && (
+          <nav className="relative mt-2 grid w-full max-w-sm grid-cols-2 gap-2 text-sm">
+            <Link
+              href="/parametres"
+              className="glow inline-flex min-h-11 items-center justify-center rounded-2xl bg-accent px-4 font-semibold text-white"
+            >
+              {t('edit')}
+            </Link>
+            <Link
+              href="/me/decisions"
+              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 font-semibold hover:border-accent/60"
+            >
+              {t('decisions')}
+            </Link>
+          </nav>
+        )}
+      </header>
 
       <section aria-labelledby="active-videos" className="flex flex-col gap-3">
-        <h2 id="active-videos" className="text-lg font-semibold">
+        <h2
+          id="active-videos"
+          className="w-fit border-b-2 border-accent pb-2 text-base font-semibold"
+        >
           {t('activeVideos')}
         </h2>
         {list.length === 0 ? (
           <p className="text-fog">{t('noVideos')}</p>
         ) : (
-          <ul className="grid grid-cols-3 gap-2">
+          <ul className="grid grid-cols-3 gap-2 sm:gap-3">
             {list.map((v) => {
               const poster = v.poster_path ? posters.get(v.poster_path) : undefined;
               return (
                 <li key={v.id}>
                   <Link
                     href={`/v/${v.id}`}
-                    className="relative block aspect-[9/16] overflow-hidden rounded-xl bg-panel"
+                    className="relative block aspect-[9/16] overflow-hidden rounded-2xl bg-panel ring-1 ring-white/5 transition hover:ring-accent/60"
                   >
                     {poster && (
                       // eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL

@@ -29,14 +29,26 @@ export function ShopDirectory({ entries }: { entries: Entry[] }) {
       <h2 id="shop-directory-title" className="sr-only">
         {t('title')}
       </h2>
-      <label className="flex flex-col gap-2 text-sm font-semibold">
-        {t('searchLabel')}
+      <label className="relative flex flex-col gap-2 text-sm font-semibold">
+        <span className="sr-only">{t('searchLabel')}</span>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-fog"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </svg>
         <input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t('searchPlaceholder')}
-          className="min-h-12 rounded-xl border border-line bg-panel px-4 font-normal text-white placeholder:text-fog focus:border-accent focus:outline-none"
+          className="min-h-12 rounded-2xl border border-white/10 bg-panel/80 pr-4 pl-12 font-normal text-white placeholder:text-fog focus:border-accent focus:ring-4 focus:ring-accent/20 focus:outline-none"
         />
       </label>
       <p className="text-sm text-fog" role="status" aria-live="polite">
@@ -52,27 +64,40 @@ export function ShopDirectory({ entries }: { entries: Entry[] }) {
           {query ? t('noResults') : t('empty')}
         </p>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-3 lg:grid-cols-2">
           {filtered.map((entry) => (
             <li key={entry.username}>
-              <article className="flex h-full flex-col gap-4 rounded-2xl border border-line bg-panel p-4 transition-colors hover:border-accent/60">
-                <div className="flex items-center gap-3">
-                  <Avatar username={entry.name} color={entry.color} size={48} />
-                  <div className="min-w-0">
-                    <h3 className="truncate font-semibold">{entry.name}</h3>
-                    <p className="text-sm text-fog">@{entry.username}</p>
-                  </div>
-                </div>
-                <p className="flex-1 text-sm leading-relaxed text-fog">
-                  {entry.description || t('noDescription')}
-                </p>
-                <Link
-                  href={`/u/${encodeURIComponent(entry.username)}`}
-                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-line px-4 text-sm font-semibold hover:border-accent"
-                >
-                  {t('viewProfile')}
-                </Link>
-              </article>
+              <Link
+                href={`/u/${encodeURIComponent(entry.username)}`}
+                className="group flex h-full items-center gap-4 rounded-3xl border border-white/[0.07] bg-panel/80 p-3 pr-4 transition hover:border-accent/50 hover:bg-panel"
+              >
+                <span className="overflow-hidden rounded-2xl">
+                  <span className="block [&>span]:rounded-none!">
+                    <Avatar username={entry.name} color={entry.color} size={64} />
+                  </span>
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-semibold">{entry.name}</span>
+                  <span className="block text-xs text-fog">@{entry.username}</span>
+                  <span className="mt-1 line-clamp-2 block text-sm leading-snug text-fog">
+                    {entry.description || t('noDescription')}
+                  </span>
+                </span>
+                <span className="glow flex h-9 shrink-0 items-center gap-1 rounded-xl bg-accent px-3 text-xs font-semibold text-white transition group-hover:brightness-110">
+                  <span className="sr-only">{t('viewProfile')}</span>
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                  >
+                    <path d="M5 12h14m-6-6l6 6-6 6" />
+                  </svg>
+                </span>
+              </Link>
             </li>
           ))}
         </ul>

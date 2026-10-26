@@ -77,7 +77,7 @@ interface PushPayload {
 }
 
 self.addEventListener('push', (event) => {
-  let data: PushPayload = { title: 'Neighbors Live', body: '', url: '/' };
+  let data: PushPayload = { title: 'Voisino', body: '', url: '/' };
   try {
     data = { ...data, ...(event.data?.json() as Partial<PushPayload>) };
   } catch {

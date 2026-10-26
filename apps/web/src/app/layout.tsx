@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
+import { Inter } from 'next/font/google';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { PwaShell } from '@/components/pwa/PwaShell';
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('common');
@@ -17,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0b0d10',
+  themeColor: '#070a1c',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -26,7 +29,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   return (
-    <html lang={locale}>
+    <html lang={locale} className={inter.variable}>
       <body className="font-sans antialiased">
         <NextIntlClientProvider>
           <PwaShell

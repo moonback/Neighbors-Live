@@ -3,7 +3,7 @@
   "close": "Close camera",
   "primer": {
     "title": "Record what’s happening",
-    "body": "Neighbors Live needs the following to record:",
+    "body": "Voisino needs the following to record:",
     "camera": "Camera and microphone: only while this screen is open. Videos must be recorded in the app; importing from your gallery is not available.",
     "location": "Location, when you publish: to show the video to nearby neighbors. Everyone sees an approximate location, rounded to about 50 m.",
     "privacy": "Faces are automatically blurred before publication, but some may be missed. Avoid recording identifiable people and report concerning content. License plates are not blurred.",

@@ -22,7 +22,7 @@ export default async function ShopDirectoryPage() {
 
   if (merchants.error) {
     return (
-      <main id="main" className="min-h-dvh bg-ink px-4 py-8 sm:px-8">
+      <div className="px-4 py-8 sm:px-8">
         <div className="mx-auto flex max-w-5xl flex-col gap-6">
           <Link href="/commerces" className="w-fit text-sm font-semibold text-fog hover:text-white">
             {t('back')}
@@ -30,7 +30,7 @@ export default async function ShopDirectoryPage() {
           <h1 className="text-3xl font-bold">{t('title')}</h1>
           <Notice kind="error">{t('error')}</Notice>
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -45,7 +45,7 @@ export default async function ShopDirectoryPage() {
     : { data: [], error: null };
   if (profiles.error) {
     return (
-      <main id="main" className="min-h-dvh bg-ink px-4 py-8 sm:px-8">
+      <div className="px-4 py-8 sm:px-8">
         <div className="mx-auto flex max-w-5xl flex-col gap-6">
           <Link href="/commerces" className="w-fit text-sm font-semibold text-fog hover:text-white">
             {t('back')}
@@ -53,7 +53,7 @@ export default async function ShopDirectoryPage() {
           <h1 className="text-3xl font-bold">{t('title')}</h1>
           <Notice kind="error">{t('error')}</Notice>
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -75,28 +75,22 @@ export default async function ShopDirectoryPage() {
   });
 
   return (
-    <main id="main" className="min-h-dvh bg-ink px-4 py-6 sm:px-8 sm:py-10">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8">
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <Link href="/commerces" className="text-sm font-semibold text-fog hover:text-white">
-            {t('back')}
-          </Link>
+    <div className="px-4 py-5 sm:px-8 sm:py-8">
+      <div className="mx-auto flex max-w-5xl flex-col gap-5">
+        <header className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold sm:text-3xl">{t('title')}</h1>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-fog">{t('intro')}</p>
+          </div>
           <Link
-            href="/commerce"
-            className="inline-flex min-h-11 items-center rounded-xl bg-accent px-4 font-semibold text-ink"
+            href="/commerces"
+            className="glass inline-flex min-h-11 shrink-0 items-center rounded-2xl px-4 text-sm font-semibold"
           >
             {t('forMerchants')}
           </Link>
         </header>
-        <section className="rounded-3xl border border-line bg-panel p-5 sm:p-8">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">
-            Neighbors Live
-          </p>
-          <h1 className="mt-2 text-3xl font-bold sm:text-4xl">{t('title')}</h1>
-          <p className="mt-3 max-w-2xl leading-relaxed text-fog">{t('intro')}</p>
-        </section>
         <ShopDirectory entries={entries} />
       </div>
-    </main>
+    </div>
   );
 }

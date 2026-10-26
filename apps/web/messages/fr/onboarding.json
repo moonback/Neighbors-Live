@@ -5,6 +5,7 @@
   "skip": "Passer",
   "finish": "J’ai compris, c’est parti",
   "value": {
+    "eyebrow": "Bienvenue sur Voisino",
     "title": "Les infos utiles, à deux pas de chez vous.",
     "body": "Découvrez les courtes vidéos publiées par vos voisins, dans un rayon de 300 m, 1 km ou 3 km.",
     "points": [
@@ -22,7 +23,7 @@
   },
   "install": {
     "title": "Installer l’application",
-    "body": "Ajoutez Neighbors Live à votre écran d’accueil : ouverture plein écran, plus rapide, et notifications possibles.",
+    "body": "Ajoutez Voisino à votre écran d’accueil : ouverture plein écran, plus rapide, et notifications possibles.",
     "ios": "Sur iPhone ou iPad (Safari) : touchez le bouton Partager, puis « Sur l’écran d’accueil ». Les notifications ne fonctionnent sur iOS qu’une fois l’application installée et ouverte depuis l’icône.",
     "android": "Sur Android (Chrome) : utilisez le bouton ci-dessous ou le menu ⋮ puis « Installer l’application ».",
     "button": "Installer",
@@ -33,7 +34,7 @@
     "points": [
       "Filmez des faits utiles au quartier, pas des personnes. Le floutage automatique des visages peut en manquer ; les plaques ne sont pas floutées.",
       "Pas d’adresse précise, pas de harcèlement, pas de dénonciation.",
-      "En cas de danger, appelez d’abord le 112 : Neighbors Live n’est pas un service d’urgence.",
+      "En cas de danger, appelez d’abord le 112 : Voisino n’est pas un service d’urgence.",
       "Signalez ce qui pose problème : à 3 signalements, la vidéo est masquée et examinée."
     ],
     "link": "Lire les règles complètes"

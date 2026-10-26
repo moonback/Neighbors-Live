@@ -45,9 +45,7 @@ export default async function MerchantLandingPage() {
             </Link>
           </div>
           <div className="flex min-h-56 flex-col justify-between rounded-2xl border border-line bg-ink p-5 sm:min-h-64 sm:p-7">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-accent">
-              Neighbors Live
-            </p>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-accent">Voisino</p>
             <p className="text-2xl font-semibold leading-snug">{t('closing')}</p>
             <p className="text-sm text-fog">{t('eyebrow')}</p>
           </div>

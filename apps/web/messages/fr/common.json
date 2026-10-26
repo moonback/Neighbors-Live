@@ -1,11 +1,13 @@
 {
-  "appName": "Neighbors Live",
+  "appName": "Voisino",
   "tagline": "Les infos utiles de votre quartier, en courtes vidéos de vos voisins.",
+  "slogan": "Le quartier en direct",
   "nav": {
     "label": "Navigation principale",
-    "feed": "Autour de moi",
+    "feed": "Accueil",
     "map": "Carte",
     "record": "Filmer",
+    "shops": "Commerces",
     "profile": "Profil",
     "settings": "Paramètres"
   },

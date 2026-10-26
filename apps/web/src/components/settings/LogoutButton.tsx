@@ -10,7 +10,8 @@ export function LogoutButton() {
   const router = useRouter();
   return (
     <Button
-      variant="ghost"
+      variant="secondary"
+      className="w-full border-alert/40! text-alert hover:bg-alert/10!"
       onClick={async () => {
         await api('/api/auth/logout', { method: 'POST', body: {} });
         router.replace('/');

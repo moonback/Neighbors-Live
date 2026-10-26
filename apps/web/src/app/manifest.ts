@@ -3,8 +3,8 @@ import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: '/',
-    name: 'Neighbors Live',
-    short_name: 'Neighbors',
+    name: 'Voisino',
+    short_name: 'Voisino',
     description: 'Ce qui se passe à deux pas de chez vous, filmé par vos voisins.',
     lang: 'fr',
     dir: 'ltr',
@@ -12,8 +12,8 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',
-    background_color: '#0b0d10',
-    theme_color: '#0b0d10',
+    background_color: '#070a1c',
+    theme_color: '#070a1c',
     categories: ['social', 'news', 'lifestyle'],
     icons: [
       { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

@@ -45,9 +45,7 @@ export default async function MerchantPage() {
     <div className="mx-auto flex max-w-5xl flex-col gap-6 p-4 pb-8 sm:p-6">
       <header className="flex flex-col gap-4 rounded-3xl border border-line bg-panel p-5 sm:flex-row sm:items-end sm:justify-between sm:p-7">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">
-            Neighbors Live
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Voisino</p>
           <h1 className="mt-2 text-2xl font-bold sm:text-3xl">{t('title')}</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fog">{t('intro')}</p>
         </div>

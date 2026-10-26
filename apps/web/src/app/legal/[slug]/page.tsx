@@ -24,7 +24,7 @@ export default async function LegalPage({ params }: Params) {
   return (
     <main id="main" className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
       <Link href="/" className="text-sm text-fog underline">
-        ← Neighbors Live
+        ← Voisino
       </Link>
       <h1 className="text-3xl font-bold">{t(`pages.${slug}.title`)}</h1>
       <p

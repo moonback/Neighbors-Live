@@ -13,7 +13,7 @@
   },
   "location": {
     "primerTitle": "Voir ce qui se passe près de vous",
-    "primerBody": "Pour afficher les vidéos de votre quartier, Neighbors Live a besoin de votre position. Elle sert uniquement à cette recherche : elle n’est ni enregistrée ni partagée.",
+    "primerBody": "Pour afficher les vidéos de votre quartier, Voisino a besoin de votre position. Elle sert uniquement à cette recherche : elle n’est ni enregistrée ni partagée.",
     "allow": "Utiliser ma position",
     "later": "Plus tard",
     "needed": "Activez la localisation pour voir les vidéos autour de vous.",

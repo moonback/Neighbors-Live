@@ -1,25 +1,34 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-ink: #0b1020;
-  --color-panel: #141a2c;
-  --color-line: #28324a;
-  --color-fog: #b6c2d8;
-  --color-accent: #9b8cff;
-  --color-blue: #52c4ff;
-  --color-alert: #ff5a4f;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-ink: #070a1c;
+  --color-panel: #111633;
+  --color-line: #252c55;
+  --color-fog: #a3abd0;
+  --color-accent: #7c5cff;
+  --color-blue: #3d8bff;
+  --color-alert: #ff4d6d;
+  --font-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 :root {
   color-scheme: dark;
+  --brand-gradient: linear-gradient(135deg, #8b5cff 0%, #6a5cff 45%, #3d7bff 100%);
 }
 
 html,
 body {
-  background: var(--color-ink);
+  background-color: var(--color-ink);
   color: #fff;
   height: 100%;
+}
+
+body {
+  background-image:
+    radial-gradient(60rem 40rem at -10% -10%, rgb(124 92 255 / 0.16), transparent 60%),
+    radial-gradient(50rem 40rem at 110% 110%, rgb(61 139 255 / 0.12), transparent 60%);
+  background-attachment: fixed;
 }
 
 :focus-visible {
@@ -27,48 +36,42 @@ body {
   outline-offset: 2px;
 }
 
-/* The admin workspace uses a calm, light surface while the media experience stays dark. */
-.admin-theme {
-  --color-ink: #f4f6fb;
-  --color-panel: #ffffff;
-  --color-line: #e1e6ef;
-  --color-fog: #596579;
-  --color-accent: #4d3bc8;
-  --color-alert: #c93636;
-  min-height: 100%;
-  color: #182033;
-  color-scheme: light;
+/* Every accent fill uses the brand gradient; dark text on it becomes white for contrast. */
+.bg-accent {
+  background-image: var(--brand-gradient);
 }
-
-.admin-theme .text-white {
-  color: #182033;
-}
-.admin-theme .text-fog {
-  color: #596579;
-}
-.admin-theme .bg-ink {
-  background-color: #f4f6fb;
-}
-.admin-theme .bg-panel {
-  background-color: #fff;
-}
-.admin-theme .text-accent {
-  color: #4d3bc8;
-}
-.admin-theme .bg-accent {
-  background-color: #4d3bc8;
+.bg-accent.text-ink,
+.bg-accent .text-ink {
   color: #fff;
 }
-.admin-theme .border-accent {
-  border-color: #4d3bc8;
+
+@utility glass {
+  background-color: rgb(17 22 51 / 0.7);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(16px);
 }
-.admin-theme :focus-visible {
-  outline-color: #4d3bc8;
+
+@utility glow {
+  box-shadow:
+    0 10px 30px -10px rgb(124 92 255 / 0.7),
+    inset 0 1px 0 rgb(255 255 255 / 0.15);
+}
+
+@utility text-brand {
+  background-image: linear-gradient(90deg, #ff5ec8 0%, #8b5cff 50%, #3d8bff 100%);
+  background-clip: text;
+  color: transparent;
+}
+
+/* Admin workspace: same dark identity as the app, with a denser layout. */
+.admin-theme {
+  min-height: 100%;
 }
 
 .admin-sidebar-link[aria-current='page'] {
-  background: #eeecff;
-  color: #3929a8;
+  background-image: var(--brand-gradient);
+  color: #fff;
+  box-shadow: 0 10px 30px -12px rgb(124 92 255 / 0.8);
 }
 
 @media (prefers-reduced-motion: reduce) {

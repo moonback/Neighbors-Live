@@ -55,6 +55,36 @@ const STAT_LINKS: Partial<Record<(typeof STAT_KEYS)[number], string>> = {
   pending_appeals: '/moderation#appeals-title',
   pending_merchants: '#merchants',
 };
+const STAT_STYLE: Record<(typeof STAT_KEYS)[number], { tile: string; icon: string }> = {
+  users: {
+    tile: 'bg-gradient-to-br from-violet-500 to-indigo-600',
+    icon: 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9a8 8 0 0116 0',
+  },
+  banned: {
+    tile: 'bg-gradient-to-br from-rose-500 to-red-600',
+    icon: 'M12 21a9 9 0 100-18 9 9 0 000 18zM5.6 5.6l12.8 12.8',
+  },
+  active_videos: {
+    tile: 'bg-gradient-to-br from-sky-400 to-blue-600',
+    icon: 'M3 7h12v10H3zM15 10l6-3v10l-6-3',
+  },
+  hidden_videos: {
+    tile: 'bg-gradient-to-br from-slate-500 to-slate-700',
+    icon: 'M3 3l18 18M10.6 6.1A9.8 9.8 0 0112 6c5 0 9 6 9 6a16 16 0 01-2.6 3.2M6.6 6.6C4.3 8.1 3 12 3 12s4 6 9 6a8.6 8.6 0 004.4-1.2',
+  },
+  open_reports: {
+    tile: 'bg-gradient-to-br from-emerald-400 to-green-600',
+    icon: 'M5 21V4h11l-1.5 4L16 12H5',
+  },
+  pending_appeals: {
+    tile: 'bg-gradient-to-br from-fuchsia-500 to-pink-600',
+    icon: 'M12 3v18M5 7h14M5 7l-3 6a3 3 0 006 0zM19 7l-3 6a3 3 0 006 0z',
+  },
+  pending_merchants: {
+    tile: 'bg-gradient-to-br from-amber-400 to-orange-500',
+    icon: 'M4 9l1.5-5h13L20 9M4 9v11h16V9M10 20v-5h4v5',
+  },
+};
 const REVERTIBLE = new Set(['hide', 'remove', 'auto_hide', 'validate', 'warn', 'ban']);
 const AUDIT_KINDS = [
   'validate',
@@ -260,9 +290,7 @@ export default async function AdminPage({
     <div className="mx-auto flex max-w-6xl flex-col gap-8 p-4 pb-8 sm:p-6">
       <header className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-accent">
-            Neighbors Live
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-accent">Voisino</p>
           <h1 className="mt-2 text-3xl font-bold">{t('title')}</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fog">{t('intro')}</p>
         </div>
@@ -302,13 +330,32 @@ export default async function AdminPage({
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {STAT_KEYS.map((key) => {
             const href = STAT_LINKS[key];
+            const style = STAT_STYLE[key];
             return (
               <div
                 key={key}
-                className={`rounded-2xl border border-line bg-panel p-4 ${href ? 'transition-colors hover:border-accent' : ''}`}
+                className={`relative flex flex-col overflow-hidden rounded-3xl border border-white/[0.07] bg-panel/80 p-4 ${href ? 'transition hover:border-accent/50' : ''}`}
               >
-                <dt className="text-sm leading-snug text-fog">{t(`stats.${key}`)}</dt>
-                <dd className="mt-2 text-3xl font-bold tabular-nums">
+                <dt className="text-sm leading-snug text-fog">
+                  <span
+                    aria-hidden="true"
+                    className={`mb-3 flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg ${style.tile}`}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                    >
+                      <path d={style.icon} />
+                    </svg>
+                  </span>
+                  {t(`stats.${key}`)}
+                </dt>
+                <dd className="mt-1 text-3xl font-bold tabular-nums">
                   {href ? (
                     <Link href={href} className="rounded-sm focus-visible:underline">
                       {parsedStats.data[key].toLocaleString('fr-FR')}
@@ -334,7 +381,7 @@ export default async function AdminPage({
         <div>
           <h2 id="processing-videos-title" className="text-lg font-semibold">
             {t('processingVideos')}
-            <span className="ml-2 rounded-full bg-sky-500/10 px-2 py-0.5 text-sm text-sky-700">
+            <span className="ml-2 rounded-full bg-sky-500/15 px-2 py-0.5 text-sm text-sky-300">
               {(processingVideos.count ?? processingVideos.data.length).toLocaleString('fr-FR')}
             </span>
           </h2>
@@ -371,7 +418,7 @@ export default async function AdminPage({
                     </p>
                   </div>
                   <div className="shrink-0 text-sm sm:text-right">
-                    <p className="font-semibold text-sky-700">{t('videoStatusProcessing')}</p>
+                    <p className="font-semibold text-sky-300">{t('videoStatusProcessing')}</p>
                     <p className="text-xs text-fog">
                       {job ? (
                         <>

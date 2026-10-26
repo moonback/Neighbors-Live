@@ -234,32 +234,43 @@ export function VideoCard({
         onClick={togglePlay}
         aria-label={paused ? t('play') : t('pause')}
         disabled={mediaState !== 'ready'}
-        className={`absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-3xl transition-opacity disabled:hidden ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
+        className={`glass absolute left-1/2 top-1/2 flex h-18 w-18 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-3xl transition-opacity disabled:hidden ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
       >
         <span aria-hidden="true">{paused ? '▶' : '❚❚'}</span>
       </button>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent px-4 pb-6 pt-24">
-        <div className="pointer-events-auto flex max-w-[calc(100%-5rem)] flex-col gap-2">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink via-ink/50 to-transparent px-4 pb-6 pt-28">
+        <div className="pointer-events-auto flex max-w-[calc(100%-5rem)] flex-col gap-2.5">
+          <Link
+            href={`/u/${item.author.username}`}
+            className="flex min-h-11 w-fit items-center gap-2.5 rounded-full pr-2 text-sm font-semibold text-white"
+          >
+            <span className="rounded-full bg-accent p-0.5">
+              <Avatar username={item.author.username} color={item.author.color} size={34} />
+            </span>
+            <span className="flex flex-col leading-tight">
+              @{item.author.username}
+              {distance && (
+                <span className="text-xs font-normal text-white/70">
+                  {t('distance', { distance: t(distance.unit, { value: distance.value }) })}
+                </span>
+              )}
+            </span>
+          </Link>
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span
-              className="rounded-full px-2 py-0.5 font-bold text-white"
+              className="rounded-full px-2.5 py-1 font-bold text-white shadow-lg"
               style={{ backgroundColor: CATEGORY_COLORS[item.category] }}
             >
               {tc(item.category)}
             </span>
             {item.isMerchant && (
-              <span className="rounded-full bg-amber-500 px-2 py-0.5 font-bold text-ink">
+              <span className="rounded-full bg-amber-400 px-2.5 py-1 font-bold text-ink">
                 {t('merchant')}
               </span>
             )}
-            {distance && (
-              <span className="text-fog">
-                {t('distance', { distance: t(distance.unit, { value: distance.value }) })}
-              </span>
-            )}
-            <span className="text-fog">
-              · {t('expires', { when: format.relativeTime(new Date(item.expiresAt), now) })}
+            <span className="glass rounded-full px-2.5 py-1 text-white/80">
+              {t('expires', { when: format.relativeTime(new Date(item.expiresAt), now) })}
             </span>
           </div>
           {item.caption && (
@@ -281,17 +292,10 @@ export function VideoCard({
               )}
             </div>
           )}
-          <Link
-            href={`/u/${item.author.username}`}
-            className="flex min-h-11 items-center gap-2 rounded-lg px-1 text-sm text-fog"
-          >
-            <Avatar username={item.author.username} color={item.author.color} size={28} />
-            {t('by', { username: item.author.username ?? '' })}
-          </Link>
         </div>
       </div>
 
-      <div className="absolute bottom-6 right-3 flex flex-col items-center gap-4 text-xs">
+      <div className="absolute bottom-6 right-2 flex flex-col items-center gap-3 text-xs font-semibold">
         <ActionButton
           label={t('usefulCount', { count: useful.count })}
           pressed={useful.reacted}
@@ -354,7 +358,7 @@ function ActionButton({
       className="flex w-16 flex-col items-center gap-1 text-center"
     >
       <span
-        className={`flex h-12 w-12 items-center justify-center rounded-full ${pressed ? 'bg-accent text-ink' : 'bg-black/50 text-white'}`}
+        className={`flex h-12 w-12 items-center justify-center rounded-full transition active:scale-90 ${pressed ? 'glow bg-accent text-white' : 'glass text-white'}`}
       >
         <svg
           aria-hidden="true"
