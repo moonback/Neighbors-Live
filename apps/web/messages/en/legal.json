@@ -1,0 +1,114 @@
+{
+  "draft": "Incomplete working draft: bracketed items still need to be filled in. A lawyer must review and approve these texts before production use.",
+  "updated": "Last updated: October 26, 2026",
+  "pages": {
+    "confidentialite": {
+      "title": "Privacy Policy",
+      "sections": [
+        {
+          "title": "Who we are",
+          "body": "Neighbors Live is operated by [publisher name, legal form, address, contact email]. The publisher is the data controller."
+        },
+        {
+          "title": "Data we collect",
+          "body": "Account: email address, password managed by the authentication service, username, optional bio, and preferences. Posts: video recorded in the app, category, caption, location at the time of posting, and its accuracy. Interactions: Useful reactions, comments, reports, and appeals. Notifications: browser subscription details and selected area (a neighborhood of about 1 km², never your exact location). Security: salted, non-reversible hashes of IP addresses and email addresses to limit abuse."
+        },
+        {
+          "title": "What we do not collect",
+          "body": "We do not keep a history of your locations: the location used to display the feed is not saved or logged. We do not collect profile photos or phone numbers, and we do not use advertising trackers."
+        },
+        {
+          "title": "Video locations",
+          "body": "A video's exact location is retained to check its consistency and associate it with a neighborhood. It is never shown: everyone sees a location rounded to about 50 m and distances rounded to 100 m."
+        },
+        {
+          "title": "Blurring",
+          "body": "Faces are automatically blurred before publication, and the unblurred original video is deleted once the processed version is online. Automatic blurring may miss very small or side-profile faces; report anyone who remains identifiable. Automatic license plate blurring is not currently active."
+        },
+        {
+          "title": "Retention periods",
+          "body": "Videos: kept until they expire (6 hours to 7 days, depending on category), then the files are deleted. The post record (without the file) is kept for reputation history until the account is deleted. Videos removed by moderation: files are kept for 7 days (the appeal period), then deleted. Moderation log: kept to provide a record of decisions, using pseudonymous identifiers. Anti-abuse counters: 24 hours."
+        },
+        {
+          "title": "Your rights",
+          "body": "You can export your data (Settings → My data), remove a video immediately, edit your information, and delete your account at any time. Account deletion removes your profile, videos and their files, comments, reactions, reports, and subscriptions. You can also contact us and lodge a complaint with the CNIL."
+        },
+        {
+          "title": "Processors and service providers",
+          "body": "Database and file hosting: Supabase. Application hosting: Vercel. Video processing: [worker host]. Map tiles: OpenFreeMap / OpenStreetMap. Notifications: browser push services (Google, Apple, Mozilla). [Specify locations and transfer safeguards.]"
+        }
+      ]
+    },
+    "conditions": {
+      "title": "Terms of Use",
+      "sections": [
+        {
+          "title": "Purpose",
+          "body": "Neighbors Live lets people share short videos that are useful to their neighborhood. The service is free of charge."
+        },
+        {
+          "title": "Account",
+          "body": "Accounts are personal. You are responsible for what you post. We may suspend an account that violates the community rules."
+        },
+        {
+          "title": "Content",
+          "body": "You retain your rights to your videos and grant us a non-exclusive, royalty-free license, limited to the period the video is visible, to show them to nearby users. You confirm that you have the right to record what you post and that you respect the rights of people shown."
+        },
+        {
+          "title": "Moderation",
+          "body": "Users can report content to neighborhood moderators. After reports from three different people, a video is hidden pending review. Moderation decisions are logged and can be appealed; another person reviews the appeal. Content is not checked in advance."
+        },
+        {
+          "title": "Not an emergency service",
+          "body": "Neighbors Live does not replace emergency services. Call 112 if you are in danger."
+        },
+        {
+          "title": "Liability",
+          "body": "Information posted by users is not checked in advance. [Liability clauses to be completed by a lawyer, including in light of hosting-provider status and the Digital Services Act.]"
+        }
+      ]
+    },
+    "regles": {
+      "title": "Community Rules",
+      "sections": [
+        {
+          "title": "Useful first",
+          "body": "Post what helps the neighborhood: an alert, practical information, an event, a helping hand, a found item, or an offer from a local business."
+        },
+        {
+          "title": "Respect people",
+          "body": "Do not film people to feature them. Avoid faces, children, license plates, and precise addresses. No public shaming, harassment, hateful speech, or discrimination."
+        },
+        {
+          "title": "Be truthful",
+          "body": "Do not post false information or misuse a category (an alert must be a real alert)."
+        },
+        {
+          "title": "Businesses",
+          "body": "Business offers are for approved merchant accounts, must use the Business category, and are subject to the daily quota."
+        },
+        {
+          "title": "Reports and sanctions",
+          "body": "After reports from 3 different accounts, a video is hidden pending a neighborhood moderator’s decision. Decisions affect reputation; serious or repeated violations can lead to suspension."
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contact",
+      "sections": [
+        {
+          "title": "Write to us",
+          "body": "For questions, requests about your personal data, or urgent reports of illegal content: [contact email address]."
+        },
+        {
+          "title": "Report content",
+          "body": "The quickest way is to use the Report button below the video. It sends the report directly to neighborhood moderators."
+        },
+        {
+          "title": "Authorities",
+          "body": "Requests from public authorities should be sent to [dedicated address]."
+        }
+      ]
+    }
+  }
+}

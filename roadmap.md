@@ -87,7 +87,7 @@ traitement, la confidentialité et l’état réel du produit.
 | Mentions légales       | ⬜ Remplacer les champs entre crochets, confirmer responsable de traitement, contact, sous-traitants et hébergement ; obtenir la revue juridique nécessaire. Bloqué par les informations de l’éditeur et le conseil juridique. |
 | Floutage et position   | Harmoniser le message de capture et la politique : floutage des visages non infaillible, plaques non floutées, position publique approximative                                                                                 |
 | Modération et urgences | Décrire clairement le signalement, le seuil d’auto-masquage, l’examen humain, le recours et l’absence de service d’urgence                                                                                                     |
-| Traductions            | Comparer les contenus FR/EN et identifier les clés manquantes, anciennes ou contradictoires                                                                                                                                    |
+| Traductions            | ✅ Les 14 namespaces FR/EN ont les mêmes clés et tailles de tableaux ; validation idiomatique et cohérence des textes encore requises                                                                                          |
 
 **Critères de sortie**
 
@@ -211,16 +211,16 @@ et local du produit.
 **Résultat attendu :** les parcours principaux sont utilisables dans des conditions variées,
 notamment avec clavier, technologies d’assistance et paramètres d’affichage.
 
-| Chantier                    | Livrables                                                                                                                                                                                                                                           |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Clavier et lecteurs d’écran | Revue de navigation, dialogue modal, focus, annonces de statuts et formulaires                                                                                                                                                                      |
-| Contraste et zoom           | Contrôle des contrastes, zoom navigateur et tailles de police agrandies                                                                                                                                                                             |
-| Vidéo                       | Contrôles compréhensibles, mode muet explicite, légende visible et alternatives lorsque disponibles                                                                                                                                                 |
-| Cibles tactiles             | 🟨 Lien auteur, filtres et suppression de commentaire portés à 44 px minimum ; autres actions et appareils à auditer                                                                                                                                |
-| Mouvement                   | ✅ Autoplay du feed arrêté selon `prefers-reduced-motion`, avec lecture manuelle disponible ; E2E                                                                                                                                                   |
-| i18n                        | 🟨 Namespaces commun, auth, feed, vidéo, carte, profil, réglages, notifications, commerce, capture, modération et onboarding traduits en anglais ; légal et autres sections restent à traduire. Les namespaces incomplets retombent sur le français |
-| Appareils                   | Matrice d’essai iPhone Safari, Android Chrome et navigateurs desktop supportés                                                                                                                                                                      |
-| PWA/push                    | Essais réels d’installation, permissions, réception et désabonnement ; noter les limites par plateforme                                                                                                                                             |
+| Chantier                    | Livrables                                                                                                                                                  |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clavier et lecteurs d’écran | Revue de navigation, dialogue modal, focus, annonces de statuts et formulaires                                                                             |
+| Contraste et zoom           | Contrôle des contrastes, zoom navigateur et tailles de police agrandies                                                                                    |
+| Vidéo                       | Contrôles compréhensibles, mode muet explicite, légende visible et alternatives lorsque disponibles                                                        |
+| Cibles tactiles             | 🟨 Lien auteur, filtres et suppression de commentaire portés à 44 px minimum ; autres actions et appareils à auditer                                       |
+| Mouvement                   | ✅ Autoplay du feed arrêté selon `prefers-reduced-motion`, avec lecture manuelle disponible ; E2E                                                          |
+| i18n                        | 🟨 Parité structurelle des 14 namespaces FR/EN vérifiée ; revue idiomatique, cohérence fonctionnelle des traductions et rendu de chaque parcours à valider |
+| Appareils                   | Matrice d’essai iPhone Safari, Android Chrome et navigateurs desktop supportés                                                                             |
+| PWA/push                    | Essais réels d’installation, permissions, réception et désabonnement ; noter les limites par plateforme                                                    |
 
 **Critères de sortie**
 
