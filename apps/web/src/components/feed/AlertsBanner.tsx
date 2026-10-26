@@ -78,18 +78,32 @@ export function AlertsBanner({
 
   if (alerts.size === 0) return null;
   return (
-    <div className="flex flex-col gap-1">
+    <div className="min-w-0 flex-1">
       <button
         type="button"
         onClick={onShow}
-        className="flex min-h-11 items-center gap-2 rounded-xl bg-alert px-3 py-2 text-left text-sm font-semibold text-ink"
+        className="flex min-h-10 w-full items-center gap-2 overflow-hidden rounded-full bg-rose-600 px-3 text-left text-xs font-bold text-white shadow-lg shadow-rose-950/20 transition hover:bg-rose-700 focus-visible:outline-white sm:text-sm"
         aria-label={`${t('banner', { count: alerts.size })} — ${t('show')}`}
       >
-        <span aria-hidden="true">⚠</span>
-        {t('banner', { count: alerts.size })}
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          className="h-4 w-4 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        >
+          <path d="M12 3 2.8 20h18.4L12 3Z" />
+          <path d="M12 9v4m0 3h.01" />
+        </svg>
+        <span className="truncate">{t('banner', { count: alerts.size })}</span>
       </button>
       {flash !== null && (
-        <p role="alert" className="rounded-xl bg-black/80 px-3 py-2 text-sm">
+        <p
+          role="alert"
+          className="absolute left-4 right-4 top-full mt-2 rounded-xl bg-slate-950/90 px-3 py-2 text-sm text-white shadow-lg backdrop-blur"
+        >
           {t('new', { caption: flash })}
         </p>
       )}

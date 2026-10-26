@@ -72,6 +72,29 @@ body {
   border-color: rgb(23 32 51 / 0.1);
 }
 
+:root[data-theme='light'] .video-card {
+  --color-ink: #070a1c;
+}
+
+:root[data-theme='light'] .video-card .text-white {
+  color: #fff;
+}
+
+:root[data-theme='light'] .video-card .glass {
+  background-color: rgb(7 10 28 / 0.6);
+  border-color: rgb(255 255 255 / 0.18);
+}
+
+:root[data-theme='light'] .feed-header .glass {
+  background-color: rgb(7 10 28 / 0.68);
+  border-color: rgb(255 255 255 / 0.18);
+}
+
+:root[data-theme='light'] .feed-header .text-white,
+:root[data-theme='light'] .feed-header select {
+  color: #fff;
+}
+
 :root[data-theme='light'] .text-white {
   color: #172033;
 }

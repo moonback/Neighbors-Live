@@ -198,7 +198,7 @@ export function VideoCard({
 
   return (
     <article
-      className="relative h-full w-full snap-start snap-always overflow-hidden bg-black"
+      className="video-card relative h-full w-full snap-start snap-always overflow-hidden bg-black"
       aria-label={`${tc(item.category)} — ${item.caption}`}
       data-testid="feed-item"
       data-video-id={item.id}
@@ -361,7 +361,7 @@ export function VideoCard({
         </div>
       </div>
 
-      <div className="absolute bottom-6 right-2 flex flex-col items-center gap-3 text-xs font-semibold">
+      <div className="absolute bottom-6 right-2 flex flex-col items-center gap-3 text-xs font-semibold text-white">
         <ActionButton
           label={t('usefulCount', { count: useful.count })}
           pressed={useful.reacted}
@@ -397,7 +397,7 @@ export function VideoCard({
       {toast && (
         <p
           role="status"
-          className="absolute left-1/2 top-20 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-sm"
+          className="absolute left-1/2 top-20 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-sm text-white"
         >
           {toast}
         </p>

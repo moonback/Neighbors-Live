@@ -231,14 +231,20 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       )}
 
       {coords && (
-        <header className="absolute inset-x-0 top-0 z-20 flex flex-col gap-3 bg-gradient-to-b from-ink/95 via-ink/60 to-transparent px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-8">
+        <header className="feed-header absolute inset-x-0 top-0 z-20 flex flex-col gap-2 bg-gradient-to-b from-slate-950/95 via-slate-950/60 to-transparent px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-8 text-white">
           <h1 className="sr-only">{t('title')}</h1>
-          <div className="flex items-center justify-between gap-3">
-            <Logo name={tc('appName')} size={26} />
+          <div className="flex min-w-0 items-center gap-2">
+            <Logo name={tc('appName')} size={26} className="shrink-0" />
+            <AlertsBanner
+              lat={coords.lat}
+              lng={coords.lng}
+              radius={radius}
+              onShow={() => setCategory('alert')}
+            />
             <label className="sr-only" htmlFor="feed-radius">
               {t('filters.radius')}
             </label>
-            <div className="glass flex items-center gap-1.5 rounded-full pl-3">
+            <div className="glass ml-auto flex shrink-0 items-center gap-1.5 rounded-full pl-3">
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
@@ -264,14 +270,14 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
               </select>
             </div>
           </div>
-          <div ref={categoryMenuRef} className="relative w-fit max-w-full">
+          <div ref={categoryMenuRef} className="relative w-fit max-w-full pl-0.5">
             <button
               type="button"
               aria-label={`${t('filters.label')}: ${category ? tc(`categories.${category}`) : t('filters.all')}`}
               aria-expanded={isCategoryMenuOpen}
               aria-controls="feed-category-options"
               onClick={() => setIsCategoryMenuOpen((open) => !open)}
-              className="glass inline-flex min-h-11 max-w-full items-center gap-2 rounded-full px-4 text-sm font-semibold text-white"
+              className="glass inline-flex min-h-10 max-w-full items-center gap-2 rounded-full px-4 text-sm font-semibold text-white shadow-lg shadow-black/10"
             >
               {category ? (
                 <CategoryIcon category={category} />
@@ -339,12 +345,6 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
               {t('alerts.notice')}
             </p>
           )}
-          <AlertsBanner
-            lat={coords.lat}
-            lng={coords.lng}
-            radius={radius}
-            onShow={() => setCategory('alert')}
-          />
           {notice && <Notice kind="success">{notice}</Notice>}
         </header>
       )}
