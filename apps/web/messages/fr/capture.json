@@ -19,6 +19,10 @@
   "switch": "Changer de caméra",
   "switchFailed": "Impossible d’ouvrir cette caméra, retour à la précédente.",
   "switchHint": "Touchez deux fois l’image pour changer de caméra",
+  "zoom": {
+    "label": "Niveau de zoom",
+    "level": "Zoom {level}×"
+  },
   "front": "Caméra avant",
   "back": "Caméra arrière",
   "torchOn": "Allumer la lampe",

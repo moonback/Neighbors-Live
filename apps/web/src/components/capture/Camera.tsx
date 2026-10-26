@@ -2,6 +2,7 @@
 
 import { MAX_RECORDING_MS } from '@nl/shared';
 import { useTranslations } from 'next-intl';
+import type { PointerEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Notice } from '@/components/ui';
 import { pickMimeType } from '@/lib/recorder';
@@ -18,6 +19,12 @@ type Facing = 'environment' | 'user';
 interface Target {
   deviceId: string | null;
   facing: Facing;
+}
+
+interface ZoomRange {
+  min: number;
+  max: number;
+  step: number;
 }
 
 const supportedMime = () =>
@@ -55,6 +62,9 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const pointersRef = useRef(new Map<number, number>());
+  const pinchRef = useRef<{ distance: number; zoom: number } | null>(null);
+  const zoomRef = useRef(1);
   const lastGood = useRef<Target | null>(null);
   const [target, setTarget] = useState<Target>({ deviceId: null, facing: 'environment' });
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
@@ -69,6 +79,8 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const [recording, setRecording] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [ready, setReady] = useState(false);
+  const [zoomRange, setZoomRange] = useState<ZoomRange | null>(null);
+  const [zoom, setZoom] = useState(1);
 
   const stopTracks = () => {
     streamRef.current?.getTracks().forEach((tr) => tr.stop());
@@ -103,8 +115,14 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
         ? settings.facingMode === 'user'
         : looksFront(track?.label ?? '') || target.facing === 'user';
       setCurrent(settings?.deviceId ? { deviceId: settings.deviceId, front } : null);
-      const caps = track?.getCapabilities?.() as { torch?: boolean } | undefined;
+      const caps = track?.getCapabilities?.() as { torch?: boolean; zoom?: ZoomRange } | undefined;
       setTorch({ supported: Boolean(caps?.torch), on: false });
+      const range = caps?.zoom;
+      setZoomRange(
+        range && Number.isFinite(range.min) && Number.isFinite(range.max)
+          ? { min: range.min, max: range.max, step: range.step || 0.1 }
+          : null,
+      );
       setBadge(front ? 'front' : 'back');
       setError(null);
       setReady(true);
@@ -132,6 +150,50 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   }, [switchFailed]);
 
   const canSwitch = cameras.length > 1 || cameras.length === 0;
+
+  const setZoomLevel = useCallback(
+    (value: number) => {
+      const min = zoomRange?.min ?? 1;
+      const max = zoomRange?.max ?? 3;
+      const next = Math.min(max, Math.max(min, value));
+      zoomRef.current = next;
+      setZoom(next);
+    },
+    [zoomRange],
+  );
+
+  useEffect(() => {
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (!track || !zoomRange || !('zoom' in zoomRange)) return;
+    void track.applyConstraints({ advanced: [{ zoom } as MediaTrackConstraintSet] }).catch(() => {
+      // Keep the CSS zoom as a graceful fallback on browsers that expose but reject zoom.
+      setZoomRange(null);
+    });
+  }, [zoom, zoomRange]);
+
+  function onPointerDown(event: PointerEvent<HTMLVideoElement>) {
+    pointersRef.current.set(event.pointerId, event.clientX);
+    if (pointersRef.current.size === 2) {
+      const [a, b] = [...pointersRef.current.values()];
+      pinchRef.current = { distance: Math.abs(a! - b!), zoom: zoomRef.current };
+    }
+  }
+
+  function onPointerMove(event: PointerEvent<HTMLVideoElement>) {
+    if (!pointersRef.current.has(event.pointerId)) return;
+    pointersRef.current.set(event.pointerId, event.clientX);
+    if (pointersRef.current.size !== 2 || !pinchRef.current) return;
+    const [a, b] = [...pointersRef.current.values()];
+    const distance = Math.abs(a! - b!);
+    if (pinchRef.current.distance > 0) {
+      setZoomLevel(pinchRef.current.zoom * (distance / pinchRef.current.distance));
+    }
+  }
+
+  function onPointerUp(event: PointerEvent<HTMLVideoElement>) {
+    pointersRef.current.delete(event.pointerId);
+    pinchRef.current = null;
+  }
 
   const switchCamera = useCallback(() => {
     if (recording || !ready) return;
@@ -221,7 +283,12 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
         playsInline
         aria-label={t('title')}
         onDoubleClick={canSwitch ? switchCamera : undefined}
-        className={`h-full w-full object-cover transition-opacity duration-300 ${mirrored ? '-scale-x-100' : ''} ${ready ? 'opacity-100' : 'opacity-0'}`}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={{ transform: `${mirrored ? 'scaleX(-1) ' : ''}scale(${zoomRange ? 1 : zoom})` }}
+        className={`h-full w-full touch-none object-cover transition-opacity duration-300 ${ready ? 'opacity-100' : 'opacity-0'}`}
       />
       {!ready && (
         <p
@@ -240,6 +307,29 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
         <div className="h-full bg-accent" style={{ width: `${progress * 100}%` }} />
       </div>
       <div className="absolute inset-x-0 top-[calc(1rem+env(safe-area-inset-top))] flex flex-col items-center gap-2">
+        {ready && !recording && (
+          <div
+            className="glass flex items-center gap-1 rounded-full p-1"
+            aria-label={t('zoom.label')}
+          >
+            {[0.5, 1, 2]
+              .filter((level) =>
+                zoomRange ? level >= zoomRange.min && level <= zoomRange.max : level >= 1,
+              )
+              .map((level) => (
+                <button
+                  key={level}
+                  type="button"
+                  aria-label={t('zoom.level', { level })}
+                  aria-pressed={Math.abs(zoom - level) < 0.08}
+                  onClick={() => setZoomLevel(level)}
+                  className="min-h-11 min-w-11 rounded-full px-3 text-xs font-semibold text-white transition active:scale-95 aria-pressed:bg-white aria-pressed:text-ink"
+                >
+                  {level.toLocaleString(undefined, { maximumFractionDigits: 1 })}×
+                </button>
+              ))}
+          </div>
+        )}
         <p
           className={`glass flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold ${recording ? 'border-alert/60!' : ''}`}
           aria-live="polite"

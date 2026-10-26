@@ -19,6 +19,10 @@
   "switch": "Switch camera",
   "switchFailed": "Couldn’t open that camera, back to the previous one.",
   "switchHint": "Double-tap the picture to switch cameras",
+  "zoom": {
+    "label": "Zoom level",
+    "level": "Zoom {level}×"
+  },
   "front": "Front camera",
   "back": "Back camera",
   "torchOn": "Turn on flashlight",
