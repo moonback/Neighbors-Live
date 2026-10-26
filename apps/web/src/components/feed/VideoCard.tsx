@@ -42,6 +42,7 @@ export function VideoCard({
   const locale = useLocale();
   const ref = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState(item.videoUrl);
+  const [mediaReloadKey, setMediaReloadKey] = useState(0);
   const [paused, setPaused] = useState(true);
   const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>('loading');
   const mediaRetries = useRef(0);
@@ -58,7 +59,7 @@ export function VideoCard({
     if (!video) return;
     if (active && autoplay) void video.play().catch(() => setPaused(true));
     if (!active || !autoplay) video.pause();
-  }, [active, autoplay, src]);
+  }, [active, autoplay, mediaReloadKey, src]);
 
   const requestMediaUrl = useCallback(async () => {
     const generation = ++mediaRequest.current.generation;
@@ -85,13 +86,17 @@ export function VideoCard({
       }
       mediaRetries.current += 1;
       const res = await requestMediaUrl();
-      if (!res) return;
-      if (res.ok && res.data.videoUrl && (force || res.data.videoUrl !== src)) {
+      if (!res) {
+        setMediaState('error');
+        return;
+      }
+      if (res.ok && res.data.videoUrl) {
+        const sameUrl = res.data.videoUrl === src;
         setSrc(res.data.videoUrl);
+        if (force || sameUrl) setMediaReloadKey((key) => key + 1);
         setMediaState('loading');
         return;
       }
-      if (force && res.ok && res.data.videoUrl) ref.current?.load();
       setMediaState('error');
     },
     [requestMediaUrl, src],
@@ -182,6 +187,7 @@ export function VideoCard({
       data-video-id={item.id}
     >
       <video
+        key={`${item.id}:${mediaReloadKey}`}
         ref={ref}
         src={load && src ? src : undefined}
         poster={item.posterUrl ?? undefined}
