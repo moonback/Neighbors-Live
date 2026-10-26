@@ -333,7 +333,12 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       )}
 
       {commentsFor && (
-        <Comments videoId={commentsFor} signedIn={signedIn} onClose={() => setCommentsFor(null)} />
+        <Comments
+          key={commentsFor}
+          videoId={commentsFor}
+          signedIn={signedIn}
+          onClose={() => setCommentsFor(null)}
+        />
       )}
       {reportFor && <ReportDialog videoId={reportFor} onClose={() => setReportFor(null)} />}
     </div>

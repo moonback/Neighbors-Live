@@ -40,44 +40,65 @@ export function Comments({
   const [next, setNext] = useState<string | null>(null);
   const [body, setBody] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [removing, setRemoving] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!videoId) return;
     let alive = true;
     void api<Page>(`/api/videos/${videoId}/comments`).then((res) => {
-      if (!alive || !res.ok) return;
-      setComments(res.data.comments);
-      setNext(res.data.nextBefore);
+      if (!alive) return;
+      if (res.ok) {
+        setComments(res.data.comments);
+        setNext(res.data.nextBefore);
+      } else {
+        setError(errorText(res.error));
+      }
+      setLoading(false);
     });
     return () => {
       alive = false;
     };
-  }, [videoId]);
+  }, [errorText, reloadKey, videoId]);
 
   async function more() {
-    if (!videoId || !next) return;
+    if (!videoId || !next || loadingMore) return;
+    setLoadingMore(true);
     const res = await api<Page>(
       `/api/videos/${videoId}/comments?before=${encodeURIComponent(next)}`,
     );
     if (res.ok) {
       setComments((c) => [...c, ...res.data.comments]);
       setNext(res.data.nextBefore);
-    }
+    } else setError(errorText(res.error));
+    setLoadingMore(false);
   }
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
-    if (!videoId || !body.trim()) return;
+    if (!videoId || !body.trim() || sending) return;
     setError(null);
+    setSending(true);
     const res = await api<Comment>(`/api/videos/${videoId}/comments`, { body: { body } });
-    if (!res.ok) return setError(errorText(res.error));
-    setComments((c) => [res.data, ...c]);
-    setBody('');
+    if (!res.ok) setError(errorText(res.error));
+    else {
+      setComments((c) => [res.data, ...c]);
+      setBody('');
+    }
+    setSending(false);
   }
 
   async function remove(id: string) {
+    if (removing) return;
+    setError(null);
+    setRemoving(id);
     const res = await api(`/api/comments/${id}`, { method: 'DELETE', body: {} });
     if (res.ok) setComments((c) => c.filter((x) => x.id !== id));
+    else setError(errorText(res.error));
+    setRemoving(null);
   }
 
   return (
@@ -96,17 +117,35 @@ export function Comments({
               value={body}
               onChange={(e) => setBody(e.target.value)}
             />
-            <Button type="submit" disabled={!body.trim()}>
-              {t('send')}
+            <Button type="submit" disabled={!body.trim() || sending}>
+              {sending ? tc('loading') : t('send')}
             </Button>
           </form>
         ) : (
           <Notice>{t('login')}</Notice>
         )}
         {error && <Notice kind="error">{error}</Notice>}
-        {comments.length === 0 ? (
+        {error && comments.length === 0 && !loading && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setLoading(true);
+              setError(null);
+              setComments([]);
+              setNext(null);
+              setReloadKey((key) => key + 1);
+            }}
+          >
+            {tc('retry')}
+          </Button>
+        )}
+        {loading ? (
+          <p role="status" className="text-fog">
+            {tc('loading')}
+          </p>
+        ) : comments.length === 0 && !error ? (
           <p className="text-fog">{t('empty')}</p>
-        ) : (
+        ) : comments.length > 0 ? (
           <ul className="flex flex-col gap-3">
             {comments.map((c) => (
               <li key={c.id} className="flex gap-3">
@@ -125,18 +164,19 @@ export function Comments({
                   <button
                     type="button"
                     className="min-h-11 self-start rounded-lg px-2 text-xs text-fog underline"
-                    onClick={() => remove(c.id)}
+                    disabled={removing === c.id}
+                    onClick={() => void remove(c.id)}
                   >
-                    {t('delete')}
+                    {removing === c.id ? tc('loading') : t('delete')}
                   </button>
                 )}
               </li>
             ))}
           </ul>
-        )}
+        ) : null}
         {next && (
-          <Button variant="ghost" onClick={more}>
-            {t('more')}
+          <Button variant="ghost" disabled={loadingMore} onClick={() => void more()}>
+            {loadingMore ? tc('loading') : t('more')}
           </Button>
         )}
       </div>

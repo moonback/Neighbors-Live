@@ -8,6 +8,7 @@ export const NAMESPACES = [
   'settings',
   'capture',
   'feed',
+  'discover',
   'map',
   'video',
   'moderation',

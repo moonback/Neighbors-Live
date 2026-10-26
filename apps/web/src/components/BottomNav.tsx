@@ -7,16 +7,16 @@ import { useTranslations } from 'next-intl';
 const items = [
   { href: '/', key: 'feed', icon: 'M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z' },
   {
+    href: '/decouvrir',
+    key: 'discover',
+    icon: 'M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z',
+  },
+  {
     href: '/carte',
     key: 'map',
     icon: 'M12 21s-7-6.1-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.9 12 21 12 21zm0-8.5a3 3 0 100-6 3 3 0 000 6z',
   },
   { href: '/filmer', key: 'record', icon: '' },
-  {
-    href: '/commerces/decouvrir',
-    key: 'shops',
-    icon: 'M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0 2.7 2.7 0 005.3 0M10 20v-5h4v5',
-  },
   { href: '/me', key: 'profile', icon: 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9a8 8 0 0116 0' },
 ] as const;
 

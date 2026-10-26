@@ -316,7 +316,7 @@ limites non validées sont explicitement documentées.
 
 ## P0 — fiabilité avant terrain
 
-- Appliquer et vérifier la migration `20261026000400_restore_accuracy_limit_100m.sql` sur Supabase local et dans pgTAP ; le test unitaire du schéma confirme le seuil, mais la base locale n’a pas pu être démarrée dans cet environnement.
+- Appliquer et vérifier la migration `20261026000600_restore_accuracy_limit_100m.sql` sur Supabase local et dans pgTAP ; le test unitaire du schéma confirme le seuil, mais la base locale n’a pas pu être démarrée dans cet environnement.
 - Rétablir une configuration SWC native sûre, puis exécuter le build et les E2E. Les commandes ont été lancées, mais l’environnement a refusé le cache SWC et l’accès Docker.
 - Faire une revue visuelle des vues principales sur petit écran et ordinateur, puis un essai caméra/localisation sur appareil physique.
 

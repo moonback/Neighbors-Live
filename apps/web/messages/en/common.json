@@ -5,6 +5,7 @@
   "nav": {
     "label": "Main navigation",
     "feed": "Home",
+    "discover": "Discover",
     "map": "Map",
     "record": "Record",
     "shops": "Shops",
