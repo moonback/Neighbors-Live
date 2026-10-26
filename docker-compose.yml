@@ -3,7 +3,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: apps/worker/Dockerfile
+      dockerfile: Containerfile
     # The root .env may belong to a linked hosted project; inject the local web stack's
     # generated credentials into the local worker instead.
     env_file: apps/web/.env.local
