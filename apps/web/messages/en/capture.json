@@ -1,0 +1,75 @@
+{
+  "title": "Record",
+  "close": "Close camera",
+  "primer": {
+    "title": "Record what’s happening",
+    "body": "Neighbors Live needs the following to record:",
+    "camera": "Camera and microphone: only while this screen is open. Videos must be recorded in the app; importing from your gallery is not available.",
+    "location": "Location, when you publish: to show the video to nearby neighbors. Everyone sees an approximate location, rounded to about 50 m.",
+    "privacy": "Faces are automatically blurred before publication, but some may be missed. Avoid recording identifiable people and report concerning content. License plates are not blurred.",
+    "continue": "Enable camera",
+    "later": "Not now"
+  },
+  "errors": {
+    "denied": "Camera or microphone access was denied. Allow it in this site’s browser settings, then try again.",
+    "notFound": "No camera is available on this device.",
+    "unsupported": "This browser cannot record video. Try Safari on iOS or Chrome on Android.",
+    "generic": "Could not start the camera."
+  },
+  "switch": "Switch camera",
+  "record": "Start recording",
+  "stop": "Stop recording",
+  "remaining": "{seconds}s remaining",
+  "maxDuration": "30 seconds maximum",
+  "preview": { "title": "Preview", "retake": "Record again", "next": "Continue" },
+  "form": {
+    "title": "Publish",
+    "category": "Category",
+    "caption": "Caption",
+    "captionHint": "{count}/140 characters",
+    "eventEnd": "Event ends",
+    "eventEndHint": "Within the next 7 days.",
+    "merchantDuration": "Offer duration",
+    "hours": "{count, plural, one {# hour} other {# hours}}",
+    "lifetime": {
+      "alert": "Visible for 6 hours.",
+      "deal": "Visible for 48 hours.",
+      "event": "Visible until the event ends.",
+      "help": "Visible for 7 days.",
+      "lost": "Visible for 7 days.",
+      "shop": "Visible for the selected duration."
+    },
+    "shopOnly": "For approved merchant accounts only.",
+    "publish": "Publish here",
+    "locating": "Getting location…",
+    "uploading": "Uploading… {percent}%",
+    "processing": "Video sent! Blurring and processing are underway. It should appear shortly.",
+    "seeStatus": "Check status",
+    "another": "Record another video"
+  },
+  "location": {
+    "denied": "Location access was denied. It is required to publish. Allow it in your browser settings.",
+    "imprecise": "Location is too imprecise (±{accuracy} m; 100 m maximum). Move to an open area or wait a few seconds, then try again.",
+    "unavailable": "Location is unavailable. Check that location services are on, then try again.",
+    "retry": "Try location again"
+  },
+  "offline": {
+    "queued": "You’re offline. The video is saved on this device and will be sent automatically when you’re back online, if you’re still near where it was recorded.",
+    "pending": "{count, plural, one {# video waiting to upload} other {# videos waiting to upload}}",
+    "sent": "Your queued video has been published.",
+    "retry": "Try again",
+    "retryable": "Upload temporarily unavailable. The video is saved on this device.",
+    "locationUnavailable": "Location unavailable. The video is saved; check your location settings, then try again.",
+    "waitPrecision": "Location is too imprecise to publish. The video remains on this device; try again from an open area.",
+    "droppedMoved": "Video not published: you are no longer near where it was recorded.",
+    "droppedStale": "Video not published: it passed the 6-hour storage limit.",
+    "failed": "Publishing failed. The video was not saved; record a new one to try again."
+  },
+  "errorsPublish": {
+    "position_incoherent": "Your location does not seem consistent with your last publication.",
+    "merchant_quota_exceeded": "You’ve reached today’s offer limit.",
+    "not_merchant": "For approved merchant accounts only.",
+    "profile_incomplete": "Choose a username first.",
+    "upload_missing": "The file did not finish uploading. Try again."
+  }
+}

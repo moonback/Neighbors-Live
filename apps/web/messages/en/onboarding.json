@@ -1,0 +1,41 @@
+{
+  "step": "Step {current} of {total}",
+  "next": "Next",
+  "back": "Back",
+  "skip": "Skip",
+  "finish": "Got it, let’s go",
+  "value": {
+    "title": "Useful updates, just around the corner.",
+    "body": "Discover short videos posted by your neighbors within 300 m, 1 km, or 3 km.",
+    "points": [
+      "Local alerts, helping out, events, and good finds.",
+      "Record on site; posts expire according to their category.",
+      "Your public location is approximate. Content can be reported."
+    ]
+  },
+  "permissions": {
+    "title": "Permissions explained before we ask",
+    "body": "Before your browser asks for permission, we explain what it is for. You can say no and change your mind later.",
+    "camera": "Camera and microphone — only while recording.",
+    "location": "Location — to show and publish nearby. It is not saved while you browse; published video locations are rounded to about 50 m for everyone.",
+    "notifications": "Notifications — if you want nearby alerts, at most once every 30 minutes."
+  },
+  "install": {
+    "title": "Install the app",
+    "body": "Add Neighbors Live to your Home Screen for a full-screen experience, faster access, and optional notifications.",
+    "ios": "On iPhone or iPad (Safari): tap Share, then “Add to Home Screen.” On iOS, notifications only work after installing the app and opening it from its icon.",
+    "android": "On Android (Chrome): use the button below or the ⋮ menu, then “Install app.”",
+    "button": "Install",
+    "installed": "The app is already installed."
+  },
+  "rules": {
+    "title": "Community rules",
+    "points": [
+      "Record useful neighborhood events, not people. Automatic face blurring may miss someone; license plates are not blurred.",
+      "No precise addresses, harassment, or public shaming.",
+      "In an emergency, call 112 first. Neighbors Live is not an emergency service.",
+      "Report concerning content. After 3 reports, a video is hidden for review."
+    ],
+    "link": "Read the full rules"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "title": "{username}’s profile",
+  "reputation": "Reputation",
+  "memberSince": "Member since {date}",
+  "activeVideos": "Videos online",
+  "noVideos": "No videos online yet.",
+  "myVideos": "My videos",
+  "status": {
+    "processing": "Processing",
+    "active": "Online",
+    "hidden": "Hidden",
+    "removed": "Removed",
+    "expired": "Expired",
+    "rejected": "Rejected"
+  },
+  "edit": "Edit profile",
+  "decisions": "Moderation decisions",
+  "withdraw": "Remove",
+  "withdrawConfirm": "Remove this video permanently? Its files will be deleted.",
+  "withdrawn": "Video removed.",
+  "notFound": "This profile does not exist."
+}

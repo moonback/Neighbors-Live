@@ -1,0 +1,50 @@
+{
+  "title": "Moderation",
+  "intro": "Residents help moderate their neighborhoods. Decisions are logged and can be appealed.",
+  "zones": "My areas",
+  "zone": "Area {short}",
+  "queue": "Moderation queue",
+  "empty": "Nothing to review in this area.",
+  "reasons": "Reported reasons",
+  "reports": "{count, plural, one {# report} other {# reports}}",
+  "hiddenAuto": "Hidden automatically",
+  "actions": { "validate": "Approve", "hide": "Hide", "remove": "Remove", "warn": "Warn author" },
+  "note": "Note (required to remove a video)",
+  "done": "Decision saved.",
+  "appeals": "Appeals to review",
+  "appealsEmpty": "No appeals are waiting.",
+  "appealReason": "Reason for appeal",
+  "uphold": "Rule in the author’s favor",
+  "reject": "Uphold the decision",
+  "apply": {
+    "title": "Become a neighborhood moderator",
+    "rules": "Requirements: account older than 14 days, at least 5 posts with no reports, and sufficient reputation. You moderate areas where you have already posted.",
+    "eligible": "You meet the requirements.",
+    "notEligible": "You do not meet the requirements yet.",
+    "zone": "Area",
+    "submit": "Become a moderator for this area",
+    "done": "You are now a moderator for this area. Thank you!",
+    "noZone": "Post in your neighborhood first."
+  },
+  "decisions": {
+    "title": "Decisions about me",
+    "empty": "There are no moderation decisions about you.",
+    "kinds": {
+      "validate": "Video approved",
+      "hide": "Video hidden",
+      "remove": "Video removed",
+      "warn": "Warning",
+      "auto_hide": "Hidden after 3 reports",
+      "revert": "Decision reversed by an administrator",
+      "ban": "Account suspended",
+      "unban": "Suspension lifted",
+      "appeal_upheld": "Appeal accepted",
+      "appeal_rejected": "Appeal rejected"
+    },
+    "appeal": "Appeal",
+    "appealLabel": "Explain why you think this decision was unfair (at least 10 characters)",
+    "appealSent": "Appeal sent. Another moderator or an administrator will review it.",
+    "appealed": "Appeal: {status}",
+    "status": { "pending": "pending", "upheld": "accepted", "rejected": "rejected" }
+  }
+}
