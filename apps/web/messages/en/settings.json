@@ -1,5 +1,10 @@
 {
   "title": "Settings",
+  "tabs": {
+    "profile": "Profile",
+    "preferences": "Preferences",
+    "account": "Account"
+  },
   "profile": {
     "title": "Profile",
     "username": "Username",
