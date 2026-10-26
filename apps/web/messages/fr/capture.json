@@ -17,6 +17,13 @@
     "generic": "Impossible de démarrer la caméra."
   },
   "switch": "Changer de caméra",
+  "switchFailed": "Impossible d’ouvrir cette caméra, retour à la précédente.",
+  "switchHint": "Touchez deux fois l’image pour changer de caméra",
+  "front": "Caméra avant",
+  "back": "Caméra arrière",
+  "torchOn": "Allumer la lampe",
+  "torchOff": "Éteindre la lampe",
+  "starting": "Démarrage de la caméra…",
   "record": "Démarrer l’enregistrement",
   "stop": "Arrêter l’enregistrement",
   "remaining": "{seconds} s restantes",

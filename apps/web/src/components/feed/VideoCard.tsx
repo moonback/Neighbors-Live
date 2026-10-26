@@ -106,8 +106,10 @@ export function VideoCard({
     if (!load || src || mediaRetries.current >= 1) return;
 
     let current = true;
+    let settled = false;
     mediaRetries.current += 1;
     void requestMediaUrl().then((res) => {
+      settled = true;
       if (!current || !res) return;
       if (res.ok && res.data.videoUrl) {
         mediaRetries.current = 0;
@@ -120,6 +122,8 @@ export function VideoCard({
 
     return () => {
       current = false;
+      // A request cancelled before answering (remount, StrictMode) must not consume the attempt.
+      if (!settled) mediaRetries.current -= 1;
     };
   }, [item.id, load, requestMediaUrl, src]);
 

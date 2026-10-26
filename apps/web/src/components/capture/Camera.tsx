@@ -3,7 +3,7 @@
 import { MAX_RECORDING_MS } from '@nl/shared';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Notice } from '@/components/ui';
+import { Notice } from '@/components/ui';
 import { pickMimeType } from '@/lib/recorder';
 
 export interface Recording {
@@ -13,17 +13,26 @@ export interface Recording {
 }
 
 type CamError = 'denied' | 'notFound' | 'unsupported' | 'generic';
+type Facing = 'environment' | 'user';
+/** A specific camera (deviceId) once devices are known, otherwise a facing preference. */
+interface Target {
+  deviceId: string | null;
+  facing: Facing;
+}
 
 const supportedMime = () =>
   typeof MediaRecorder === 'undefined'
     ? null
     : pickMimeType((m) => MediaRecorder.isTypeSupported(m));
 
-async function openCamera(facing: 'environment' | 'user'): Promise<MediaStream | CamError> {
+async function openCamera(target: Target): Promise<MediaStream | CamError> {
   if (!navigator.mediaDevices?.getUserMedia || !supportedMime()) return 'unsupported';
+  const size = { width: { ideal: 720 }, height: { ideal: 1280 } };
   try {
     return await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: facing }, width: { ideal: 720 }, height: { ideal: 1280 } },
+      video: target.deviceId
+        ? { deviceId: { exact: target.deviceId }, ...size }
+        : { facingMode: { ideal: target.facing }, ...size },
       audio: true,
     });
   } catch (e) {
@@ -33,8 +42,12 @@ async function openCamera(facing: 'environment' | 'user'): Promise<MediaStream |
   }
 }
 
+/** Labels are only exposed after permission; "front"/"user"/"facetime" mark a selfie camera. */
+const looksFront = (label: string) => /front|user|facetime|avant|selfie/i.test(label);
+
 /**
- * Full-screen camera: back camera by default, front/back switch, 30 s max with a gauge.
+ * Full-screen camera: back camera by default, switch between every available camera (button or
+ * double tap), flashlight when supported, 30 s max with a gauge.
  * Only `getUserMedia` + `MediaRecorder` are used: there is no file picker (no gallery import).
  */
 export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
@@ -42,7 +55,16 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
-  const [facing, setFacing] = useState<'environment' | 'user'>('environment');
+  const lastGood = useRef<Target | null>(null);
+  const [target, setTarget] = useState<Target>({ deviceId: null, facing: 'environment' });
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
+  const [current, setCurrent] = useState<{ deviceId: string; front: boolean } | null>(null);
+  const [torch, setTorch] = useState<{ supported: boolean; on: boolean }>({
+    supported: false,
+    on: false,
+  });
+  const [badge, setBadge] = useState<'front' | 'back' | null>(null);
+  const [switchFailed, setSwitchFailed] = useState(false);
   const [error, setError] = useState<CamError | null>(null);
   const [recording, setRecording] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -55,27 +77,94 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
 
   useEffect(() => {
     let cancelled = false;
-    void openCamera(facing).then((result) => {
+    // Many Android devices cannot open a second camera while one is live: release it first.
+    stopTracks();
+    void openCamera(target).then(async (result) => {
       if (typeof result === 'string') {
-        if (!cancelled) setError(result);
+        if (cancelled) return;
+        const previous = lastGood.current;
+        if (previous && previous !== target) {
+          setSwitchFailed(true);
+          setTarget(previous);
+        } else setError(result);
         return;
       }
       if (cancelled) {
         result.getTracks().forEach((tr) => tr.stop());
         return;
       }
-      stopTracks();
       streamRef.current = result;
+      lastGood.current = target;
       if (videoRef.current) videoRef.current.srcObject = result;
+
+      const track = result.getVideoTracks()[0];
+      const settings = track?.getSettings();
+      const front = settings?.facingMode
+        ? settings.facingMode === 'user'
+        : looksFront(track?.label ?? '') || target.facing === 'user';
+      setCurrent(settings?.deviceId ? { deviceId: settings.deviceId, front } : null);
+      const caps = track?.getCapabilities?.() as { torch?: boolean } | undefined;
+      setTorch({ supported: Boolean(caps?.torch), on: false });
+      setBadge(front ? 'front' : 'back');
       setError(null);
       setReady(true);
+
+      const devices = await navigator.mediaDevices.enumerateDevices().catch(() => []);
+      if (!cancelled) setCameras(devices.filter((d) => d.kind === 'videoinput' && d.deviceId));
     });
     return () => {
       cancelled = true;
     };
-  }, [facing]);
+  }, [target]);
 
   useEffect(() => () => stopTracks(), []);
+
+  useEffect(() => {
+    if (!badge) return;
+    const timer = setTimeout(() => setBadge(null), 1500);
+    return () => clearTimeout(timer);
+  }, [badge]);
+
+  useEffect(() => {
+    if (!switchFailed) return;
+    const timer = setTimeout(() => setSwitchFailed(false), 3000);
+    return () => clearTimeout(timer);
+  }, [switchFailed]);
+
+  const canSwitch = cameras.length > 1 || cameras.length === 0;
+
+  const switchCamera = useCallback(() => {
+    if (recording || !ready) return;
+    setSwitchFailed(false);
+    setReady(false);
+    // With known devices, cycle through all of them (front, back, wide, external webcam…);
+    // otherwise fall back to flipping the facing preference.
+    if (cameras.length > 1) {
+      const index = cameras.findIndex((c) => c.deviceId === current?.deviceId);
+      const next = cameras[(index + 1) % cameras.length]!;
+      setTarget({
+        deviceId: next.deviceId,
+        facing: looksFront(next.label) ? 'user' : 'environment',
+      });
+    } else {
+      setTarget((prev) => ({
+        deviceId: null,
+        facing: prev.facing === 'environment' ? 'user' : 'environment',
+      }));
+    }
+  }, [cameras, current, ready, recording]);
+
+  async function toggleTorch() {
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (!track) return;
+    const on = !torch.on;
+    try {
+      await track.applyConstraints({ advanced: [{ torch: on } as MediaTrackConstraintSet] });
+      setTorch({ supported: true, on });
+    } catch {
+      setTorch({ supported: false, on: false });
+    }
+  }
 
   const stop = useCallback(() => {
     if (recorderRef.current?.state === 'recording') recorderRef.current.stop();
@@ -113,6 +202,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
 
   const progress = Math.min(1, elapsed / MAX_RECORDING_MS);
   const remaining = Math.max(0, Math.ceil((MAX_RECORDING_MS - elapsed) / 1000));
+  const mirrored = current?.front ?? target.facing === 'user';
 
   if (error) {
     return (
@@ -123,71 +213,146 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   }
 
   return (
-    <div className="relative h-full w-full bg-black">
+    <div className="relative h-full w-full overflow-hidden bg-black">
       <video
         ref={videoRef}
         autoPlay
         muted
         playsInline
         aria-label={t('title')}
-        className={`h-full w-full object-cover ${facing === 'user' ? '-scale-x-100' : ''}`}
+        onDoubleClick={canSwitch ? switchCamera : undefined}
+        className={`h-full w-full object-cover transition-opacity duration-300 ${mirrored ? '-scale-x-100' : ''} ${ready ? 'opacity-100' : 'opacity-0'}`}
       />
-      <div className="absolute inset-x-0 top-0 h-1.5 bg-white/20" aria-hidden="true">
-        <div className="h-full bg-alert" style={{ width: `${progress * 100}%` }} />
-      </div>
-      <p
-        className="absolute left-1/2 top-[calc(1rem+env(safe-area-inset-top))] -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-sm"
-        aria-live="polite"
-      >
-        {recording ? t('remaining', { seconds: remaining }) : t('maxDuration')}
-      </p>
-      <div className="absolute inset-x-0 bottom-0 flex items-center justify-around pb-[max(2rem,env(safe-area-inset-bottom))]">
-        <span className="w-14" />
-        <button
-          type="button"
-          onClick={recording ? stop : record}
-          disabled={!ready}
-          aria-label={recording ? t('stop') : t('record')}
-          className="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-white"
+      {!ready && (
+        <p
+          role="status"
+          className="glass absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full px-4 py-2 text-sm"
         >
-          <svg className="absolute inset-0 -rotate-90" viewBox="0 0 80 80" aria-hidden="true">
-            <circle
-              cx="40"
-              cy="40"
-              r="36"
-              fill="none"
-              stroke="var(--color-alert)"
-              strokeWidth="6"
-              strokeDasharray={226}
-              strokeDashoffset={226 * (1 - progress)}
-            />
-          </svg>
           <span
-            className={`bg-alert transition-all ${recording ? 'h-7 w-7 rounded-md' : 'h-14 w-14 rounded-full'}`}
-          />
-        </button>
-        <Button
-          variant="secondary"
-          className="h-14 w-14 rounded-full p-0"
-          aria-label={t('switch')}
-          disabled={recording}
-          onClick={() => {
-            setReady(false);
-            setFacing((f) => (f === 'environment' ? 'user' : 'environment'));
-          }}
-        >
-          <svg
             aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+            className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white motion-safe:animate-spin"
+          />
+          {t('starting')}
+        </p>
+      )}
+
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-white/15" aria-hidden="true">
+        <div className="h-full bg-accent" style={{ width: `${progress * 100}%` }} />
+      </div>
+      <div className="absolute inset-x-0 top-[calc(1rem+env(safe-area-inset-top))] flex flex-col items-center gap-2">
+        <p
+          className={`glass flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold ${recording ? 'border-alert/60!' : ''}`}
+          aria-live="polite"
+        >
+          {recording && (
+            <span
+              aria-hidden="true"
+              className="h-2.5 w-2.5 rounded-full bg-alert motion-safe:animate-pulse"
+            />
+          )}
+          {recording ? t('remaining', { seconds: remaining }) : t('maxDuration')}
+        </p>
+        {badge && !recording && (
+          <p className="glass rounded-full px-3 py-1 text-xs text-white/90" aria-hidden="true">
+            {t(badge)}
+          </p>
+        )}
+        {switchFailed && (
+          <p role="alert" className="rounded-full bg-alert/90 px-3 py-1 text-xs font-semibold">
+            {t('switchFailed')}
+          </p>
+        )}
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-4 bg-gradient-to-t from-black/70 to-transparent pt-16 pb-[max(2rem,env(safe-area-inset-bottom))]">
+        {canSwitch && !recording && ready && (
+          <p className="text-xs text-white/70">{t('switchHint')}</p>
+        )}
+        <div className="grid w-full max-w-sm grid-cols-3 place-items-center">
+          {torch.supported ? (
+            <ControlButton
+              label={torch.on ? t('torchOff') : t('torchOn')}
+              pressed={torch.on}
+              onClick={toggleTorch}
+              icon="M9 2h6l-1 7h4l-8 13 2-9H8z"
+            />
+          ) : (
+            <span />
+          )}
+          <button
+            type="button"
+            onClick={recording ? stop : record}
+            disabled={!ready}
+            aria-label={recording ? t('stop') : t('record')}
+            className="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/90 transition active:scale-95 disabled:opacity-50"
           >
-            <path d="M4 7h3l2-2h6l2 2h3v12H4zM9 13a3 3 0 015-2.2M15 13a3 3 0 01-5 2.2" />
-          </svg>
-        </Button>
+            <svg className="absolute -inset-1 -rotate-90" viewBox="0 0 88 88" aria-hidden="true">
+              <circle
+                cx="44"
+                cy="44"
+                r="40"
+                fill="none"
+                stroke="var(--color-alert)"
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeDasharray={251}
+                strokeDashoffset={251 * (1 - progress)}
+              />
+            </svg>
+            <span
+              className={`bg-alert shadow-[0_0_24px_rgba(255,77,109,0.7)] transition-all ${recording ? 'h-7 w-7 rounded-md' : 'h-14 w-14 rounded-full'}`}
+            />
+          </button>
+          {canSwitch ? (
+            <ControlButton
+              label={t('switch')}
+              disabled={recording || !ready}
+              onClick={switchCamera}
+              icon="M20 7h-3.2L15 5H9L7.2 7H4v12h16zM9 13.5a3 3 0 015-2.2l1-1M15 12.5a3 3 0 01-5 2.2l-1 1"
+            />
+          ) : (
+            <span />
+          )}
+        </div>
       </div>
     </div>
+  );
+}
+
+function ControlButton({
+  label,
+  icon,
+  onClick,
+  pressed,
+  disabled,
+}: {
+  label: string;
+  icon: string;
+  onClick: () => void;
+  pressed?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-pressed={pressed}
+      disabled={disabled}
+      onClick={onClick}
+      className={`flex h-14 w-14 items-center justify-center rounded-full transition active:scale-90 disabled:opacity-40 ${pressed ? 'bg-amber-300 text-ink' : 'glass text-white'}`}
+    >
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
+        <path d={icon} />
+      </svg>
+    </button>
   );
 }

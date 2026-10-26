@@ -17,6 +17,13 @@
     "generic": "Could not start the camera."
   },
   "switch": "Switch camera",
+  "switchFailed": "Couldn’t open that camera, back to the previous one.",
+  "switchHint": "Double-tap the picture to switch cameras",
+  "front": "Front camera",
+  "back": "Back camera",
+  "torchOn": "Turn on flashlight",
+  "torchOff": "Turn off flashlight",
+  "starting": "Starting camera…",
   "record": "Start recording",
   "stop": "Stop recording",
   "remaining": "{seconds}s remaining",
