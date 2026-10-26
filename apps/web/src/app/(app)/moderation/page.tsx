@@ -126,7 +126,11 @@ export default async function ModerationPage({
         </h2>
         <ModerationQueue items={queue} />
       </section>
-      <section aria-labelledby="appeals-title" className="flex flex-col gap-3">
+      <section
+        id="appeals"
+        aria-labelledby="appeals-title"
+        className="scroll-mt-20 flex flex-col gap-3"
+      >
         <h2 id="appeals-title" className="text-lg font-semibold">
           {t('appeals')}
         </h2>

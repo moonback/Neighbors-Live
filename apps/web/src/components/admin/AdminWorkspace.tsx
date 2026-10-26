@@ -14,6 +14,11 @@ const sections = [
     icon: 'M12 3l9 4v5c0 5-3.8 8-9 9-5.2-1-9-4-9-9V7zM8 12l2.5 2.5L16 9',
   },
   {
+    href: '/moderation#appeals',
+    key: 'appeals',
+    icon: 'M3 12a9 9 0 101.8-5.4M3 4v4h4M12 7v5l3 2',
+  },
+  {
     href: '/admin#merchants',
     key: 'merchants',
     icon: 'M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0 2.7 2.7 0 005.3 0M10 20v-5h4v5',
@@ -71,7 +76,9 @@ export function AdminWorkspace({
   const t = useTranslations('admin');
   const tc = useTranslations('common');
   if (!enabled || (pathname !== '/admin' && !pathname.startsWith('/moderation'))) return children;
-  const visible = sections.filter((item) => isAdmin || item.key === 'moderation');
+  const visible = sections.filter(
+    (item) => isAdmin || item.key === 'moderation' || item.key === 'appeals',
+  );
 
   return (
     <div className="admin-theme min-h-dvh">
@@ -189,20 +196,16 @@ export function AdminWorkspace({
               ))}
               {isAdmin && (
                 <>
-                  <Link
-                    href="/admin#users"
-                    className="glass flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/90"
-                  >
-                    <Icon d={tools[2].icon} />
-                    {t('users')}
-                  </Link>
-                  <Link
-                    href="/admin#mediaSettings"
-                    className="glass flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/90"
-                  >
-                    <Icon d={tools[0].icon} />
-                    {t('mediaSettings')}
-                  </Link>
+                  {tools.map((item) => (
+                    <Link
+                      key={item.key}
+                      href={`/admin#${item.key}`}
+                      className="glass flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/90"
+                    >
+                      <Icon d={item.icon} />
+                      {t(item.key)}
+                    </Link>
+                  ))}
                 </>
               )}
             </nav>

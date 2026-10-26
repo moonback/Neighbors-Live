@@ -22,7 +22,7 @@ export function LogoMark({ size = 36 }: { size?: number }) {
   );
 }
 
-/** Mark + wordmark. `tagline` adds a subtitle whose last word is highlighted (“en direct”). */
+/** Mark + wordmark, with an optional supporting tagline. */
 export function Logo({
   name,
   tagline,

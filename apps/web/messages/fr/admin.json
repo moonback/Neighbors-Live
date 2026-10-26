@@ -4,6 +4,7 @@
   "workspaceHint": "Les outils de gestion du quartier et de la communauté.",
   "dashboard": "Vue d’ensemble",
   "moderation": "Modération",
+  "appeals": "Recours",
   "tools": "Gestion",
   "profile": "Compte administrateur",
   "intro": "Vue d’ensemble de la plateforme, des demandes et des décisions de modération.",
