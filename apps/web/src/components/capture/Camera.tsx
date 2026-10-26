@@ -68,7 +68,12 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
-  const pointersRef = useRef(new Map<number, number>());
+  const activeDurationRef = useRef(0);
+  const takeStartedAtRef = useRef<number | null>(null);
+  const frameRef = useRef<number | null>(null);
+  const updateRecordingTimeRef = useRef<FrameRequestCallback>(() => {});
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const pointersRef = useRef(new Map<number, { x: number; y: number }>());
   const pinchRef = useRef<{ distance: number; zoom: number } | null>(null);
   const zoomRef = useRef(1);
   const lastGood = useRef<Target | null>(null);
@@ -83,15 +88,19 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const [switchFailed, setSwitchFailed] = useState(false);
   const [error, setError] = useState<CamError | null>(null);
   const [recording, setRecording] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [timerDelay, setTimerDelay] = useState<0 | 3 | 10>(0);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [takeDurations, setTakeDurations] = useState<number[]>([]);
   const [ready, setReady] = useState(false);
   const [zoomRange, setZoomRange] = useState<ZoomRange | null>(null);
   const [zoom, setZoom] = useState(1);
 
-  const stopTracks = () => {
+  const stopTracks = useCallback(() => {
     streamRef.current?.getTracks().forEach((tr) => tr.stop());
     streamRef.current = null;
-  };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -139,9 +148,16 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
     return () => {
       cancelled = true;
     };
-  }, [target]);
+  }, [stopTracks, target]);
 
-  useEffect(() => () => stopTracks(), []);
+  useEffect(
+    () => () => {
+      stopTracks();
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      void audioContextRef.current?.close();
+    },
+    [stopTracks],
+  );
 
   useEffect(() => {
     if (!badge) return;
@@ -190,19 +206,22 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   }, [zoom, zoomRange]);
 
   function onPointerDown(event: PointerEvent<HTMLVideoElement>) {
-    pointersRef.current.set(event.pointerId, event.clientX);
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (pointersRef.current.size === 2) {
       const [a, b] = [...pointersRef.current.values()];
-      pinchRef.current = { distance: Math.abs(a! - b!), zoom: zoomRef.current };
+      pinchRef.current = {
+        distance: Math.hypot(a!.x - b!.x, a!.y - b!.y),
+        zoom: zoomRef.current,
+      };
     }
   }
 
   function onPointerMove(event: PointerEvent<HTMLVideoElement>) {
     if (!pointersRef.current.has(event.pointerId)) return;
-    pointersRef.current.set(event.pointerId, event.clientX);
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (pointersRef.current.size !== 2 || !pinchRef.current) return;
     const [a, b] = [...pointersRef.current.values()];
-    const distance = Math.abs(a! - b!);
+    const distance = Math.hypot(a!.x - b!.x, a!.y - b!.y);
     if (pinchRef.current.distance > 0) {
       setZoomLevel(pinchRef.current.zoom * (distance / pinchRef.current.distance));
     }
@@ -260,40 +279,132 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   }
 
   const stop = useCallback(() => {
-    if (recorderRef.current?.state === 'recording') recorderRef.current.stop();
+    if (recorderRef.current?.state === 'recording' || recorderRef.current?.state === 'paused') {
+      recorderRef.current.stop();
+    }
   }, []);
 
-  function record() {
+  const updateRecordingTime = useCallback(() => {
+    const start = takeStartedAtRef.current;
+    const currentTake = start === null ? 0 : performance.now() - start;
+    const ms = activeDurationRef.current + currentTake;
+    setElapsed(ms);
+    if (ms >= MAX_RECORDING_MS) {
+      recorderRef.current?.stop();
+      return;
+    }
+    frameRef.current = requestAnimationFrame(updateRecordingTimeRef.current);
+  }, []);
+
+  useEffect(() => {
+    updateRecordingTimeRef.current = updateRecordingTime;
+  }, [updateRecordingTime]);
+
+  const pauseTake = useCallback(() => {
+    const recorder = recorderRef.current;
+    const start = takeStartedAtRef.current;
+    if (recorder?.state !== 'recording' || start === null) return;
+    const duration = performance.now() - start;
+    activeDurationRef.current += duration;
+    takeStartedAtRef.current = null;
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    setTakeDurations((takes) => [...takes, duration]);
+    setElapsed(activeDurationRef.current);
+    recorder.pause();
+    setPaused(true);
+  }, []);
+
+  function resumeTake() {
+    const recorder = recorderRef.current;
+    if (recorder?.state !== 'paused') return;
+    takeStartedAtRef.current = performance.now();
+    recorder.resume();
+    setPaused(false);
+    frameRef.current = requestAnimationFrame(updateRecordingTimeRef.current);
+  }
+
+  const countdownBeep = useCallback(() => {
+    if (typeof window === 'undefined' || !window.AudioContext) return;
+    try {
+      const context = audioContextRef.current ?? new AudioContext();
+      audioContextRef.current = context;
+      void context.resume();
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.frequency.value = 880;
+      gain.gain.setValueAtTime(0.08, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.09);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.09);
+    } catch {
+      // Audio feedback is optional; countdown remains available without Web Audio.
+    }
+  }, []);
+
+  const startRecording = useCallback(() => {
     const stream = streamRef.current;
     const mime = supportedMime();
     if (!stream || !mime) return;
     const chunks: Blob[] = [];
     const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 2_500_000 });
-    const startedAt = performance.now();
+    activeDurationRef.current = 0;
+    takeStartedAtRef.current = performance.now();
+    setTakeDurations([]);
     recorder.ondataavailable = (e) => {
       if (e.data.size > 0) chunks.push(e.data);
     };
     recorder.onstop = () => {
+      const start = takeStartedAtRef.current;
+      const duration = activeDurationRef.current + (start === null ? 0 : performance.now() - start);
+      takeStartedAtRef.current = null;
+      activeDurationRef.current = 0;
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
       setRecording(false);
-      const durationMs = Math.min(MAX_RECORDING_MS, Math.round(performance.now() - startedAt));
+      setPaused(false);
+      const durationMs = Math.min(MAX_RECORDING_MS, Math.round(duration));
       stopTracks();
       onRecorded({ blob: new Blob(chunks, { type: mime }), mime, durationMs });
     };
     recorderRef.current = recorder;
     recorder.start(1000);
     setRecording(true);
+    setPaused(false);
     setElapsed(0);
-    const tick = () => {
-      if (recorder.state !== 'recording') return;
-      const ms = performance.now() - startedAt;
-      setElapsed(ms);
-      if (ms >= MAX_RECORDING_MS) recorder.stop();
-      else requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
+    frameRef.current = requestAnimationFrame(updateRecordingTimeRef.current);
+  }, [onRecorded, stopTracks]);
+
+  const record = useCallback(() => {
+    if (timerDelay > 0) {
+      setCountdown(timerDelay);
+      countdownBeep();
+      return;
+    }
+    startRecording();
+  }, [countdownBeep, startRecording, timerDelay]);
+
+  const advanceCountdown = useCallback(() => {
+    if (countdown === null) return;
+    if (countdown <= 1) {
+      setCountdown(null);
+      startRecording();
+      return;
+    }
+    countdownBeep();
+    setCountdown(countdown - 1);
+  }, [countdown, countdownBeep, startRecording]);
+
+  useEffect(() => {
+    if (countdown === null) return;
+    const timeout = setTimeout(advanceCountdown, 1000);
+    return () => clearTimeout(timeout);
+  }, [advanceCountdown, countdown]);
 
   const progress = Math.min(1, elapsed / MAX_RECORDING_MS);
+  const completedDuration = takeDurations.reduce((sum, duration) => sum + duration, 0);
+  const activeTakeDuration = recording && !paused ? Math.max(0, elapsed - completedDuration) : 0;
+  const visibleTakes = [...takeDurations, ...(activeTakeDuration > 0 ? [activeTakeDuration] : [])];
   const remaining = Math.max(0, Math.ceil((MAX_RECORDING_MS - elapsed) / 1000));
   const mirrored = current?.front ?? target.facing === 'user';
 
@@ -335,34 +446,63 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
       )}
 
       <div className="absolute inset-x-0 top-0 h-1.5 bg-white/15" aria-hidden="true">
-        <div className="h-full bg-accent" style={{ width: `${progress * 100}%` }} />
+        {visibleTakes.map((duration, index) => {
+          const left = visibleTakes.slice(0, index).reduce((sum, take) => sum + take, 0);
+          return (
+            <span
+              key={index}
+              className="absolute inset-y-0 bg-accent"
+              style={{
+                left: `${(left / MAX_RECORDING_MS) * 100}%`,
+                width: `${(duration / MAX_RECORDING_MS) * 100}%`,
+              }}
+            />
+          );
+        })}
       </div>
       <div className="absolute inset-x-0 top-[calc(1rem+env(safe-area-inset-top))] flex flex-col items-center gap-2">
-        {ready && !recording && (
-          <div
-            className="glass flex items-center gap-1 rounded-full p-1"
-            aria-label={t('zoom.label')}
-          >
-            {zoomLevels.map((level) => {
-              const lens = physicalLenses.find((candidate) => candidate.level === level);
-              const selected = lens
-                ? lens.camera.deviceId === current?.deviceId
-                : Math.abs(zoom - level) < 0.08;
-              return (
-                <button
-                  key={level}
-                  type="button"
-                  aria-label={t(`zoom.${level === 0.5 ? 'wide' : level === 2 ? 'tele' : 'level'}`, {
-                    level,
-                  })}
-                  aria-pressed={selected}
-                  onClick={() => selectLens(level)}
-                  className="min-h-11 min-w-11 rounded-full px-3 text-xs font-semibold text-white transition active:scale-95 aria-pressed:bg-white aria-pressed:text-ink"
-                >
-                  {level.toLocaleString(undefined, { maximumFractionDigits: 1 })}×
-                </button>
-              );
-            })}
+        {ready && !recording && countdown === null && (
+          <div className="flex items-center gap-2">
+            <div
+              role="group"
+              className="glass flex items-center gap-1 rounded-full p-1"
+              aria-label={t('zoom.label')}
+            >
+              {zoomLevels.map((level) => {
+                const lens = physicalLenses.find((candidate) => candidate.level === level);
+                const selected = lens
+                  ? lens.camera.deviceId === current?.deviceId
+                  : Math.abs(zoom - level) < 0.08;
+                return (
+                  <button
+                    key={level}
+                    type="button"
+                    aria-label={t(
+                      `zoom.${level === 0.5 ? 'wide' : level === 2 ? 'tele' : 'level'}`,
+                      {
+                        level,
+                      },
+                    )}
+                    aria-pressed={selected}
+                    onClick={() => selectLens(level)}
+                    className="min-h-11 min-w-11 rounded-full px-3 text-xs font-semibold text-white transition active:scale-95 aria-pressed:bg-white aria-pressed:text-ink"
+                  >
+                    {level.toLocaleString(undefined, { maximumFractionDigits: 1 })}×
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              aria-label={
+                timerDelay === 0 ? t('timer.off') : t('timer.set', { seconds: timerDelay })
+              }
+              aria-pressed={timerDelay > 0}
+              onClick={() => setTimerDelay((value) => (value === 0 ? 3 : value === 3 ? 10 : 0))}
+              className="glass min-h-11 min-w-11 rounded-full px-3 text-xs font-semibold text-white"
+            >
+              {timerDelay === 0 ? '⏱' : `${timerDelay}s`}
+            </button>
           </div>
         )}
         <p
@@ -375,7 +515,11 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
               className="h-2.5 w-2.5 rounded-full bg-alert motion-safe:animate-pulse"
             />
           )}
-          {recording ? t('remaining', { seconds: remaining }) : t('maxDuration')}
+          {recording
+            ? paused
+              ? t('paused')
+              : t('remaining', { seconds: remaining })
+            : t('maxDuration')}
         </p>
         {badge && !recording && (
           <p className="glass rounded-full px-3 py-1 text-xs text-white/90" aria-hidden="true">
@@ -428,10 +572,17 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
               className={`bg-alert shadow-[0_0_24px_rgba(255,77,109,0.7)] transition-all ${recording ? 'h-7 w-7 rounded-md' : 'h-14 w-14 rounded-full'}`}
             />
           </button>
-          {canSwitch ? (
+          {recording ? (
+            <ControlButton
+              label={paused ? t('resume') : t('pause')}
+              disabled={!ready}
+              onClick={paused ? resumeTake : pauseTake}
+              icon={paused ? 'M8 5v14l11-7z' : 'M8 5v14M16 5v14'}
+            />
+          ) : canSwitch ? (
             <ControlButton
               label={t('switch')}
-              disabled={recording || !ready}
+              disabled={!ready}
               onClick={switchCamera}
               icon="M20 7h-3.2L15 5H9L7.2 7H4v12h16zM9 13.5a3 3 0 015-2.2l1-1M15 12.5a3 3 0 01-5 2.2l-1 1"
             />
@@ -440,6 +591,22 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
           )}
         </div>
       </div>
+
+      {countdown !== null && (
+        <button
+          type="button"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/45 text-white"
+          onClick={() => setCountdown(null)}
+          aria-label={t('timer.cancel')}
+        >
+          <span aria-live="assertive" className="text-8xl font-bold tabular-nums">
+            {countdown}
+          </span>
+          <span className="mt-4 rounded-full bg-black/50 px-4 py-2 text-sm">
+            {t('timer.cancel')}
+          </span>
+        </button>
+      )}
     </div>
   );
 }

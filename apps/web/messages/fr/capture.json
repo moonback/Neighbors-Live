@@ -32,6 +32,14 @@
   "starting": "Démarrage de la caméra…",
   "record": "Démarrer l’enregistrement",
   "stop": "Arrêter l’enregistrement",
+  "pause": "Mettre en pause la prise",
+  "resume": "Reprendre l’enregistrement",
+  "paused": "Enregistrement en pause",
+  "timer": {
+    "off": "Minuteur désactivé",
+    "set": "Minuteur de {seconds} secondes",
+    "cancel": "Toucher pour annuler le compte à rebours"
+  },
   "remaining": "{seconds} s restantes",
   "maxDuration": "30 secondes maximum",
   "preview": {

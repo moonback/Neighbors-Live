@@ -32,6 +32,14 @@
   "starting": "Starting camera…",
   "record": "Start recording",
   "stop": "Stop recording",
+  "pause": "Pause this take",
+  "resume": "Resume recording",
+  "paused": "Recording paused",
+  "timer": {
+    "off": "Timer off",
+    "set": "{seconds}-second timer",
+    "cancel": "Tap to cancel countdown"
+  },
   "remaining": "{seconds}s remaining",
   "maxDuration": "30 seconds maximum",
   "preview": { "title": "Preview", "retake": "Record again", "next": "Continue" },
