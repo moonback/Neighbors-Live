@@ -247,7 +247,7 @@ export function VideoCard({
         type="button"
         onClick={onToggleFit}
         aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
-        className="absolute right-4 top-[10.5rem] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-black/80 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="glass absolute right-4 top-[10.5rem] z-20 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         <svg
           aria-hidden="true"
@@ -300,8 +300,8 @@ export function VideoCard({
         </svg>
       </button>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink via-ink/50 to-transparent px-4 pb-6 pt-28">
-        <div className="pointer-events-auto flex max-w-[calc(100%-5rem)] flex-col gap-2.5">
+      <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10">
+        <div className="glass pointer-events-auto flex w-fit max-w-[calc(100%-5rem)] flex-col gap-2.5 rounded-3xl p-4 shadow-2xl shadow-black/30">
           <Link
             href={`/u/${item.author.username}`}
             className="flex min-h-11 w-fit items-center gap-2.5 rounded-full pr-2 text-sm font-semibold text-white"

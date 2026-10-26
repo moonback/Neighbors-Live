@@ -55,8 +55,17 @@ body {
 
 @utility glass {
   background-color: rgb(17 22 51 / 0.7);
-  border: 1px solid rgb(255 255 255 / 0.08);
-  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  backdrop-filter: blur(18px) saturate(155%);
+  box-shadow:
+    0 12px 32px rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass {
+    background-color: rgb(17 22 51 / 0.96);
+  }
 }
 
 /* The light palette follows the same semantic Tailwind colors used by every app screen. */
@@ -72,6 +81,11 @@ body {
   border-color: rgb(23 32 51 / 0.1);
 }
 
+:root[data-theme='light'] .feed-header.glass {
+  background-color: rgb(7 10 28 / 0.76);
+  border-color: rgb(255 255 255 / 0.2);
+}
+
 :root[data-theme='light'] .video-card {
   --color-ink: #070a1c;
 }
@@ -81,8 +95,8 @@ body {
 }
 
 :root[data-theme='light'] .video-card .glass {
-  background-color: rgb(7 10 28 / 0.6);
-  border-color: rgb(255 255 255 / 0.18);
+  background-color: rgb(7 10 28 / 0.72);
+  border-color: rgb(255 255 255 / 0.2);
 }
 
 :root[data-theme='light'] .feed-header .glass {
