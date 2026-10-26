@@ -25,6 +25,8 @@ Mise à jour 2026-10-27 — direction glass appliquée au feed : barre de filtre
 
 Complément visuel 2026-10-27 après capture fournie par l’utilisateur : la vidéo est affichée en mode « ajuster » avec de grandes bandes noires; ajout d’un fond flou dérivé du poster lorsque ce mode est choisi, pour garder la vidéo entière sans laisser des aplats noirs. Navigation inférieure passée en verre avec fond sombre conservé aussi dans le thème clair. Typecheck, lint et Prettier passent; le rendu modifié reste à vérifier dans un navigateur.
 
+Correction mobile 2026-10-27 : la vidéo superposée avait un `z-index` supérieur à la colonne d’actions; les commandes utile/commenter/partager/signaler/son pouvaient passer derrière elle. Colonne remontée au-dessus du média (`z-20`) et légèrement éloignée du bord inférieur. Typecheck, lint et Prettier passent; appareil mobile réel non disponible pour confirmer visuellement.
+
 ## 0. Cadrage et fondations
 
 | #    | Élément                                                                             | État | Notes                                                                        |

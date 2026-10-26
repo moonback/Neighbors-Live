@@ -371,7 +371,7 @@ export function VideoCard({
         </div>
       </div>
 
-      <div className="absolute bottom-6 right-2 flex flex-col items-center gap-3 text-xs font-semibold text-white">
+      <div className="absolute right-2 bottom-8 z-20 flex flex-col items-center gap-3 text-xs font-semibold text-white">
         <ActionButton
           label={t('usefulCount', { count: useful.count })}
           pressed={useful.reacted}
