@@ -1,9 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 import { BottomNav } from '@/components/BottomNav';
+import { AdminWorkspace } from '@/components/admin/AdminWorkspace';
 import { OfflineQueueRunner } from '@/components/capture/OfflineQueueRunner';
+import { getViewer } from '@/lib/session';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations('common');
+  const viewer = await getViewer();
   return (
     <>
       <a
@@ -13,9 +16,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         {t('skip')}
       </a>
       <main id="main" className="min-h-dvh pb-24">
-        {children}
+        <AdminWorkspace
+          enabled={Boolean(viewer?.isModerator)}
+          isAdmin={viewer?.role === 'admin'}
+          username={viewer?.username ?? null}
+        >
+          {children}
+        </AdminWorkspace>
       </main>
-      <BottomNav />
+      <BottomNav isModerator={Boolean(viewer?.isModerator)} />
       <OfflineQueueRunner />
     </>
   );

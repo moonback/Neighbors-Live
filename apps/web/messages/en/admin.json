@@ -1,5 +1,11 @@
 {
   "title": "Administration",
+  "workspace": "Admin workspace",
+  "workspaceHint": "Tools for managing the neighborhood and community.",
+  "dashboard": "Overview",
+  "moderation": "Moderation",
+  "tools": "Management",
+  "profile": "Administrator account",
   "intro": "Platform overview, requests, and moderation decisions.",
   "navigation": "Administration navigation",
   "userPagination": "User result pages",

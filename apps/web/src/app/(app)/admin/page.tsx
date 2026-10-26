@@ -257,7 +257,7 @@ export default async function AdminPage({
   };
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 p-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:p-6">
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 p-4 pb-8 sm:p-6">
       <header className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider text-accent">

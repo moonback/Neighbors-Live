@@ -1,11 +1,12 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-ink: #0b0d10;
-  --color-panel: #15181d;
-  --color-line: #2a2f37;
-  --color-fog: #c9cfd8;
-  --color-accent: #ffd34d;
+  --color-ink: #0b1020;
+  --color-panel: #141a2c;
+  --color-line: #28324a;
+  --color-fog: #b6c2d8;
+  --color-accent: #8068ff;
+  --color-blue: #52c4ff;
   --color-alert: #ff5a4f;
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
@@ -24,6 +25,50 @@ body {
 :focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* The admin workspace uses a calm, light surface while the media experience stays dark. */
+.admin-theme {
+  --color-ink: #f4f6fb;
+  --color-panel: #ffffff;
+  --color-line: #e1e6ef;
+  --color-fog: #596579;
+  --color-accent: #4d3bc8;
+  --color-alert: #c93636;
+  min-height: 100%;
+  color: #182033;
+  color-scheme: light;
+}
+
+.admin-theme .text-white {
+  color: #182033;
+}
+.admin-theme .text-fog {
+  color: #596579;
+}
+.admin-theme .bg-ink {
+  background-color: #f4f6fb;
+}
+.admin-theme .bg-panel {
+  background-color: #fff;
+}
+.admin-theme .text-accent {
+  color: #4d3bc8;
+}
+.admin-theme .bg-accent {
+  background-color: #4d3bc8;
+  color: #fff;
+}
+.admin-theme .border-accent {
+  border-color: #4d3bc8;
+}
+.admin-theme :focus-visible {
+  outline-color: #4d3bc8;
+}
+
+.admin-sidebar-link[aria-current='page'] {
+  background: #eeecff;
+  color: #3929a8;
 }
 
 @media (prefers-reduced-motion: reduce) {

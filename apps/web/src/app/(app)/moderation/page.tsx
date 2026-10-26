@@ -38,7 +38,7 @@ export default async function ModerationPage({
     ]);
     const cells = [...new Set((own.data ?? []).map((v) => v.h3_cell))];
     return (
-      <div className="mx-auto flex max-w-lg flex-col gap-4 p-4">
+      <div className="mx-auto flex max-w-5xl flex-col gap-4 p-4 sm:p-6">
         <h1 className="pt-4 text-2xl font-bold">{t('title')}</h1>
         <p className="text-fog">{t('intro')}</p>
         <ApplyForm eligible={Boolean(eligible.data)} cells={cells} />
@@ -105,7 +105,7 @@ export default async function ModerationPage({
   }));
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-5 p-4">
+    <div className="mx-auto flex max-w-5xl flex-col gap-5 p-4 sm:p-6">
       <h1 className="pt-4 text-2xl font-bold">{t('title')}</h1>
       <p className="text-sm text-fog">{t('intro')}</p>
       <nav aria-label={t('zones')} className="flex flex-wrap gap-2">

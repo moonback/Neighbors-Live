@@ -16,9 +16,10 @@ const items = [
   },
 ] as const;
 
-export function BottomNav() {
+export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
   const t = useTranslations('common.nav');
   const pathname = usePathname();
+  if (pathname === '/admin' || (isModerator && pathname.startsWith('/moderation'))) return null;
   return (
     <nav
       aria-label={t('label')}
