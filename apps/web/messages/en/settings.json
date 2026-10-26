@@ -1,0 +1,40 @@
+{
+  "title": "Settings",
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "bio": "Bio (optional)",
+    "bioHint": "{count}/160 characters",
+    "saved": "Profile saved."
+  },
+  "preferences": {
+    "title": "Preferences",
+    "radius": "Default radius",
+    "language": "Language",
+    "languages": {
+      "fr": "French",
+      "en": "English"
+    },
+    "saved": "Preferences saved."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "alerts": "Receive nearby alerts",
+    "alertsHint": "At most one grouped notification every 30 minutes."
+  },
+  "data": {
+    "title": "My data",
+    "export": "Export my data (JSON)",
+    "exportHint": "Profile, videos, locations attached to your posts, comments, reports, and subscriptions."
+  },
+  "danger": {
+    "title": "Delete my account",
+    "body": "Permanently deletes your profile, videos and their files, comments, reactions, reports, and notification subscriptions. This cannot be undone.",
+    "confirmLabel": "Type your username “{username}” to confirm",
+    "submit": "Delete permanently",
+    "done": "Your account has been deleted."
+  },
+  "merchant": "Merchant space",
+  "moderation": "Moderation space",
+  "admin": "Administration"
+}

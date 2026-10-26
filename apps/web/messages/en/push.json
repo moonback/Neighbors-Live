@@ -1,0 +1,21 @@
+{
+  "title": "Alerts on this device",
+  "unsupported": "This browser does not support web notifications.",
+  "iosInstall": "On iPhone and iPad, notifications only work after you add the app to your Home Screen (Share → “Add to Home Screen”) and open it from its icon.",
+  "iosInstallLink": "See how to install",
+  "enabled": "Enabled on this device for a {radius} radius around your selected area.",
+  "disabled": "Disabled on this device.",
+  "enable": "Turn on alerts",
+  "disable": "Turn off on this device",
+  "radius": "Alert area radius",
+  "denied": "Notifications are blocked in your browser settings. Allow them for this site, then try again.",
+  "noPosition": "Could not determine your area. Allow location access or try again outdoors.",
+  "primer": {
+    "title": "Get notified about nearby alerts",
+    "body": "We’ll ask for two permissions:",
+    "notifications": "Notifications: to receive at most one grouped notification every 30 minutes when an alert is posted in your area.",
+    "location": "Location, once: to choose your alert area (a neighborhood of about 1 km²). Your exact location is not saved or tracked afterward.",
+    "continue": "I understand, continue",
+    "later": "Not now"
+  }
+}

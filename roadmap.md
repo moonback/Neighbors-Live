@@ -211,16 +211,16 @@ et local du produit.
 **Résultat attendu :** les parcours principaux sont utilisables dans des conditions variées,
 notamment avec clavier, technologies d’assistance et paramètres d’affichage.
 
-| Chantier                    | Livrables                                                                                                                                                                                                                 |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Clavier et lecteurs d’écran | Revue de navigation, dialogue modal, focus, annonces de statuts et formulaires                                                                                                                                            |
-| Contraste et zoom           | Contrôle des contrastes, zoom navigateur et tailles de police agrandies                                                                                                                                                   |
-| Vidéo                       | Contrôles compréhensibles, mode muet explicite, légende visible et alternatives lorsque disponibles                                                                                                                       |
-| Cibles tactiles             | 🟨 Lien auteur, filtres et suppression de commentaire portés à 44 px minimum ; autres actions et appareils à auditer                                                                                                      |
-| Mouvement                   | ✅ Autoplay du feed arrêté selon `prefers-reduced-motion`, avec lecture manuelle disponible ; E2E                                                                                                                         |
-| i18n                        | 🟨 Namespaces commun, feed, vidéo et commerce traduits en anglais ; authentification, capture, erreurs spécifiques, modération et autres sections restent à traduire. Les namespaces incomplets retombent sur le français |
-| Appareils                   | Matrice d’essai iPhone Safari, Android Chrome et navigateurs desktop supportés                                                                                                                                            |
-| PWA/push                    | Essais réels d’installation, permissions, réception et désabonnement ; noter les limites par plateforme                                                                                                                   |
+| Chantier                    | Livrables                                                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clavier et lecteurs d’écran | Revue de navigation, dialogue modal, focus, annonces de statuts et formulaires                                                                                                                                                  |
+| Contraste et zoom           | Contrôle des contrastes, zoom navigateur et tailles de police agrandies                                                                                                                                                         |
+| Vidéo                       | Contrôles compréhensibles, mode muet explicite, légende visible et alternatives lorsque disponibles                                                                                                                             |
+| Cibles tactiles             | 🟨 Lien auteur, filtres et suppression de commentaire portés à 44 px minimum ; autres actions et appareils à auditer                                                                                                            |
+| Mouvement                   | ✅ Autoplay du feed arrêté selon `prefers-reduced-motion`, avec lecture manuelle disponible ; E2E                                                                                                                               |
+| i18n                        | 🟨 Namespaces commun, auth, feed, vidéo, carte, réglages, notifications et commerce traduits en anglais ; capture, modération, légal et autres sections restent à traduire. Les namespaces incomplets retombent sur le français |
+| Appareils                   | Matrice d’essai iPhone Safari, Android Chrome et navigateurs desktop supportés                                                                                                                                                  |
+| PWA/push                    | Essais réels d’installation, permissions, réception et désabonnement ; noter les limites par plateforme                                                                                                                         |
 
 **Critères de sortie**
 
