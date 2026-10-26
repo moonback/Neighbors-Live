@@ -58,7 +58,7 @@ select set_eq(
 select ok(
   (select bool_and(distance_m % 100 = 0) from public.nearby_videos(48.8722, 2.3767, 3000)),
   'nearby_videos: distances bucketed to 100 m');
-select throws_ok($$select * from public.nearby_videos(48.8722, 2.3767, 5000)$$, 'radius_invalid');
+select throws_ok($$select * from public.nearby_videos(48.8722, 2.3767, 2000)$$, 'radius_invalid');
 select tests.clear_authentication();
 
 select cmp_ok(

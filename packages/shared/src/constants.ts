@@ -1,7 +1,7 @@
 export const CATEGORIES = ['alert', 'deal', 'event', 'help', 'shop', 'lost'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
-export const RADII_M = [300, 1000, 3000] as const;
+export const RADII_M = [300, 1000, 3000, 5000, 10000] as const;
 export type Radius = (typeof RADII_M)[number];
 
 export const MAX_RECORDING_MS = 30_000;

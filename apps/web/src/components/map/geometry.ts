@@ -17,4 +17,12 @@ export function circlePolygon(lat: number, lng: number, radiusM: number, steps =
 
 /** Zoom level showing the whole radius on a phone screen. */
 export const zoomForRadius = (radiusM: number): number =>
-  radiusM <= 300 ? 15.5 : radiusM <= 1000 ? 14 : 12.4;
+  radiusM <= 300
+    ? 15.5
+    : radiusM <= 1000
+      ? 14
+      : radiusM <= 3000
+        ? 12.4
+        : radiusM <= 5000
+          ? 11.6
+          : 10.6;

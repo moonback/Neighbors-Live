@@ -51,7 +51,9 @@ export function AlertsBanner({
       ([{ haversineMeters, realtimeCells }, { browserClient }]) => {
         if (!alive) return;
         const supabase = browserClient();
-        const channels = realtimeCells({ lat, lng }, radius).map((cell) =>
+        // shortcut: live updates cover at most 5 km (61 channels; 10 km would need 127, over
+        // Realtime's per-client channel limit). Upgrade with coarser topic cells if needed.
+        const channels = realtimeCells({ lat, lng }, Math.min(radius, 5000)).map((cell) =>
           supabase
             .channel(`alerts:${cell}`, { config: { private: false } })
             .on('broadcast', { event: 'alert' }, ({ payload }) => {

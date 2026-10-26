@@ -28,7 +28,7 @@ test('feed pagination: cursor pages do not overlap', async ({ request }) => {
   // Public payload never contains exact coordinates or storage paths.
   expect(JSON.stringify(first)).not.toMatch(/location|video_path|raw_path|accuracy/);
   expect(first.items.every((i: { distanceM: number }) => i.distanceM % 100 === 0)).toBe(true);
-  expect((await request.get(`/api/feed?${BELLEVILLE}&radius=5000`)).status()).toBe(422);
+  expect((await request.get(`/api/feed?${BELLEVILLE}&radius=2000`)).status()).toBe(422);
 });
 
 test('map: GeoJSON of fuzzed positions', async ({ request }) => {

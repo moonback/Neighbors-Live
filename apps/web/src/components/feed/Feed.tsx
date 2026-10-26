@@ -146,6 +146,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   }, [items]);
 
   const goLogin = () => router.push('/login?next=/');
+  const wider = RADII_M.find((r) => r > radius);
 
   return (
     <div className="relative h-[calc(100dvh-4.5rem)] w-full">
@@ -271,9 +272,9 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
           >
             {t('empty.cta')}
           </Link>
-          {radius < 3000 && (
-            <Button variant="secondary" onClick={() => setRadius(radius === 300 ? 1000 : 3000)}>
-              {t('empty.wider', { radius: tc(`radius.${radius === 300 ? 1000 : 3000}`) })}
+          {wider && (
+            <Button variant="secondary" onClick={() => setRadius(wider)}>
+              {t('empty.wider', { radius: tc(`radius.${wider}`) })}
             </Button>
           )}
         </div>
