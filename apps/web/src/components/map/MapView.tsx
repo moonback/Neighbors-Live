@@ -41,6 +41,8 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   const [category, setCategory] = useState<Category | null>(null);
   const [count, setCount] = useState<number | null>(null);
   const [selected, setSelected] = useState<Selected | null>(null);
+  const [resultsState, setResultsState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [retry, setRetry] = useState(0);
 
   const lat = location.status === 'ok' ? location.lat : null;
   const lng = location.status === 'ok' ? location.lng : null;
@@ -66,13 +68,13 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           id: 'radius-fill',
           type: 'fill',
           source: 'radius',
-          paint: { 'fill-color': '#ffd34d', 'fill-opacity': 0.08 },
+          paint: { 'fill-color': '#9b8cff', 'fill-opacity': 0.08 },
         });
         map.addLayer({
           id: 'radius-line',
           type: 'line',
           source: 'radius',
-          paint: { 'line-color': '#ffd34d', 'line-width': 2 },
+          paint: { 'line-color': '#9b8cff', 'line-width': 2 },
         });
         map.addSource('videos', {
           type: 'geojson',
@@ -87,8 +89,8 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           source: 'videos',
           filter: ['has', 'point_count'],
           paint: {
-            'circle-color': '#15181d',
-            'circle-stroke-color': '#ffd34d',
+            'circle-color': '#141a2c',
+            'circle-stroke-color': '#9b8cff',
             'circle-stroke-width': 2,
             'circle-radius': ['step', ['get', 'point_count'], 16, 10, 22, 30, 28],
           },
@@ -133,7 +135,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
           map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
         }
-        markerRef.current = new maplibregl.Marker({ color: '#ffd34d' })
+        markerRef.current = new maplibregl.Marker({ color: '#9b8cff' })
           .setLngLat([lng, lat])
           .addTo(map);
         setLoaded(true);
@@ -150,22 +152,32 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   useEffect(() => {
     const map = mapRef.current;
     if (!loaded || !map || lat === null || lng === null) return;
+    setResultsState('loading');
     (map.getSource('radius') as GeoJSONSource).setData(circlePolygon(lat, lng, radius));
     markerRef.current?.setLngLat([lng, lat]);
     const qs = new URLSearchParams({ lat: String(lat), lng: String(lng), radius: String(radius) });
     if (category) qs.set('category', category);
     let alive = true;
-    void api<FC>(`/api/map?${qs}`).then((res) => {
-      if (!alive || !res.ok) return;
-      (map.getSource('videos') as GeoJSONSource).setData(
-        res.data as Parameters<GeoJSONSource['setData']>[0],
-      );
-      setCount(res.data.features.length);
-    });
+    void api<FC>(`/api/map?${qs}`)
+      .then((res) => {
+        if (!alive) return;
+        if (!res.ok) {
+          setResultsState('error');
+          return;
+        }
+        (map.getSource('videos') as GeoJSONSource).setData(
+          res.data as Parameters<GeoJSONSource['setData']>[0],
+        );
+        setCount(res.data.features.length);
+        setResultsState('ready');
+      })
+      .catch(() => {
+        if (alive) setResultsState('error');
+      });
     return () => {
       alive = false;
     };
-  }, [loaded, lat, lng, radius, category]);
+  }, [loaded, lat, lng, radius, category, retry]);
 
   function relocate() {
     void locate().then(() => {
@@ -224,7 +236,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             id="map-radius"
             value={radius}
             onChange={(e) => setRadius(Number(e.target.value))}
-            className="min-h-11 rounded-full border border-line bg-black/80 px-3 text-sm"
+            className="min-h-11 rounded-full border border-line bg-ink/95 px-3 text-sm"
           >
             {RADII_M.map((r) => (
               <option key={r} value={r}>
@@ -232,13 +244,35 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
               </option>
             ))}
           </select>
-          {count !== null && (
-            <p className="rounded-full bg-black/80 px-3 py-2 text-xs" role="status">
-              {t('count', { count })}
-            </p>
-          )}
+          <p
+            className="rounded-full border border-line bg-ink/95 px-3 py-2 text-xs"
+            role="status"
+            aria-live="polite"
+          >
+            {resultsState === 'ready' && count !== null
+              ? t('count', { count })
+              : resultsState === 'loading'
+                ? t('loading')
+                : null}
+          </p>
         </div>
       </div>
+
+      {resultsState === 'error' && (
+        <div
+          role="alert"
+          className="absolute inset-x-3 top-28 z-10 flex items-center justify-between gap-3 rounded-2xl border border-alert/50 bg-ink/95 p-3 shadow-xl"
+        >
+          <p className="text-sm">{t('loadError')}</p>
+          <Button
+            variant="secondary"
+            className="shrink-0"
+            onClick={() => setRetry((value) => value + 1)}
+          >
+            {tc('actions.retry')}
+          </Button>
+        </div>
+      )}
 
       <Button
         variant="secondary"

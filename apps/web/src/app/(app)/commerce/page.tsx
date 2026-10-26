@@ -42,16 +42,23 @@ export default async function MerchantPage() {
   const quota = merchant?.status === 'approved' ? await merchantQuota(viewer.id) : null;
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-4 p-4">
-      <h1 className="pt-4 text-2xl font-bold">{t('title')}</h1>
-      <p className="text-fog">{t('intro')}</p>
-      <Link
-        href="/commerces"
-        className="text-sm font-semibold text-accent underline underline-offset-4"
-      >
-        {t('learnMore')}
-      </Link>
-      <Card className="flex flex-col gap-3">
+    <div className="mx-auto flex max-w-5xl flex-col gap-6 p-4 pb-8 sm:p-6">
+      <header className="flex flex-col gap-4 rounded-3xl border border-line bg-panel p-5 sm:flex-row sm:items-end sm:justify-between sm:p-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">
+            Neighbors Live
+          </p>
+          <h1 className="mt-2 text-2xl font-bold sm:text-3xl">{t('title')}</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fog">{t('intro')}</p>
+        </div>
+        <Link
+          href="/commerces"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-line px-4 text-sm font-semibold hover:border-accent"
+        >
+          {t('learnMore')}
+        </Link>
+      </header>
+      <Card className="flex max-w-3xl flex-col gap-3">
         {!merchant && (
           <>
             <h2 className="text-lg font-semibold">{t('apply')}</h2>

@@ -3,5 +3,7 @@
   "locate": "Me localiser",
   "open": "Ouvrir dans le fil",
   "count": "{count, plural, =0 {Aucune vidéo} one {# vidéo} other {# vidéos}} dans ce rayon",
+  "loading": "Recherche des vidéos à proximité…",
+  "loadError": "Les résultats de la carte n’ont pas pu être chargés.",
   "attribution": "Positions arrondies à environ 50 m."
 }

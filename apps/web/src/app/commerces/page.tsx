@@ -33,7 +33,7 @@ export default async function MerchantLandingPage() {
             <p className="max-w-2xl text-lg leading-relaxed text-fog">{t('intro')}</p>
             <Link
               href="/commerce"
-              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-yellow-300"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-accent/90"
             >
               {t('apply')}
             </Link>
@@ -88,7 +88,7 @@ export default async function MerchantLandingPage() {
           <p className="max-w-xl text-sm leading-relaxed text-fog">{t('closing')}</p>
           <Link
             href="/commerce"
-            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-yellow-300"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-6 font-bold text-ink hover:bg-accent/90"
           >
             {t('apply')}
           </Link>
