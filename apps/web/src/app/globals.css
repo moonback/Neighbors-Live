@@ -17,6 +17,14 @@
   --brand-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 48%, #0ea5e9 100%);
 }
 
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-ink: #f4f7fc;
+  --color-panel: #ffffff;
+  --color-line: #d9e1ef;
+  --color-fog: #58677f;
+}
+
 html,
 body {
   background-color: var(--color-ink);
@@ -49,6 +57,51 @@ body {
   background-color: rgb(17 22 51 / 0.7);
   border: 1px solid rgb(255 255 255 / 0.08);
   backdrop-filter: blur(16px);
+}
+
+/* The light palette follows the same semantic Tailwind colors used by every app screen. */
+:root[data-theme='light'] body {
+  color: #172033;
+  background-image:
+    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.09), transparent 60%),
+    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.08), transparent 60%);
+}
+
+:root[data-theme='light'] .glass {
+  background-color: rgb(255 255 255 / 0.78);
+  border-color: rgb(23 32 51 / 0.1);
+}
+
+:root[data-theme='light'] .text-white {
+  color: #172033;
+}
+
+:root[data-theme='light'] .bg-accent.text-white,
+:root[data-theme='light'] .bg-accent .text-white,
+:root[data-theme='light'] .bg-alert.text-white {
+  color: #fff;
+}
+
+:root[data-theme='light'] .bg-panel\/80,
+:root[data-theme='light'] .bg-panel\/60 {
+  background-color: rgb(255 255 255 / 0.9);
+}
+
+:root[data-theme='light'] .border-white\/\[0\.07\],
+:root[data-theme='light'] .border-white\/\[0\.06\],
+:root[data-theme='light'] .border-white\/10 {
+  border-color: rgb(23 32 51 / 0.12);
+}
+
+:root[data-theme='light'] input:not([type='checkbox']):not([type='radio']),
+:root[data-theme='light'] textarea,
+:root[data-theme='light'] select {
+  color: #172033;
+}
+
+:root[data-theme='light'] input::placeholder,
+:root[data-theme='light'] textarea::placeholder {
+  color: #58677f;
 }
 
 @utility glow {

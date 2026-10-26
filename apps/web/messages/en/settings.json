@@ -35,6 +35,10 @@
     "title": "Preferences",
     "radius": "Default radius",
     "language": "Language",
+    "theme": "Appearance",
+    "themeHint": "Choose the app theme on this device.",
+    "light": "Light theme",
+    "dark": "Dark theme",
     "languages": {
       "fr": "French",
       "en": "English"

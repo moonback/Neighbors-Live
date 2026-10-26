@@ -7,6 +7,7 @@ import { PushSettings } from '@/components/push/PushSettings';
 import { LogoutButton } from '@/components/settings/LogoutButton';
 import { ProfileImagesForm } from '@/components/settings/ProfileImagesForm';
 import { SettingsTabs } from '@/components/settings/SettingsTabs';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { profileImageUrl } from '@/lib/profile-image';
 import {
   DangerZone,
@@ -97,6 +98,7 @@ export default async function SettingsPage() {
                   defaultRadius={viewer.settings.defaultRadius}
                   locale={viewer.settings.locale}
                 />
+                <ThemeToggle />
                 <PushSettings
                   notifyAlerts={viewer.settings.notifyAlerts}
                   defaultRadius={viewer.settings.defaultRadius}

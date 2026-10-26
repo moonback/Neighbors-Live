@@ -35,6 +35,10 @@
     "title": "Préférences",
     "radius": "Rayon par défaut",
     "language": "Langue",
+    "theme": "Apparence",
+    "themeHint": "Choisissez le thème de l’application sur cet appareil.",
+    "light": "Thème clair",
+    "dark": "Thème sombre",
     "languages": {
       "fr": "Français",
       "en": "English"
