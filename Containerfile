@@ -1,4 +1,4 @@
-# Media worker: ffmpeg + onnxruntime (CPU). At repo root because Vercel daemons use the Dockerfile's directory as build context.
+# Media worker: ffmpeg + onnxruntime (CPU). At repo root because Vercel daemons use this file's directory as build context; the CLI only accepts the names Dockerfile/Containerfile[.vercel], and .vercel would mark the whole project as a container.
 FROM node:24-bookworm-slim
 
 RUN apt-get update \

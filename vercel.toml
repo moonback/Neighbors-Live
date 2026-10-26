@@ -2,5 +2,5 @@
 
 [daemons.media-worker]
 root = "."
-entrypoint = "Dockerfile.worker"
+entrypoint = "Containerfile"
 instances.iad1 = 1
