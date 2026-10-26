@@ -307,7 +307,12 @@ export function VideoCard({
             className="flex min-h-11 w-fit items-center gap-2.5 rounded-full pr-2 text-sm font-semibold text-white"
           >
             <span className="rounded-full bg-accent p-0.5">
-              <Avatar username={item.author.username} color={item.author.color} size={34} />
+              <Avatar
+                username={item.author.username}
+                color={item.author.color}
+                size={34}
+                src={item.author.avatarUrl}
+              />
             </span>
             <span className="flex flex-col leading-tight">
               @{item.author.username}

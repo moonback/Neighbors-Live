@@ -6,6 +6,7 @@ import { Avatar } from '@/components/Avatar';
 import { MyVideos } from '@/components/profile/MyVideos';
 import { signMedia } from '@/lib/media';
 import { getViewer } from '@/lib/session';
+import { profileImageUrl } from '@/lib/profile-image';
 import { adminClient } from '@/lib/supabase/admin';
 
 type Params = { params: Promise<{ username: string }> };
@@ -20,7 +21,9 @@ export default async function ProfilePage({ params }: Params) {
   const admin = adminClient();
   const { data: profile } = await admin
     .from('profiles')
-    .select('id, username, bio, avatar_color, role, reputation, created_at')
+    .select(
+      'id, username, bio, avatar_color, avatar_path, cover_path, role, reputation, created_at',
+    )
     .eq('username', decodeURIComponent(username).toLowerCase())
     .is('banned_at', null)
     .maybeSingle();
@@ -52,7 +55,20 @@ export default async function ProfilePage({ params }: Params) {
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6 p-4 pb-8 sm:p-6">
-      <header className="relative flex flex-col items-center gap-3 overflow-hidden rounded-3xl border border-white/[0.07] bg-panel/80 px-5 pt-8 pb-6 text-center">
+      <header className="relative flex flex-col items-center gap-3 overflow-hidden rounded-3xl border border-white/[0.07] bg-panel/80 px-5 pt-32 pb-6 text-center">
+        {profile.cover_path ? (
+          // eslint-disable-next-line @next/next/no-img-element -- public profile image URL
+          <img
+            src={profileImageUrl(profile.cover_path) ?? undefined}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-40 w-full object-cover"
+          />
+        ) : null}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/30 to-panel"
+        />
         <div
           aria-hidden="true"
           className="absolute inset-x-0 top-0 h-28 bg-accent opacity-25 blur-2xl"
@@ -79,7 +95,12 @@ export default async function ProfilePage({ params }: Params) {
         )}
         <span className="glow relative rounded-full bg-accent p-1">
           <span className="block rounded-full bg-ink p-0.5">
-            <Avatar username={profile.username} color={profile.avatar_color} size={88} />
+            <Avatar
+              username={profile.username}
+              color={profile.avatar_color}
+              size={88}
+              src={profileImageUrl(profile.avatar_path)}
+            />
           </span>
         </span>
         <h1 className="relative max-w-full truncate text-2xl font-bold">@{profile.username}</h1>

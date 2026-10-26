@@ -7,6 +7,25 @@
     "bioHint": "{count}/160 caractères",
     "saved": "Profil enregistré."
   },
+  "profileImages": {
+    "title": "Photos du profil",
+    "avatar": "Photo de profil",
+    "avatarHint": "Choisissez une image ou prenez un selfie. 5 Mo maximum.",
+    "chooseAvatar": "Importer une photo",
+    "takeAvatar": "Prendre un selfie",
+    "removeAvatar": "Supprimer la photo",
+    "avatarSaved": "Photo de profil mise à jour.",
+    "avatarRemoved": "Photo de profil supprimée.",
+    "cover": "Photo de couverture",
+    "coverHint": "Importez une image de couverture. 5 Mo maximum.",
+    "chooseCover": "Importer une couverture",
+    "removeCover": "Supprimer la couverture",
+    "coverSaved": "Photo de couverture mise à jour.",
+    "coverRemoved": "Photo de couverture supprimée.",
+    "unsupported": "Choisissez une image JPEG, PNG ou WebP.",
+    "tooLarge": "L’image doit faire 5 Mo ou moins.",
+    "uploadError": "Impossible d’enregistrer cette image. Réessayez."
+  },
   "preferences": {
     "title": "Préférences",
     "radius": "Rayon par défaut",

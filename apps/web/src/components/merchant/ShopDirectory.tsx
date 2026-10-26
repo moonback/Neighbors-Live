@@ -8,6 +8,7 @@ import { Avatar } from '@/components/Avatar';
 interface Entry {
   username: string;
   color: string;
+  avatarUrl: string | null;
   name: string;
   description: string;
 }
@@ -73,7 +74,12 @@ export function ShopDirectory({ entries }: { entries: Entry[] }) {
               >
                 <span className="overflow-hidden rounded-2xl">
                   <span className="block [&>span]:rounded-none!">
-                    <Avatar username={entry.name} color={entry.color} size={64} />
+                    <Avatar
+                      username={entry.name}
+                      color={entry.color}
+                      size={64}
+                      src={entry.avatarUrl}
+                    />
                   </span>
                 </span>
                 <span className="min-w-0 flex-1">

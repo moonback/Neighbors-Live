@@ -332,9 +332,11 @@ export type Database = {
       profiles: {
         Row: {
           avatar_color: string;
+          avatar_path: string | null;
           banned_at: string | null;
           bio: string;
           created_at: string;
+          cover_path: string | null;
           id: string;
           reputation: number;
           role: Database['public']['Enums']['user_role'];
@@ -343,9 +345,11 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           avatar_color?: string;
+          avatar_path?: string | null;
           banned_at?: string | null;
           bio?: string;
           created_at?: string;
+          cover_path?: string | null;
           id: string;
           reputation?: number;
           role?: Database['public']['Enums']['user_role'];
@@ -353,9 +357,11 @@ export type Database = {
         };
         Update: {
           avatar_color?: string;
+          avatar_path?: string | null;
           banned_at?: string | null;
           bio?: string;
           created_at?: string;
+          cover_path?: string | null;
           id?: string;
           reputation?: number;
           role?: Database['public']['Enums']['user_role'];

@@ -1,5 +1,6 @@
 import type { Category } from '@nl/shared';
 import { signMedia } from '@/lib/media';
+import { profileImageUrl } from '@/lib/profile-image';
 import { adminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -8,7 +9,13 @@ export interface FeedItem {
   id: string;
   category: Category;
   caption: string;
-  author: { id: string; username: string | null; color: string; isMerchant: boolean };
+  author: {
+    id: string;
+    username: string | null;
+    color: string;
+    avatarUrl: string | null;
+    isMerchant: boolean;
+  };
   publishedAt: string | null;
   expiresAt: string;
   usefulCount: number;
@@ -55,6 +62,14 @@ export async function hydrate(
     .in('id', ids);
   const byId = new Map((paths ?? []).map((p) => [p.id, p]));
   const urls = await signMedia((paths ?? []).flatMap((p) => [p.video_path, p.poster_path]));
+  const authorIds = [...new Set(rows.map((row) => row.author_id))];
+  const { data: profiles } = await adminClient()
+    .from('profiles')
+    .select('id, avatar_path')
+    .in('id', authorIds);
+  const avatarUrls = new Map(
+    (profiles ?? []).map((profile) => [profile.id, profileImageUrl(profile.avatar_path)]),
+  );
   let reacted = new Set<string>();
   if (viewerId) {
     const supabase = await createClient();
@@ -71,6 +86,7 @@ export async function hydrate(
         id: r.author_id,
         username: r.author_username,
         color: r.author_color,
+        avatarUrl: avatarUrls.get(r.author_id) ?? null,
         isMerchant: Boolean(r.author_is_merchant ?? r.is_merchant),
       },
       publishedAt: r.published_at,

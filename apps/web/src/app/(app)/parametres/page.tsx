@@ -5,6 +5,8 @@ import { getTranslations } from 'next-intl/server';
 import { Avatar } from '@/components/Avatar';
 import { PushSettings } from '@/components/push/PushSettings';
 import { LogoutButton } from '@/components/settings/LogoutButton';
+import { ProfileImagesForm } from '@/components/settings/ProfileImagesForm';
+import { profileImageUrl } from '@/lib/profile-image';
 import {
   DangerZone,
   DataSection,
@@ -52,7 +54,12 @@ export default async function SettingsPage() {
           className="flex items-center gap-4 rounded-3xl border border-white/[0.07] bg-panel/80 p-4 transition hover:border-accent/50"
         >
           <span className="rounded-full bg-accent p-0.5">
-            <Avatar username={viewer.username} color={viewer.avatarColor} size={52} />
+            <Avatar
+              username={viewer.username}
+              color={viewer.avatarColor}
+              size={52}
+              src={profileImageUrl(viewer.avatarPath)}
+            />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate font-semibold">@{viewer.username}</span>
@@ -63,6 +70,13 @@ export default async function SettingsPage() {
       </header>
       <section aria-label={t('title')} className="grid gap-4 lg:grid-cols-2">
         <ProfileForm username={viewer.username} bio={viewer.bio} />
+        <ProfileImagesForm
+          userId={viewer.id}
+          username={viewer.username}
+          avatarColor={viewer.avatarColor}
+          avatarPath={viewer.avatarPath}
+          coverPath={viewer.coverPath}
+        />
         <PreferencesForm
           defaultRadius={viewer.settings.defaultRadius}
           locale={viewer.settings.locale}

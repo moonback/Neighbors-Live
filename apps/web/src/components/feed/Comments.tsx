@@ -14,7 +14,7 @@ interface Comment {
   body: string;
   created_at: string;
   mine: boolean;
-  author: { username: string | null; avatar_color: string } | null;
+  author: { username: string | null; avatar_color: string; avatar_url: string | null } | null;
 }
 
 interface Page {
@@ -153,6 +153,7 @@ export function Comments({
                   username={c.author?.username ?? null}
                   color={c.author?.avatar_color ?? '#64748b'}
                   size={32}
+                  src={c.author?.avatar_url}
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-fog">

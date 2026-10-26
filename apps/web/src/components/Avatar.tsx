@@ -18,11 +18,25 @@ export function Avatar({
   username,
   color,
   size = 40,
+  src,
 }: {
   username: string | null;
   color: string;
   size?: number;
+  src?: string | null;
 }) {
+  if (src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- public profile images use Supabase URLs
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        className="inline-flex shrink-0 rounded-full object-cover"
+        style={{ width: size, height: size }}
+      />
+    );
+  }
   const initials = (username ?? '?').replace(/_/g, '').slice(0, 2).toUpperCase() || '?';
   return (
     <span

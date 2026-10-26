@@ -1,6 +1,7 @@
 import { commentSchema } from '@nl/shared';
 import { z } from 'zod';
 import { json, parseBody, requireUser, route, unwrap } from '@/lib/api';
+import { profileImageUrl } from '@/lib/profile-image';
 import { createClient } from '@/lib/supabase/server';
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -11,10 +12,21 @@ interface CommentRow {
   body: string;
   created_at: string;
   author_id: string;
-  author: { username: string | null; avatar_color: string } | null;
+  author: { username: string | null; avatar_color: string; avatar_path: string | null } | null;
 }
 
-const columns = 'id, body, created_at, author_id, author:profiles(username, avatar_color)';
+const columns =
+  'id, body, created_at, author_id, author:profiles(username, avatar_color, avatar_path)';
+
+function publicComment(row: CommentRow, mine: boolean) {
+  return {
+    ...row,
+    author: row.author
+      ? { ...row.author, avatar_url: profileImageUrl(row.author.avatar_path) }
+      : null,
+    mine,
+  };
+}
 
 /** Comments, newest first, paginated with a `before` timestamp cursor. */
 export const GET = route<Ctx>(async (req, { params }) => {
@@ -31,7 +43,7 @@ export const GET = route<Ctx>(async (req, { params }) => {
   const rows = unwrap(await query);
   const { data } = await supabase.auth.getUser();
   return json({
-    comments: rows.map((c) => ({ ...c, mine: c.author_id === data.user?.id })),
+    comments: rows.map((c) => publicComment(c, c.author_id === data.user?.id)),
     nextBefore: rows.length === PAGE ? (rows.at(-1)?.created_at ?? null) : null,
   });
 });
@@ -49,5 +61,5 @@ export const POST = route<Ctx>(async (req, { params }) => {
       .select(columns)
       .single(),
   );
-  return json({ ...comment, mine: true }, 201);
+  return json(publicComment(comment, true), 201);
 });

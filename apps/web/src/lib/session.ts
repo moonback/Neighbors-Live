@@ -8,6 +8,8 @@ export interface Viewer {
   username: string | null;
   bio: string;
   avatarColor: string;
+  avatarPath: string | null;
+  coverPath: string | null;
   role: 'user' | 'merchant' | 'admin';
   reputation: number;
   banned: boolean;
@@ -26,7 +28,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   const [profile, settings, zones] = await Promise.all([
     admin
       .from('profiles')
-      .select('username, bio, avatar_color, role, reputation, banned_at')
+      .select('username, bio, avatar_color, avatar_path, cover_path, role, reputation, banned_at')
       .eq('id', user.id)
       .single(),
     supabase
@@ -44,6 +46,8 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     username: profile.data.username,
     bio: profile.data.bio,
     avatarColor: profile.data.avatar_color,
+    avatarPath: profile.data.avatar_path,
+    coverPath: profile.data.cover_path,
     role: profile.data.role,
     reputation: profile.data.reputation,
     banned: profile.data.banned_at !== null,

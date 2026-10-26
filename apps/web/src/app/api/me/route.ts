@@ -16,7 +16,7 @@ export const DELETE = route(async (req) => {
   const admin = adminClient();
   const { data: profile } = await admin
     .from('profiles')
-    .select('username')
+    .select('username, avatar_path, cover_path')
     .eq('id', user.id)
     .single();
   if (!profile || (profile.username ?? '') !== confirm.trim().toLowerCase()) {
@@ -27,6 +27,14 @@ export const DELETE = route(async (req) => {
   for (const [bucket, list] of groupByBucket(paths)) {
     const { error } = await admin.storage.from(bucket).remove(list);
     if (error) console.error('storage removal deferred to purge job', bucket, error.message);
+  }
+  const profileImages = [profile.avatar_path, profile.cover_path].filter(
+    (path): path is string => path !== null,
+  );
+  if (profileImages.length) {
+    const { error } = await admin.storage.from('profile-images').remove(profileImages);
+    if (error)
+      console.error('profile image removal deferred after account deletion', error.message);
   }
 
   const { error } = await admin.auth.admin.deleteUser(user.id);

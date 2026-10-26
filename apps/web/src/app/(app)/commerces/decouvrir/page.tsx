@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { ShopDirectory } from '@/components/merchant/ShopDirectory';
 import { Notice } from '@/components/ui';
 import { createClient } from '@/lib/supabase/server';
+import { profileImageUrl } from '@/lib/profile-image';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('merchant.landing.directory');
@@ -37,7 +38,7 @@ export default async function ShopDirectoryPage() {
   const profiles = merchants.data.length
     ? await supabase
         .from('profiles')
-        .select('id, username, avatar_color')
+        .select('id, username, avatar_color, avatar_path')
         .in(
           'id',
           merchants.data.map((merchant) => merchant.user_id),
@@ -61,6 +62,9 @@ export default async function ShopDirectoryPage() {
   const colors = new Map(
     (profiles.data ?? []).map((profile) => [profile.id, profile.avatar_color]),
   );
+  const avatars = new Map(
+    (profiles.data ?? []).map((profile) => [profile.id, profileImageUrl(profile.avatar_path)]),
+  );
   const entries = merchants.data.flatMap((merchant) => {
     const username = usernames.get(merchant.user_id);
     if (!username) return [];
@@ -68,6 +72,7 @@ export default async function ShopDirectoryPage() {
       {
         username,
         color: colors.get(merchant.user_id) ?? '#6b7280',
+        avatarUrl: avatars.get(merchant.user_id) ?? null,
         name: merchant.business_name,
         description: merchant.description,
       },
