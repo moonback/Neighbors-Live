@@ -27,6 +27,8 @@ Complément visuel 2026-10-27 après capture fournie par l’utilisateur : la vi
 
 Correction mobile 2026-10-27 : la vidéo superposée avait un `z-index` supérieur à la colonne d’actions; les commandes utile/commenter/partager/signaler/son pouvaient passer derrière elle. Colonne remontée au-dessus du média (`z-20`) et légèrement éloignée du bord inférieur. Typecheck, lint et Prettier passent; appareil mobile réel non disponible pour confirmer visuellement.
 
+Documentation 2026-10-27 : README réécrit pour décrire les parcours habitants/commerces/modération/admin, les limites exactes du temps réel (5 km) et du feed (10 km), les durées, la configuration réelle des services, le démarrage local et les limites de validation. Liens Markdown locaux (25) et Prettier vérifiés; aucun test applicatif exécuté pour ce changement documentaire.
+
 ## 0. Cadrage et fondations
 
 | #    | Élément                                                                             | État | Notes                                                                        |

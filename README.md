@@ -1,20 +1,19 @@
 # Neighbors Live
 
-Neighbors Live est une PWA de vidéos courtes hyperlocales. Elle permet aux habitants de partager
-des informations utiles à proximité (alertes, entraide, événements et offres locales) sous forme de
-vidéos éphémères, filmées directement dans l’application et modérées à l’échelle du quartier.
+**Neighbors Live** est une application web progressive (PWA) de vidéos courtes hyperlocales. Les
+habitants y partagent des informations utiles à proximité : alertes, bons plans, événements,
+entraide, offres de commerces et objets perdus ou trouvés.
 
-Les rayons proposés sont **300 m, 1 km, 3 km, 5 km et 10 km**. L’interface est en français par défaut ; les
-messages anglais sont également prévus.
-
-> **État du projet :** application en développement actif. Une grande partie du parcours principal
-> (publication, traitement média, feed et carte) est implémentée. Les fonctions terminées, les tests
-> réellement exécutés et les limites restantes sont suivis dans [docs/PROGRESS.md](./docs/PROGRESS.md).
-> Ce dépôt n’est pas une déclaration de disponibilité en production.
+> **État du projet : développement actif.** Le dépôt contient les parcours principaux d’authentification,
+> de publication vidéo, de découverte, de modération, d’administration et de commerce. Les limites et
+> vérifications réelles sont suivies dans [docs/PROGRESS.md](docs/PROGRESS.md). Les textes juridiques
+> sont encore des brouillons : l’application ne doit pas être considérée comme prête pour une
+> présentation publique ou une mise en production sans validation complémentaire.
 
 ## Sommaire
 
 - [Fonctionnalités](#fonctionnalités)
+- [Parcours et règles produit](#parcours-et-règles-produit)
 - [Architecture](#architecture)
 - [Vie privée et sécurité](#vie-privée-et-sécurité)
 - [Prérequis](#prérequis)
@@ -22,121 +21,171 @@ messages anglais sont également prévus.
 - [Comptes de démonstration](#comptes-de-démonstration)
 - [Commandes](#commandes)
 - [Configuration](#configuration)
-- [Tests](#tests)
+- [Tests et CI](#tests-et-ci)
 - [Structure du dépôt](#structure-du-dépôt)
 - [Déploiement](#déploiement)
 - [Limites connues](#limites-connues)
-- [Documentation](#documentation)
+- [Documentation associée](#documentation-associée)
 
 ## Fonctionnalités
 
-### Côté habitant
+### Habitants
 
-- Inscription et connexion par e-mail et mot de passe, choix d’un pseudo unique, récupération du
-  mot de passe et préférences de langue et de rayon.
-- Feed vidéo vertical avec lecture adaptée aux vidéos courtes, filtres par catégorie et proximité,
-  pagination et alertes locales.
-- Carte interactive des publications proches, avec regroupement des marqueurs et position publique
-  approximative.
-- Capture depuis la caméra du navigateur, durée maximale d’environ 30 secondes, aperçu avant
-  publication et changement de caméra lorsqu’il est pris en charge.
-- Publication avec légende, catégorie, durée de vie et géolocalisation. Les catégories disponibles
-  sont `alert`, `deal`, `event`, `help`, `shop` et `lost`.
-- Upload résumable via TUS, réactions « utile », commentaires, partage et signalement.
-- File de publication hors ligne dans IndexedDB ; la position est contrôlée de nouveau avant la
-  reprise d’une publication en attente.
-- Profil public, réputation, badges et paramètres personnels.
-- Installation PWA, page hors ligne et notifications push selon les permissions et la configuration
-  du navigateur.
+- Inscription, connexion et récupération de mot de passe par e-mail, avec choix d’un pseudo unique.
+- Feed vidéo vertical, filtres par catégorie, rayons de 300 m, 1 km, 3 km, 5 km et 10 km, lecture
+  automatique adaptée au réglage de mouvement réduit, pagination et lien direct vers une vidéo.
+- Carte interactive des publications proches, avec regroupement des marqueurs.
+- Capture depuis la caméra du navigateur, aperçu avant publication, caméra avant/arrière selon la
+  plateforme et durée maximale de 30 secondes. L’import d’une vidéo depuis la galerie n’est pas
+  proposé.
+- Réactions « Utile », commentaires, partage et signalements.
+- Profils publics avec vidéos, réputation et badges; préférences, décisions de modération, export et
+  suppression du compte dans les pages personnelles.
+- Installation PWA, page hors ligne et notifications Web Push lorsque le navigateur, les permissions
+  et les clés de configuration le permettent.
 
-### Modération et commerces
+### Commerces
 
-- Mise en attente des vidéos pendant leur traitement et retrait automatique après expiration.
-- Signalements, masquage automatique après le seuil configuré et décisions de modération historisées.
-- Files de modération par cellule de quartier H3, appels de modérateur et recours.
-- Rôles administrateur et commerce, profils de commerce et quota de publications commerciales.
-- Tableau de bord d’administration et pages dédiées à la modération et aux commerces.
+- Présentation de l’offre commerçante et demande de compte commerce.
+- Revue administrative des demandes et annuaire des commerces approuvés.
+- Après approbation, publication d’offres filmées sur place, avec badge commerce et quota quotidien
+  indiqué dans l’espace commerçant.
 
-Les accès et statuts sont contrôlés côté serveur et en base de données ; la présence d’une page dans
-l’interface ne signifie pas que chaque parcours est déjà couvert par un test E2E. Voir
-[l’avancement détaillé](./docs/PROGRESS.md).
+### Modération et administration
+
+- Signalements par les habitants et masquage automatique au seuil configuré (trois comptes distincts
+  par défaut dans le modèle actuel).
+- Files de revue par cellule de quartier H3, candidatures de modérateur, décisions journalisées et
+  recours.
+- Tableau de bord administrateur : utilisateurs et rôles, vidéos et zones, signalements, recours,
+  demandes de compte commerce et réglages du traitement média.
+- Les réglages du floutage sont capturés au moment de la création du job; les tentatives d’un même job
+  réutilisent ces réglages.
+
+Les contrôles d’accès sont appliqués côté serveur et base de données. Une page présente dans
+l’interface ne signifie pas à elle seule que tous ses cas d’erreur ont été validés en E2E.
+
+## Parcours et règles produit
+
+### Catégories et durée de visibilité
+
+| Catégorie             | Durée actuelle                           |
+| --------------------- | ---------------------------------------- |
+| Alerte (`alert`)      | 6 heures                                 |
+| Bon plan (`deal`)     | 48 heures                                |
+| Événement (`event`)   | Jusqu’à la fin indiquée, au plus 7 jours |
+| Entraide (`help`)     | 7 jours                                  |
+| Commerce (`shop`)     | Choix de 6, 24, 48, 72 ou 168 heures     |
+| Perdu/trouvé (`lost`) | 7 jours                                  |
+
+Les textes affichés et les constantes partagées doivent rester alignés sur ces valeurs.
+
+### Publication vidéo
+
+1. Le navigateur filme avec `MediaRecorder`, vérifie la disponibilité d’une position et refuse une
+   précision GPS supérieure à 100 m. La légende est limitée à 140 caractères et l’upload à 60 Mio.
+2. `POST /api/videos` valide le contenu, les limites de débit, la cohérence de la position, la durée
+   et les règles de compte; la ligne est créée en état `processing`.
+3. Le navigateur envoie le fichier au bucket privé `raw-videos` avec l’upload résumable TUS.
+4. Un trigger Storage crée un job média. Le worker le réclame avec `SKIP LOCKED`, est réveillé par
+   `LISTEN/NOTIFY` et utilise aussi un polling de secours.
+5. Le worker détecte et pixellise les visages, transcode en H.264/AAC jusqu’à 720p et produit une
+   miniature. Après succès, il active la publication et supprime le fichier brut.
+6. Les jobs média échoués sont retentés avec backoff; après épuisement des tentatives, la publication
+   est rejetée. Les fichiers expirés ou supprimés sont pris en charge par la purge.
+
+Une clé de requête stable et une réservation SQL idempotente sont prévues pour éviter la création de
+plusieurs lignes quand une réponse réseau se perd. Cette migration récente doit encore être validée
+par les tests de base de données et E2E; voir les limites ci-dessous.
+
+### Feed, carte et alertes
+
+Le feed et la carte utilisent la RPC SQL `nearby_videos` pour filtrer par distance, catégorie, état
+et expiration. Le feed utilise un curseur de pagination. Les URL vidéo et miniature sont signées côté
+serveur avec une durée limitée.
+
+Les alertes visibles dans le feed sont chargées depuis le feed puis enrichies en temps réel par
+Supabase Broadcast sur des cellules H3. Les mises à jour Broadcast en direct sont limitées à un rayon
+de 5 km pour respecter la limite de canaux par client; le feed accepte des rayons jusqu’à 10 km.
+Le payload temps réel ne contient qu’une position publique approximative.
+
+### File hors ligne
+
+Les enregistrements mis en attente sont conservés dans IndexedDB sur l’appareil. Avant de les
+renvoyer, l’application relève la position à nouveau : elle attend une précision suffisante et ne
+reprend la publication que si l’appareil reste à moins de 100 m du lieu de capture. Une vidéo de plus
+de 6 heures ou éloignée de son lieu d’origine est abandonnée. La reprise complète doit encore être
+vérifiée sur appareil et après interruption réseau.
 
 ## Architecture
 
-Le dépôt est un monorepo pnpm composé de trois unités principales :
+Le dépôt est un monorepo pnpm :
 
-| Unité             | Responsabilité                                                                                 |
-| ----------------- | ---------------------------------------------------------------------------------------------- |
-| `apps/web`        | Application Next.js App Router : interface, routes API, sessions, carte, PWA et upload         |
-| `apps/worker`     | Worker Node : traitement vidéo, floutage, purge des fichiers et envoi des notifications        |
-| `packages/shared` | Schémas Zod, types, constantes, logique de durée de vie, stockage et utilitaires géographiques |
-| `supabase`        | Migrations Postgres, seed local, configuration et tests pgTAP                                  |
+| Dossier           | Responsabilité                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| `apps/web`        | Next.js App Router : pages, routes API, sessions, carte, feed et PWA                        |
+| `apps/worker`     | Worker Node : traitement vidéo, floutage, purge et notifications Web Push                   |
+| `packages/shared` | Schémas Zod, types générés, constantes, règles de durée de vie et utilitaires géographiques |
+| `supabase`        | Configuration locale, migrations Postgres, seed et tests pgTAP                              |
+| `tests/e2e`       | Parcours Playwright                                                                         |
+| `scripts`         | Démarrage de Supabase local et préparation des médias de démonstration                      |
 
-### Technologies
+### Technologies principales
 
-- **Web :** Next.js 16, React 19, TypeScript strict, Tailwind CSS 4, next-intl et Serwist.
-- **Services :** Supabase (Postgres 17, PostGIS, Auth, Storage, Realtime et pg_cron).
-- **Géographie :** PostGIS pour la recherche de proximité et H3 pour les cellules de modération et
-  de notification.
-- **Carte :** MapLibre GL ; le style OpenFreeMap est utilisé par défaut et peut être remplacé.
-- **Médias :** TUS pour l’upload résumable, ffmpeg pour le transcodage, ONNX Runtime et YuNet pour
-  la détection des visages.
-- **Tests et qualité :** Vitest, pgTAP, Playwright, ESLint, Prettier et TypeScript.
-- **Gestion des dépendances :** pnpm workspaces.
+- **Web :** Next.js 16 App Router, React 19, TypeScript strict, Tailwind CSS 4, next-intl et Serwist.
+- **Services :** Supabase Auth, Postgres 17, PostGIS, Storage, Realtime et pg_cron.
+- **Géographie :** PostGIS pour la proximité et H3 pour les zones de modération et de diffusion.
+- **Carte :** MapLibre GL; OpenFreeMap est le style par défaut, modifiable par configuration.
+- **Médias :** TUS, ffmpeg et ONNX Runtime Node; YuNet est le modèle facial fourni.
+- **Qualité :** Vitest, pgTAP, Playwright, ESLint, Prettier et TypeScript.
 
-### Publication et traitement vidéo
+### Routes principales
 
-1. Le navigateur enregistre une vidéo avec `MediaRecorder` et demande une position suffisamment
-   précise (au plus 100 m d’incertitude).
-2. `POST /api/videos` valide les données, les limites de publication, la cohérence de la position,
-   la catégorie et la durée de vie ; le serveur crée une publication en état `processing`.
-3. Le navigateur envoie le média au bucket privé `raw-videos` avec TUS.
-4. Un trigger SQL crée un job ; le worker le prend en charge avec `SKIP LOCKED` et une notification
-   `LISTEN/NOTIFY`, avec polling de secours.
-5. Le worker détecte et pixellise les visages, transcode en H.264/AAC jusqu’à 720p et crée une
-   miniature. En cas de succès, il stocke le média traité, active la publication et supprime
-   l’original non flouté.
-6. En cas d’échec, le job est retenté avec backoff ; après le nombre maximal de tentatives, la
-   vidéo est rejetée. Les vidéos expirées ou supprimées sont purgées par le worker.
+| Parcours                        | Routes                                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------ |
+| Feed, découverte et carte       | `/`, `/decouvrir`, `/carte`, `/v/[id]`                                                     |
+| Capture et comptes              | `/filmer`, `/login`, `/bienvenue`, `/onboarding`, `/mot-de-passe-oublie`, `/reinitialiser` |
+| Profils et paramètres           | `/u/[username]`, `/me`, `/me/decisions`, `/parametres`                                     |
+| Commerces                       | `/commerces`, `/commerces/decouvrir`, `/commerce`                                          |
+| Modération et administration    | `/moderation`, `/admin`                                                                    |
+| Textes juridiques et hors ligne | `/legal/[slug]`, `/offline`                                                                |
 
-### Lecture du feed et carte
-
-Le feed et la carte utilisent la fonction SQL `nearby_videos`, qui filtre par distance, catégorie,
-statut et expiration. Le feed est paginé par curseur. Les URL des vidéos et miniatures privées sont
-signées côté serveur pour une durée limitée. Les alertes temps réel utilisent Supabase Broadcast
-avec une cellule H3 et un payload public minimal ; le client ne s’abonne pas aux changements bruts
-de la table des vidéos.
+Les routes API se trouvent sous `/api`: authentification, feed/carte, médias et publications, profils,
+commentaires, réactions, signalements, modération, commerces, notifications push, export et suppression
+de compte.
 
 ## Vie privée et sécurité
 
-Les règles suivantes font partie de la conception du produit :
+- Les buckets vidéo sont privés. Les fichiers vidéo signés et les API ne sont pas mis en cache par le
+  service worker; seules des pages explicitement publiques peuvent être conservées pour la navigation
+  hors ligne. Les navigations personnelles restent réseau uniquement.
+- La position exacte de la vidéo est conservée côté base pour la recherche de proximité. Les réponses
+  publiques utilisent une position approximative (environ 50 m) et des distances arrondies à 100 m.
+  Les coordonnées de recherche du feed ne sont pas enregistrées comme historique.
+- Les abonnements d’alerte utilisent une cellule de zone plutôt que la position GPS brute.
+- Les tables sont protégées par RLS. Les routes mutatives valident les données, contrôlent l’origine
+  de la requête et appliquent des limites de débit.
+- Les fichiers vidéo originaux sont supprimés après traitement réussi; les règles de suppression et
+  de conservation doivent être vérifiées dans l’environnement réellement déployé.
+- Le modèle YuNet peut manquer de très petits visages ou certains angles. Aucun modèle de plaques
+  n’est livré ou activé par défaut; l’interface administrateur ne rend pas un modèle absent fiable.
+- Les seules variables `NEXT_PUBLIC_*` doivent être publiques. La clé Supabase `service_role`, la clé
+  privée VAPID et le sel de hachage restent côté serveur/worker.
 
-- Les buckets vidéo sont privés ; le client n’accède pas directement aux fichiers originaux.
-- Les vidéos publiques et les réponses de proximité utilisent une position arrondie/décalée et des
-  distances arrondies à 100 m. La position exacte, conservée pour la recherche géographique, n’est
-  accessible qu’aux fonctions serveur prévues à cet effet.
-- La position de recherche n’est pas enregistrée comme historique utilisateur. Les abonnements
-  d’alerte utilisent une cellule de zone plutôt que la position GPS exacte.
-- Les mutations passent par des routes serveur avec validation Zod, contrôles d’accès et limites de
-  débit ; les tables sont protégées par RLS.
-- Les fichiers vidéo signés ne sont pas mis en cache par le service worker. Les en-têtes incluent
-  notamment CSP, HSTS, protection contre le framing et Permissions Policy.
-- L’import de galerie n’est pas proposé par l’interface : la capture utilise la caméra du navigateur.
-- Le détecteur de plaques est désactivé par défaut faute de modèle fiable fourni.
-
-Ces protections ne remplacent pas une revue de sécurité, une validation juridique ou des essais de
-terrain avant un lancement public.
+`docs/PRIVACY.md` décrit l’état technique de confidentialité, mais **ce n’est pas une notice juridique
+finale**. Les informations d’éditeur, sous-traitants réels, durées, transferts et clauses restent à
+confirmer. Les pages légales de l’application affichent encore un avertissement de brouillon.
 
 ## Prérequis
 
-- **Node.js 22.18 ou supérieur** (l’environnement de développement du projet utilise Node 24).
-- **pnpm 10** (version attendue dans le dépôt : `10.33.2`).
-- **Docker** avec le moteur démarré, requis pour Supabase local et le worker média.
-- **Git** pour récupérer le dépôt.
+- Node.js **22.18 ou supérieur** (Node 24 est utilisé dans la CI actuelle).
+- pnpm **10.33.2**, version verrouillée par `packageManager`.
+- Docker Desktop ou Docker Engine démarré pour Supabase local et le worker conteneurisé.
+- Git.
 
-Le worker Docker embarque ffmpeg et télécharge le modèle YuNet pendant sa construction. Pour lancer
-le worker directement avec `pnpm worker:dev`, installez aussi le modèle YuNet avec
-`pnpm --filter @nl/worker models:download` ; ffmpeg doit alors être installé localement.
+Le conteneur du worker fournit ffmpeg et télécharge le modèle YuNet pendant la construction. Pour
+lancer le worker directement hors Docker, installez ffmpeg localement et téléchargez le modèle avec
+`pnpm --filter @nl/worker models:download`.
 
 ## Démarrage local
 
@@ -148,17 +197,23 @@ pnpm db:start
 pnpm dev
 ```
 
-Ouvrir ensuite [http://localhost:3000](http://localhost:3000).
+Ouvrez [http://localhost:3000](http://localhost:3000). `pnpm db:start` démarre Supabase local,
+applique les migrations et le seed, crée les variables locales nécessaires si elles manquent,
+démarre le worker Docker et prépare les médias de démonstration. Les valeurs générées ne sont pas
+écrasées lors d’une relance; supprimez une configuration locale uniquement si vous savez qu’elle est
+obsolète et que vous pouvez la régénérer.
 
-`pnpm db:start` démarre Supabase local, applique les migrations et le seed configurés, génère les
-fichiers d’environnement locaux manquants, construit et lance le worker Docker, puis prépare les
-médias de démonstration. Les fichiers `.env` et `apps/web/.env.local` générés sont des secrets
-locaux : ne les commitez pas et n’utilisez pas ces valeurs en production.
+Ports locaux configurés : API Supabase **56421**, Postgres **56422**, Studio **56423** et Mailpit
+**56424**. L’URL de Mailpit est affichée par `pnpm db:start`; utilisez-la pour consulter les messages
+de confirmation et de récupération de mot de passe.
 
-La configuration Supabase du dépôt utilise les ports **56421** (API), **56422** (Postgres),
-**56423** (Studio) et **56424** (Mailpit). Cette plage évite les conflits courants avec d’autres
-projets Supabase locaux. Mailpit est indiqué dans la sortie de `pnpm db:start` ; il permet de
-récupérer les e-mails de confirmation ou de récupération de mot de passe si nécessaire.
+Pour démarrer seulement Supabase et préparer le seed sans le worker, dans PowerShell :
+
+```powershell
+$env:SKIP_WORKER = '1'
+pnpm db:start
+Remove-Item Env:SKIP_WORKER
+```
 
 Pour arrêter les services locaux :
 
@@ -166,197 +221,185 @@ Pour arrêter les services locaux :
 pnpm db:stop
 ```
 
-Pour reconstruire la base locale et recharger ses données de démonstration :
+Pour réinitialiser la base et recharger les médias de démonstration :
 
 ```powershell
 pnpm db:reset
 ```
 
-Cette commande réinitialise la base locale ; ne l’utilisez pas sur une base contenant des données à
-conserver.
+`pnpm db:reset` détruit les données locales de Supabase avant de rejouer les migrations et le seed.
+Ne l’exécutez pas sur une base contenant des données à conserver.
 
 ## Comptes de démonstration
 
-Après le seed local, les comptes suivants sont disponibles :
+Les comptes suivants sont créés par le seed local :
 
 | Rôle                     | E-mail                           |
 | ------------------------ | -------------------------------- |
-| Administrateur           | `admin@neighbors.test`           |
+| Habitant                 | `lea@neighbors.test`             |
 | Modérateur de Belleville | `modo.belleville@neighbors.test` |
 | Commerce                 | `boulangerie@neighbors.test`     |
-| Habitant                 | `lea@neighbors.test`             |
+| Administrateur           | `admin@neighbors.test`           |
 
-Le mot de passe de démonstration est `voisins2026` pour ces comptes. **Ces identifiants sont
-réservés à la base locale de démonstration** ; ne les réutilisez pas sur un environnement partagé
-ou en production.
+Mot de passe local de démonstration : `voisins2026`. **Ces comptes sont réservés à la base locale**;
+ne réutilisez pas ces identifiants dans un environnement partagé ou en production.
 
 ## Commandes
 
-À exécuter depuis la racine du monorepo :
+À exécuter depuis la racine :
 
-| Commande            | Description                                                             |
-| ------------------- | ----------------------------------------------------------------------- |
-| `pnpm dev`          | Démarre l’application web Next.js en mode développement                 |
-| `pnpm worker:dev`   | Lance le worker Node localement (ffmpeg doit être installé)             |
-| `pnpm db:start`     | Démarre Supabase local, le worker Docker et les médias de démonstration |
-| `pnpm db:stop`      | Arrête Supabase local et le worker Compose                              |
-| `pnpm db:reset`     | Réinitialise la base, rejoue migrations/seed et recharge les médias     |
-| `pnpm db:types`     | Régénère les types TypeScript depuis la base locale                     |
-| `pnpm typecheck`    | Vérifie les types des workspaces                                        |
-| `pnpm lint`         | Exécute ESLint sans avertissements autorisés                            |
-| `pnpm format`       | Formate le dépôt avec Prettier                                          |
-| `pnpm format:check` | Vérifie le formatage sans modifier les fichiers                         |
-| `pnpm test`         | Lance les tests unitaires Vitest des workspaces                         |
-| `pnpm test:db`      | Lance les tests pgTAP sur Supabase local                                |
-| `pnpm test:e2e`     | Lance Playwright ; nécessite la stack locale et le worker               |
-| `pnpm build`        | Construit les applications disposant d’un script de build               |
+| Commande            | Description                                                                 |
+| ------------------- | --------------------------------------------------------------------------- |
+| `pnpm dev`          | Démarre l’application web en développement                                  |
+| `pnpm worker:dev`   | Lance le worker localement; ffmpeg et le modèle YuNet doivent être présents |
+| `pnpm db:start`     | Démarre Supabase, le worker Docker et les médias de démonstration           |
+| `pnpm db:stop`      | Arrête Supabase local et le worker Compose                                  |
+| `pnpm db:reset`     | Réinitialise Supabase local et recharge les données de démonstration        |
+| `pnpm db:types`     | Régénère les types Supabase depuis la base locale                           |
+| `pnpm typecheck`    | Vérifie TypeScript dans les workspaces                                      |
+| `pnpm lint`         | Exécute ESLint sans avertissements                                          |
+| `pnpm format`       | Formate les fichiers avec Prettier                                          |
+| `pnpm format:check` | Vérifie le formatage sans modifier les fichiers                             |
+| `pnpm test`         | Lance les suites unitaires Vitest                                           |
+| `pnpm test:db`      | Lance les tests pgTAP; Supabase doit être démarré                           |
+| `pnpm test:e2e`     | Lance Playwright; la stack locale et le worker sont nécessaires             |
+| `pnpm build`        | Construit les workspaces avec un script de build                            |
 
-Validation complète recommandée :
+Vérification locale habituelle :
 
 ```powershell
-pnpm typecheck
+pnpm format:check
 pnpm lint
+pnpm typecheck
 pnpm test
 pnpm build
 ```
 
-Les tests E2E utilisent Chromium, une caméra simulée et une position simulée ; ils ne remplacent pas
-les essais sur appareil mobile réel.
+La CI GitHub Actions exécute ces contrôles ainsi que les suites base de données et E2E. Les E2E
+utilisent Chromium et des périphériques/capacités simulés; ils ne remplacent pas les essais sur
+appareils iOS et Android physiques.
 
 ## Configuration
 
-`pnpm db:start` génère les variables nécessaires au développement local si les fichiers locaux
-manquent. Les valeurs ci-dessous décrivent les paramètres importants pour une configuration
-manuelle ou un déploiement :
+Pour un développement local standard, préférez `pnpm db:start`, qui génère les valeurs adaptées à
+la Supabase locale. `.env.example` contient des exemples/placeholders et ne doit pas être utilisé
+comme configuration de production. Ne partagez pas `.env`, `apps/web/.env.local` ou les valeurs de
+clés privées.
 
-| Variable                                  | Usage                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`                | URL Supabase visible du navigateur                                  |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`           | Clé publique Supabase (anon/publishable), jamais une clé service    |
-| `NEXT_PUBLIC_SITE_URL`                    | URL de l’application utilisée pour les liens d’authentification     |
-| `NEXT_PUBLIC_MAP_STYLE_URL`               | URL du style MapLibre ; OpenFreeMap est la valeur locale par défaut |
-| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`            | Clé publique VAPID pour les abonnements push                        |
-| `SUPABASE_URL`                            | URL Supabase utilisée côté serveur et par le worker                 |
-| `SUPABASE_SERVICE_ROLE_KEY`               | Clé secrète service, réservée au serveur et au worker               |
-| `DATABASE_URL`                            | Connexion Postgres directe utilisée par le worker                   |
-| `VAPID_PRIVATE_KEY`                       | Clé privée VAPID, secrète                                           |
-| `VAPID_SUBJECT`                           | Identifiant d’expéditeur VAPID, sous forme `mailto:` ou URL HTTPS   |
-| `IP_HASH_SALT`                            | Secret aléatoire pour hacher les IP utilisées par le rate limiting  |
-| `WORKER_CONCURRENCY`                      | Nombre de traitements simultanés du worker (1 à 8)                  |
-| `WORKER_ID`                               | Identifiant du worker ; par défaut le nom d’hôte                    |
-| `DETECT_EVERY`                            | Intervalle d’échantillonnage de la détection des visages            |
-| `FACE_BLUR_ENABLED` / `FACE_MODEL_PATH`   | Active YuNet (actif par défaut) et indique le chemin du modèle ONNX |
-| `PLATE_BLUR_ENABLED` / `PLATE_MODEL_PATH` | Active le modèle ONNX de plaques, désactivé par défaut              |
-| `PLATE_MODEL_DIR`                         | Dossier local monté en lecture seule dans le worker Docker          |
-| `POLL_INTERVAL_MS`                        | Intervalle de polling de secours des jobs                           |
-| `OUTBOX_INTERVAL_MS`                      | Intervalle de traitement de la file de notifications                |
+### Variables publiques du navigateur
 
-Les variables `NEXT_PUBLIC_*` sont intégrées au bundle navigateur et ne doivent contenir que des
-valeurs publiques. Les variables secrètes sont validées au démarrage côté serveur et dans le worker.
-Ne publiez jamais `.env`, `.env.local` ou des clés Supabase/VAPID privées.
+| Variable                        | Usage                                           |
+| ------------------------------- | ----------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL de l’API Supabase                           |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anon/publishable non secrète                |
+| `NEXT_PUBLIC_SITE_URL`          | Origine utilisée pour les callbacks Auth        |
+| `NEXT_PUBLIC_MAP_STYLE_URL`     | URL JSON du style MapLibre                      |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`  | Clé publique utilisée pour les abonnements push |
 
-Les administrateurs peuvent activer ou désactiver le floutage des visages et des plaques dans
-**Administration → Traitement vidéo**, puis ajuster la fréquence d’analyse et les seuils de
-confiance. Ces réglages s’appliquent aux nouveaux jobs média. Les variables `*_BLUR_ENABLED` du
-worker servent de garde-fous de disponibilité : l’admin indique si un worker actif a chargé le
-modèle requis. Chaque job conserve les réglages présents lors de sa mise en file d’attente ; les
-tentatives suivantes gardent le même instantané. Les changements sont inscrits dans l’historique
-admin. Une fréquence d’analyse plus basse augmente le temps de traitement ; un seuil plus élevé
-peut laisser davantage de visages ou de plaques non floutés.
+Toute variable `NEXT_PUBLIC_*` est intégrée au bundle navigateur et ne doit jamais contenir de secret.
 
-### Modèles du worker média
+### Variables serveur et worker
 
-L’image Docker télécharge le modèle facial YuNet `face_detection_yunet_2023mar.onnx` et vérifie son
-SHA-256 pendant la construction. `FACE_MODEL_PATH` est relatif au dossier de travail du worker dans
-le conteneur (`/app/apps/worker`) ; gardez sa valeur par défaut sauf si vous fournissez une autre
-copie compatible. Pour une exécution locale, la commande `pnpm --filter @nl/worker models:download`
-télécharge ce même modèle vers le chemin `FACE_MODEL_PATH` (par défaut `apps/worker/models/…`) et
-vérifie le même SHA-256 avant de l’écrire.
+| Variable                    | Requise / défaut                           | Usage                                                                     |
+| --------------------------- | ------------------------------------------ | ------------------------------------------------------------------------- |
+| `SUPABASE_URL`              | Requise pour le worker                     | URL Supabase utilisée par le worker                                       |
+| `SUPABASE_SERVICE_ROLE_KEY` | Requise, secrète                           | Opérations privilégiées serveur/worker; ne jamais exposer au navigateur   |
+| `DATABASE_URL`              | Requise pour le worker                     | Connexion Postgres directe pour LISTEN/NOTIFY et la prise des jobs        |
+| `VAPID_PRIVATE_KEY`         | Requise, secrète                           | Signature des notifications push                                          |
+| `VAPID_SUBJECT`             | Requise                                    | Contact expéditeur `mailto:` ou URL HTTPS                                 |
+| `IP_HASH_SALT`              | Requise côté serveur                       | Sel secret pour hacher des identifiants utilisés par les limites de débit |
+| `WORKER_ID`                 | Nom d’hôte                                 | Identifiant du worker                                                     |
+| `WORKER_CONCURRENCY`        | `1`, de 1 à 8                              | Nombre maximal de jobs médias simultanés                                  |
+| `DETECT_EVERY`              | `2`, de 1 à 10                             | Échantillonnage des images analysées                                      |
+| `FACE_BLUR_ENABLED`         | `true`                                     | Active le floutage facial si le modèle est disponible                     |
+| `FACE_MODEL_PATH`           | `models/face_detection_yunet_2023mar.onnx` | Chemin du modèle YuNet                                                    |
+| `PLATE_BLUR_ENABLED`        | `false`                                    | N’activer qu’avec un modèle compatible installé                           |
+| `PLATE_MODEL_PATH`          | Sans valeur par défaut                     | Modèle ONNX de plaques; obligatoire si le détecteur est activé            |
+| `PLATE_MODEL_DIR`           | `./models/plates` dans l’exemple           | Dossier hôte monté pour le modèle de plaques Docker                       |
+| `POLL_INTERVAL_MS`          | `10000` ms                                 | Intervalle de polling de secours des jobs                                 |
+| `OUTBOX_INTERVAL_MS`        | `15000` ms                                 | Intervalle de traitement de la file de notifications                      |
 
-Aucun modèle de plaques n’est inclus. Pour l’activer, placez un modèle ONNX compatible dans
-`models/plates/` à la racine du dépôt, puis configurez `PLATE_BLUR_ENABLED=true` et
-`PLATE_MODEL_PATH=../../models/plates/votre-modele.onnx` dans `.env`. Ce chemin relatif fonctionne
-avec le worker direct et Docker ; `PLATE_MODEL_DIR` permet de changer le dossier hôte monté en
-lecture seule dans le conteneur. Le détecteur attend un modèle YOLO à une classe, entrée
-640 × 640, sortie de détections de forme `[1, 5, N]`, avec coordonnées centre/largeur/hauteur et
-score. Le modèle doit traiter l’entrée RGB normalisée de 0 à 1. Le worker refuse de démarrer si un
-détecteur activé n’a pas de chemin configuré ou si le fichier est absent. Vérifiez la licence et la
-couverture du modèle choisi avant de l’utiliser ; l’activation seule ne garantit pas la détection
-fiable de toutes les plaques.
+Le worker valide sa configuration au démarrage. Le modèle facial est téléchargé et vérifié par
+SHA-256 dans le flux Docker. En exécution locale directe, utilisez :
 
-## Tests
-
-- **Vitest** : logique partagée, validations, routes API avec clients Supabase simulés et pipeline
-  du worker.
-- **pgTAP** : schéma, fonctions SQL, règles RLS et permissions par rôle.
-- **Playwright** : parcours web sur Chromium avec appareils et géolocalisation simulés. Les traces
-  et vidéos de test sont conservées en cas d’échec selon la configuration Playwright.
-
-Pour exécuter les tests de base de données, démarrer d’abord Supabase local avec `pnpm db:start`.
-Les parcours E2E nécessitent également le worker afin que les vidéos publiées soient traitées.
-
-## Structure du dépôt
-
-```text
-apps/
-  web/                 Application Next.js, interface, API, PWA et messages i18n
-  worker/              Worker média, floutage, stockage et notifications
-packages/
-  shared/              Schémas, types et fonctions partagés
-supabase/
-  migrations/          Migrations SQL versionnées
-  tests/database/      Tests pgTAP
-  seed.sql             Données de démonstration
-tests/e2e/             Parcours Playwright
-scripts/               Démarrage local et préparation des médias de démo
-docs/                  Architecture, décisions et progression
+```powershell
+pnpm --filter @nl/worker models:download
+pnpm worker:dev
 ```
 
-Les migrations déjà intégrées ne doivent pas être modifiées : toute évolution du schéma doit
-ajouter une nouvelle migration.
+Aucun modèle de plaques n’est inclus. Pour activer cette fonction, fournissez un modèle ONNX
+compatible, configurez `PLATE_MODEL_PATH` et activez `PLATE_BLUR_ENABLED=true`. Le modèle attendu
+par l’adaptateur actuel est un détecteur YOLO à une classe, entrée 640 × 640, sortie `[1, 5, N]`
+(coordonnées centre/largeur/hauteur et score; RGB normalisé 0–1). Vérifiez licence et couverture du
+modèle retenu : l’activation ne garantit pas que toutes les plaques soient détectées.
+
+Les valeurs `PLATE_BLUR_ENABLED` du `.env.example` et le générateur `pnpm db:start` peuvent différer
+selon leur usage; pour le démarrage local généré, le worker facial est activé et le détecteur de
+plaques est désactivé. Si vous utilisez un fichier d’environnement manuel, gardez les deux options
+cohérentes avec les chemins de modèles effectivement présents.
+
+## Tests et CI
+
+- **Vitest** : constantes, schémas et fonctions partagées, routes web avec clients Supabase simulés,
+  et logique de traitement du worker.
+- **pgTAP** : schéma, fonctions SQL, RLS et permissions selon les rôles.
+- **Playwright** : parcours web Chromium avec géolocalisation et caméra simulées. Supabase local,
+  Mailpit et le worker sont utilisés par les scénarios qui en dépendent.
+- **GitHub Actions** : formatage, lint, types, tests unitaires, build, tests DB et E2E.
+
+Pour les tests DB, démarrez Supabase avec `pnpm db:start` puis lancez `pnpm test:db`. Pour E2E,
+la stack locale complète est nécessaire : `pnpm db:start`, puis `pnpm test:e2e`.
+
+Consultez `docs/PROGRESS.md` avant de considérer un contrôle comme validé : ce document date les
+commandes réellement exécutées et distingue les résultats historiques des changements non vérifiés.
 
 ## Déploiement
 
-L’architecture prévue sépare le web, les services Supabase et le worker média. Les notes
-d’architecture mentionnent Supabase Cloud, un hébergement web tel que Vercel et un hébergement
-worker tel que Fly.io. La configuration de production, les secrets, les domaines, le stockage et
-les politiques de sauvegarde doivent être définis et validés pour le projet cible ; le dépôt ne
-fournit pas de procédure de déploiement vérifiée de bout en bout.
+L’architecture cible sépare le web, Supabase et le worker média. Le dépôt contient une configuration
+Vercel pour le web, mais cela ne déploie pas à lui seul Postgres, Storage, Realtime ni le worker.
 
-Avant toute mise en production, vérifier au minimum :
+Une configuration de production doit encore définir et valider pour le projet cible :
 
-1. Les variables publiques et secrètes dans les environnements distincts web/worker.
-2. Les callbacks d’authentification et URL du site dans Supabase.
-3. Les buckets privés, policies Storage/RLS et accès de service.
-4. La connectivité Postgres du worker, ffmpeg, le modèle de visages et les jobs de purge.
-5. Les clés VAPID, les quotas et la fréquence d’envoi des notifications.
-6. Les domaines HTTPS, CSP, HSTS, règles de sauvegarde et procédures de suppression des données.
-7. Le comportement réel caméra, géolocalisation, push et performances sur appareils ciblés.
+1. Projet Supabase, migrations, RLS, buckets privés, callbacks Auth et domaines autorisés.
+2. Variables publiques côté build web et secrets séparés côté serveur et worker.
+3. Connexion Postgres du worker, stockage local des modèles ONNX, ffmpeg et capacité de traitement.
+4. Clés VAPID, quotas et fréquence de notifications.
+5. HTTPS, CSP/HSTS, sauvegardes, restauration, supervision et procédure de suppression des données.
+6. Expiration des URL signées et purge effective des fichiers vidéo dans l’environnement déployé.
+7. Essais caméra, géolocalisation, notifications et performances sur les appareils réellement ciblés.
+
+Aucune procédure de déploiement bout en bout n’est considérée comme vérifiée. Le lien Vercel de
+prévisualisation ne remplace pas la configuration des services Supabase et du worker.
 
 ## Limites connues
 
-- La caméra, le microphone et les notifications push n’ont pas été validés sur iPhone ou Android
-  physiques ; les tests automatisés utilisent Chromium desktop avec des périphériques simulés.
-- La détection des visages YuNet a des limites, notamment pour les très petits visages (environ
-  moins de 15 px selon les essais documentés).
-- Aucun détecteur de plaques fiable n’est fourni ; cette détection est désactivée par défaut.
-- La file hors ligne est couverte par des tests unitaires, mais le parcours complet de reprise hors
-  connexion n’est pas automatisé.
-- Le parcours d’export/suppression de compte et certains parcours de signalement restent à compléter
-  en E2E selon le suivi du projet.
-- La reprise TUS après une coupure réseau n’a pas été vérifiée automatiquement.
-- Le serveur valide la précision et la cohérence des coordonnées, mais ne peut pas prouver que la
-  vidéo a physiquement été enregistrée par la caméra plutôt que fournie par un client modifié.
+- Les textes juridiques sont des brouillons avec des informations d’éditeur et de sous-traitants à
+  compléter; `docs/PRIVACY.md` est un état technique, pas un avis juridique final.
+- Les tests sur téléphones iOS/Android physiques, notifications push réelles et caméra matérielle
+  restent à réaliser.
+- YuNet peut manquer de petits visages ou de visages partiellement visibles; aucun modèle de plaques
+  n’est livré.
+- Les notifications temps réel Broadcast couvrent au plus 5 km actuellement, alors que le feed peut
+  chercher jusqu’à 10 km.
+- La file hors ligne est contrôlée par position et âge; son scénario complet d’interruption/reprise
+  n’est pas encore validé de bout en bout.
+- Une migration récente ajoute l’idempotence de réservation après perte de réponse réseau. La
+  migration et son test DB/E2E dédié restent à appliquer et à vérifier.
+- Les parcours d’export, de suppression de compte et plusieurs erreurs réseau demandent encore des
+  vérifications E2E; voir l’audit parcours.
+- Le serveur vérifie la précision et la cohérence déclarées de la position, mais ne peut pas prouver
+  qu’un client modifié a réellement enregistré la vidéo avec la caméra.
+- Les pages juridiques et la disponibilité de l’application ne doivent pas être considérées comme
+  prêtes pour un lancement public sans validation produit, sécurité, infrastructure et juridique.
 
-Le suivi à jour des écarts et des vérifications se trouve dans
-[docs/PROGRESS.md](./docs/PROGRESS.md) ; la conception détaillée est dans
-[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+## Documentation associée
 
-## Documentation
-
-- [Audit contenu et UI/UX](./AUDIT-CONTENU-UX.md)
-- [Roadmap contenu, UX et positionnement](./roadmap.md)
-- [Architecture et flux de données](./docs/ARCHITECTURE.md)
-- [Décisions techniques et dépendances](./docs/DECISIONS.md)
-- [Avancement, tests exécutés et limites](./docs/PROGRESS.md)
-- [Instructions de contribution du dépôt](./CLAUDE.md)
+- [État du projet, commandes vérifiées et limites](docs/PROGRESS.md)
+- [Architecture, données et flux](docs/ARCHITECTURE.md)
+- [État technique de confidentialité (brouillon)](docs/PRIVACY.md)
+- [Audit exhaustif des parcours utilisateur](docs/AUDIT-PARCOURS-UTILISATEUR.md)
+- [Audit contenu et UI/UX](AUDIT-CONTENU-UX.md)
+- [Roadmap produit, contenu et UX](roadmap.md)
+- [Décisions techniques et dépendances](docs/DECISIONS.md)
+- [Plan de refactorisation](docs/REFACTOR-PLAN.md)
+- [Consignes de contribution et commandes](CLAUDE.md)
