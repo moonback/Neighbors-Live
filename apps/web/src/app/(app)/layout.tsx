@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { BottomNav } from '@/components/BottomNav';
+import { AppShell } from '@/components/AppShell';
 import { AdminWorkspace } from '@/components/admin/AdminWorkspace';
 import { OfflineQueueRunner } from '@/components/capture/OfflineQueueRunner';
 import { profileImageUrl } from '@/lib/profile-image';
@@ -16,20 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       >
         {t('skip')}
       </a>
-      <main
-        id="main"
-        className="min-h-dvh"
-        style={{ paddingBottom: 'calc(3.5rem + env(safe-area-inset-bottom, 0px))' }}
-      >
-        <AdminWorkspace
-          enabled={Boolean(viewer?.isModerator)}
-          isAdmin={viewer?.role === 'admin'}
-          username={viewer?.username ?? null}
-        >
-          {children}
-        </AdminWorkspace>
-      </main>
-      <BottomNav
+      <AppShell
         isModerator={Boolean(viewer?.isModerator)}
         profileAvatar={
           viewer
@@ -40,7 +27,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               }
             : null
         }
-      />
+      >
+        <AdminWorkspace
+          enabled={Boolean(viewer?.isModerator)}
+          isAdmin={viewer?.role === 'admin'}
+          username={viewer?.username ?? null}
+        >
+          {children}
+        </AdminWorkspace>
+      </AppShell>
       <OfflineQueueRunner />
     </>
   );

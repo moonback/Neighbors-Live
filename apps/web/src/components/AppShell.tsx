@@ -1,0 +1,156 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
+import { Avatar } from '@/components/Avatar';
+import { BottomNav } from '@/components/BottomNav';
+import { Logo } from '@/components/Logo';
+
+interface ProfileAvatar {
+  username: string | null;
+  color: string;
+  imageUrl: string | null;
+}
+
+const links = [
+  { href: '/', key: 'feed', icon: 'M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z' },
+  {
+    href: '/decouvrir',
+    key: 'discover',
+    icon: 'M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z',
+  },
+  {
+    href: '/carte',
+    key: 'map',
+    icon: 'M12 21s-7-6.1-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.9 12 21 12 21zm0-8.5a3 3 0 100-6 3 3 0 000 6z',
+  },
+  {
+    href: '/commerces/decouvrir',
+    key: 'shops',
+    icon: 'M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0 2.7 2.7 0 005.3 0M10 20v-5h4v5',
+  },
+  { href: '/me', key: 'profile', icon: 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9a8 8 0 0116 0' },
+] as const;
+
+function isActive(href: string, pathname: string) {
+  if (href === '/') return pathname === '/';
+  if (href === '/me')
+    return ['/me', '/u/', '/parametres'].some((path) => pathname.startsWith(path));
+  if (href === '/commerces/decouvrir') return pathname.startsWith('/commerces');
+  return pathname.startsWith(href);
+}
+
+function Icon({ path }: { path: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-5 w-5 shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+    >
+      <path d={path} />
+    </svg>
+  );
+}
+
+export function AppShell({
+  children,
+  isModerator,
+  profileAvatar,
+}: {
+  children: ReactNode;
+  isModerator: boolean;
+  profileAvatar: ProfileAvatar | null;
+}) {
+  const pathname = usePathname();
+  const t = useTranslations('common');
+  const workspace = pathname === '/admin' || pathname.startsWith('/moderation');
+  const immersive = pathname === '/filmer';
+  const showNavigation = !workspace && !immersive;
+
+  return (
+    <div className="app-shell min-h-dvh lg:flex">
+      {showNavigation && (
+        <aside className="app-sidebar sticky top-0 hidden h-dvh w-64 shrink-0 flex-col px-4 py-6 lg:flex">
+          <Link href="/" aria-label={t('appName')} className="mb-9 px-2">
+            <Logo name={t('appName')} tagline={t('slogan')} size={30} />
+          </Link>
+          <nav aria-label={t('nav.label')} className="flex flex-col gap-1">
+            {links.slice(0, 3).map((item) => {
+              const active = isActive(item.href, pathname);
+              return (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  className="app-sidebar-link flex min-h-12 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition"
+                >
+                  <Icon path={item.icon} />
+                  {t(`nav.${item.key}`)}
+                </Link>
+              );
+            })}
+            <Link
+              href="/filmer"
+              aria-current={immersive ? 'page' : undefined}
+              className="app-record-link my-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-bold text-white transition"
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              {t('nav.record')}
+            </Link>
+            {links.slice(3).map((item) => {
+              const active = isActive(item.href, pathname);
+              return (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  className="app-sidebar-link flex min-h-12 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition"
+                >
+                  {item.key === 'profile' && profileAvatar?.imageUrl ? (
+                    <Avatar
+                      username={profileAvatar.username}
+                      color={profileAvatar.color}
+                      size={22}
+                      src={profileAvatar.imageUrl}
+                    />
+                  ) : (
+                    <Icon path={item.icon} />
+                  )}
+                  {t(`nav.${item.key}`)}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="app-sidebar-note mt-auto rounded-2xl p-4">
+            <Logo name={t('appName')} size={22} />
+            <p className="mt-3 text-xs leading-relaxed text-fog">{t('tagline')}</p>
+          </div>
+        </aside>
+      )}
+      <main
+        id="main"
+        className={`app-main min-h-dvh min-w-0 flex-1 ${showNavigation ? 'pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0' : ''}`}
+      >
+        {children}
+      </main>
+      <BottomNav isModerator={isModerator} profileAvatar={profileAvatar} />
+    </div>
+  );
+}

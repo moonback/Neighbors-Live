@@ -218,14 +218,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   const wider = RADII_M.find((r) => r > radius);
 
   return (
-    <div
-      className="relative w-full"
-      style={{
-        height:
-          'calc(100svh - 3.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))',
-        marginTop: 'env(safe-area-inset-top, 0px)',
-      }}
-    >
+    <div className="feed-stage relative w-full">
       {!coords && (
         <WelcomeHero
           status={location.status}
@@ -387,7 +380,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       {items.length > 0 && (
         <div
           ref={listRef}
-          className="h-full snap-y snap-mandatory overflow-y-scroll overscroll-contain"
+          className="feed-list h-full snap-y snap-mandatory overflow-y-scroll overscroll-contain"
           aria-busy={status === 'loading'}
         >
           {items.map((item, index) => (

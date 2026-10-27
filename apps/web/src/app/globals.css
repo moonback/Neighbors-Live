@@ -68,11 +68,13 @@ body {
 }
 
 .bottom-nav {
-  background-color: rgb(0 0 0 / 0.96);
-  border-top: 1px solid rgb(255 255 255 / 0.12);
-  box-shadow: 0 -8px 28px rgb(0 0 0 / 0.38);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background-color: rgb(7 10 28 / 0.92);
+  box-shadow:
+    0 16px 40px rgb(0 0 0 / 0.42),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
 }
 
 .record-button {
@@ -288,10 +290,210 @@ body {
   box-shadow: 0 10px 30px -12px rgb(37 99 235 / 0.8);
 }
 
+.app-shell {
+  isolation: isolate;
+}
+
+.app-sidebar {
+  border-right: 1px solid rgb(255 255 255 / 0.08);
+  background:
+    radial-gradient(30rem 24rem at -70% -12%, rgb(37 99 235 / 0.2), transparent 70%),
+    rgb(9 13 32 / 0.94);
+  box-shadow: 12px 0 40px rgb(0 0 0 / 0.12);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+.app-sidebar-link {
+  color: var(--color-fog);
+}
+
+.app-sidebar-link:hover {
+  background-color: rgb(255 255 255 / 0.06);
+  color: #fff;
+}
+
+.app-sidebar-link[aria-current='page'] {
+  border: 1px solid rgb(56 189 248 / 0.22);
+  background:
+    linear-gradient(110deg, rgb(37 99 235 / 0.2), rgb(14 165 233 / 0.08)), rgb(255 255 255 / 0.04);
+  color: #fff;
+  box-shadow: inset 3px 0 0 #38bdf8;
+}
+
+.app-record-link {
+  background: var(--brand-gradient);
+  box-shadow: 0 10px 28px -12px rgb(14 165 233 / 0.75);
+}
+
+.app-record-link:hover {
+  box-shadow: 0 14px 34px -10px rgb(14 165 233 / 0.8);
+  transform: translateY(-1px);
+}
+
+.app-sidebar-note {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background-color: rgb(255 255 255 / 0.035);
+}
+
+.feed-stage {
+  height: calc(100svh - 3.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  margin-top: env(safe-area-inset-top, 0px);
+}
+
+.discover-hero {
+  background:
+    radial-gradient(30rem 24rem at 88% 40%, rgb(14 165 233 / 0.16), transparent 72%),
+    radial-gradient(35rem 24rem at 10% 110%, rgb(37 99 235 / 0.16), transparent 72%),
+    var(--color-panel);
+}
+
+.discover-orbit {
+  position: absolute;
+  top: 50%;
+  right: 3%;
+  width: min(36vw, 22rem);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  opacity: 0.72;
+}
+
+.discover-orbit > span:not(.discover-orbit-pin) {
+  position: absolute;
+  inset: 8%;
+  border: 1px solid rgb(56 189 248 / 0.18);
+  border-radius: 50%;
+}
+
+.discover-orbit > span:nth-child(2) {
+  inset: 20%;
+  border-style: dashed;
+  animation: orbit-turn 40s linear infinite;
+}
+
+.discover-orbit > span:nth-child(3) {
+  inset: 32%;
+  border-color: rgb(37 99 235 / 0.32);
+}
+
+.discover-orbit-pin {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #7dd3fc;
+  filter: drop-shadow(0 0 24px rgb(56 189 248 / 0.45));
+}
+
+.discover-category {
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 0.035), transparent 60%), var(--color-panel);
+}
+
+.discover-category:hover {
+  box-shadow: 0 18px 36px -24px rgb(14 165 233 / 0.75);
+}
+
+.discover-feature {
+  background: linear-gradient(110deg, rgb(37 99 235 / 0.09), transparent 72%), var(--color-panel);
+}
+
+.discover-feature-map {
+  background: linear-gradient(110deg, rgb(14 165 233 / 0.12), transparent 72%), var(--color-panel);
+}
+
+.discover-feature:hover {
+  box-shadow: 0 18px 36px -24px rgb(14 165 233 / 0.7);
+}
+
+@keyframes orbit-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .feed-stage {
+    width: min(calc(100% - 3rem), 76rem);
+    height: calc(100svh - 2rem);
+    margin: 1rem auto;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 2rem;
+    background:
+      radial-gradient(34rem 28rem at 50% 45%, rgb(37 99 235 / 0.12), transparent 72%),
+      rgb(255 255 255 / 0.018);
+  }
+
+  .feed-header {
+    left: 50%;
+    width: min(100% - 2rem, 29rem);
+    padding-top: 1rem;
+    transform: translateX(-50%);
+  }
+
+  .feed-list {
+    width: min(100% - 2rem, 29rem);
+    height: calc(100% - 2rem);
+    margin: 1rem auto;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 70px rgb(0 0 0 / 0.34);
+  }
+
+  .feed-list > [data-index] {
+    padding: 0.25rem;
+  }
+
+  .feed-list .video-card {
+    border-radius: 1.25rem;
+  }
+}
+
+:root[data-theme='light'] .app-sidebar {
+  border-right-color: rgb(23 32 51 / 0.1);
+  background:
+    radial-gradient(30rem 24rem at -70% -12%, rgb(37 99 235 / 0.12), transparent 70%),
+    rgb(248 250 255 / 0.96);
+}
+
+:root[data-theme='light'] .app-sidebar-link:hover {
+  background-color: rgb(23 32 51 / 0.05);
+  color: #172033;
+}
+
+:root[data-theme='light'] .app-sidebar-link[aria-current='page'] {
+  color: #172033;
+}
+
+:root[data-theme='light'] .app-sidebar-note {
+  border-color: rgb(23 32 51 / 0.1);
+  background-color: rgb(23 32 51 / 0.025);
+}
+
+:root[data-theme='light'] .bottom-nav {
+  border-color: rgb(255 255 255 / 0.18);
+  background-color: rgb(7 10 28 / 0.94);
+}
+
+:root[data-theme='light'] .discover-hero {
+  border-color: rgb(23 32 51 / 0.1);
+}
+
+:root[data-theme='light'] .discover-category,
+:root[data-theme='light'] .discover-feature,
+:root[data-theme='light'] .discover-feature-map {
+  border-color: rgb(23 32 51 / 0.1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .record-button {
     animation: none;
     transition: none;
+  }
+
+  .discover-orbit > span:nth-child(2) {
+    animation: none;
   }
 
   *,

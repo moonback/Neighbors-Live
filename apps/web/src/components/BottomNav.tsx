@@ -42,11 +42,17 @@ export function BottomNav({
 }) {
   const t = useTranslations('common.nav');
   const pathname = usePathname();
-  if (pathname === '/admin' || (isModerator && pathname.startsWith('/moderation'))) return null;
+  if (
+    pathname === '/admin' ||
+    pathname === '/filmer' ||
+    (isModerator && pathname.startsWith('/moderation'))
+  )
+    return null;
   return (
     <nav
       aria-label={t('label')}
-      className="bottom-nav fixed inset-x-0 bottom-0 z-40 rounded-t-3xl pb-[env(safe-area-inset-bottom)]"
+      className="bottom-nav fixed inset-x-3 z-40 mx-auto max-w-lg rounded-2xl px-1 pb-1 lg:hidden"
+      style={{ bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
     >
       <ul className="mx-auto flex max-w-lg items-center justify-around px-2">
         {items.map((item) => {
