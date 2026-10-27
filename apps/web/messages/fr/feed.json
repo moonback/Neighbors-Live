@@ -9,6 +9,7 @@
     "banner": "{count, plural, one {# alerte proche} other {# alertes proches}}",
     "new": "Nouvelle alerte : {caption}",
     "show": "Voir les alertes",
+    "liveLimit": "Les nouvelles alertes en direct couvrent jusqu’à 5 km.",
     "notice": "Les alertes sont des publications de la communauté, pas des alertes officielles. En cas de danger immédiat, appelez le 112."
   },
   "location": {

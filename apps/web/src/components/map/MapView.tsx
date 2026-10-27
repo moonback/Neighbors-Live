@@ -10,6 +10,7 @@ import { PermissionPrimer } from '@/components/PermissionPrimer';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import { clientEnv } from '@/lib/env';
+import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
 import { useLocation } from '@/lib/useLocation';
 import { circlePolygon, zoomForRadius } from './geometry';
 import { MapFiltersDialog } from './MapFiltersDialog';
@@ -38,8 +39,13 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   const mapRef = useRef<MlMap | null>(null);
   const markerRef = useRef<Marker | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [radius, setRadius] = useState(initialRadius);
-  const [category, setCategory] = useState<Category | null>(null);
+  const {
+    radius,
+    setRadius,
+    category,
+    setCategory,
+    ready: filtersReady,
+  } = useNeighborhoodFilters(initialRadius, null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [count, setCount] = useState<number | null>(null);
   const [selected, setSelected] = useState<Selected | null>(null);
@@ -60,12 +66,12 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
         container: container.current,
         style: clientEnv.NEXT_PUBLIC_MAP_STYLE_URL,
         center: [lng, lat],
-        zoom: zoomForRadius(initialRadius),
+        zoom: zoomForRadius(radius),
         attributionControl: { compact: true },
       });
       mapRef.current = map;
       map.on('load', () => {
-        map.addSource('radius', { type: 'geojson', data: circlePolygon(lat, lng, initialRadius) });
+        map.addSource('radius', { type: 'geojson', data: circlePolygon(lat, lng, radius) });
         map.addLayer({
           id: 'radius-fill',
           type: 'fill',
@@ -146,14 +152,14 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
     return () => {
       cancelled = true;
     };
-  }, [lat, lng, initialRadius]);
+  }, [lat, lng, radius]);
 
   useEffect(() => () => mapRef.current?.remove(), []);
 
   // Data + radius overlay follow the position, radius and category filter.
   useEffect(() => {
     const map = mapRef.current;
-    if (!loaded || !map || lat === null || lng === null) return;
+    if (!loaded || !filtersReady || !map || lat === null || lng === null) return;
     setResultsState('loading');
     (map.getSource('radius') as GeoJSONSource).setData(circlePolygon(lat, lng, radius));
     markerRef.current?.setLngLat([lng, lat]);
@@ -179,15 +185,18 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
     return () => {
       alive = false;
     };
-  }, [loaded, lat, lng, radius, category, retry]);
+  }, [loaded, filtersReady, lat, lng, radius, category, retry]);
 
   function relocate() {
-    void locate().then(() => {
-      const map = mapRef.current;
-      if (map && lat !== null && lng !== null)
-        map.flyTo({ center: [lng, lat], zoom: zoomForRadius(radius) });
-    });
+    void locate();
   }
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (loaded && map && lat !== null && lng !== null) {
+      map.flyTo({ center: [lng, lat], zoom: zoomForRadius(radius) });
+    }
+  }, [loaded, lat, lng, radius]);
 
   return (
     <div className="relative h-[calc(100dvh-4.5rem)] w-full">
@@ -248,9 +257,9 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           aria-live="polite"
         >
           {resultsState === 'ready' && count !== null
-            ? t('count', { count })
+            ? t('count', { count, radius: tc(`radius.${radius}`) })
             : resultsState === 'loading'
-              ? t('loading')
+              ? t('loading', { radius: tc(`radius.${radius}`) })
               : null}
         </p>
       </div>
@@ -316,7 +325,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             <p className="text-sm font-semibold">{tc(`categories.${selected.category}`)}</p>
             <p className="line-clamp-2 text-sm text-fog">{selected.caption}</p>
             <Link
-              href={`/?video=${selected.id}`}
+              href={`/?video=${encodeURIComponent(selected.id)}&category=${selected.category}&radius=${radius}`}
               className="mt-2 inline-flex min-h-11 items-center rounded-xl bg-accent px-3 font-semibold text-ink"
             >
               {t('open')}

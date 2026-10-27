@@ -7,8 +7,8 @@
   },
   "locate": "Find my location",
   "open": "Open in feed",
-  "count": "{count, plural, =0 {No videos} one {# video} other {# videos}} in this radius",
-  "loading": "Finding nearby videos…",
+  "count": "{count, plural, =0 {No videos} one {# video} other {# videos}} within {radius}",
+  "loading": "Finding videos within {radius}…",
   "loadError": "Map results could not be loaded.",
   "attribution": "Locations are rounded to about 50 m."
 }

@@ -41,9 +41,12 @@ export function AlertsBanner({
       category: 'alert',
       limit: '20',
     });
-    void api<{ items: FeedItem[] }>(`/api/feed?${qs}`).then((res) => {
-      if (alive && res.ok) setAlerts(new Map(res.data.items.map((i) => [i.id, i.caption])));
-    });
+    const refreshAlerts = () =>
+      api<{ items: FeedItem[] }>(`/api/feed?${qs}`).then((res) => {
+        if (alive && res.ok) setAlerts(new Map(res.data.items.map((i) => [i.id, i.caption])));
+      });
+    void refreshAlerts();
+    const refreshTimer = window.setInterval(() => void refreshAlerts(), 60_000);
 
     // Realtime client and H3 are loaded after first paint, only where the banner is used.
     let cleanup = () => {};
@@ -72,6 +75,7 @@ export function AlertsBanner({
     );
     return () => {
       alive = false;
+      window.clearInterval(refreshTimer);
       cleanup();
     };
   }, [lat, lng, radius]);
@@ -99,6 +103,9 @@ export function AlertsBanner({
         </svg>
         <span className="truncate">{t('banner', { count: alerts.size })}</span>
       </button>
+      {radius > 5000 && (
+        <p className="px-2 pt-1 text-[10px] leading-tight text-white/70">{t('liveLimit')}</p>
+      )}
       {flash !== null && (
         <p
           role="alert"

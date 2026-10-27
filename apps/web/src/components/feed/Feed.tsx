@@ -12,6 +12,7 @@ import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
 import { useLocation } from '@/lib/useLocation';
+import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
 import { AlertsBanner } from './AlertsBanner';
 import { VideoCard } from './VideoCard';
 import { WelcomeHero } from './WelcomeHero';
@@ -80,8 +81,13 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   const tc = useTranslations('common');
   const router = useRouter();
   const { state: location, locate, dismiss } = useLocation();
-  const [radius, setRadius] = useState(initialRadius);
-  const [category, setCategory] = useState<Category | null>(initialCategory);
+  const {
+    radius,
+    setRadius,
+    category,
+    setCategory,
+    ready: filtersReady,
+  } = useNeighborhoodFilters(initialRadius, initialCategory);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -145,7 +151,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
 
   // First page (and focused deep-linked video) whenever position or filters change.
   useEffect(() => {
-    if (lat === null) return;
+    if (!filtersReady || lat === null) return;
     let alive = true;
     const run = async () => {
       setStatus('loading');
@@ -166,7 +172,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
     return () => {
       alive = false;
     };
-  }, [fetchPage, focusId, lat, reloadKey]);
+  }, [fetchPage, filtersReady, focusId, lat, reloadKey]);
 
   const loadMore = useCallback(async () => {
     if (!cursor || loadingMore.current) return;
