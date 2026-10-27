@@ -43,7 +43,7 @@ export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
                 <Link
                   href={item.href}
                   aria-label={t(item.key)}
-                  className="record-button -mt-7 flex h-14 w-14 items-center justify-center rounded-full text-white ring-4 ring-black transition-transform active:scale-95"
+                  className="record-button -mt-6 flex h-12 w-12 items-center justify-center rounded-full text-white ring-4 ring-black transition-transform active:scale-95"
                 >
                   <svg
                     aria-hidden="true"
@@ -66,7 +66,7 @@ export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
               <Link
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative flex min-h-16 min-w-14 flex-col items-center justify-center gap-1 px-2 text-[11px] font-medium transition-colors ${active ? 'text-white' : 'text-fog hover:text-white'}`}
+                className={`relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0 px-2 text-[10px] font-medium transition-colors ${active ? 'text-white' : 'text-fog hover:text-white'}`}
               >
                 <svg
                   aria-hidden="true"

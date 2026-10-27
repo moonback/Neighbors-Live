@@ -13,7 +13,7 @@ export default async function DiscoverPage() {
   const tc = await getTranslations('common');
 
   return (
-    <div className="min-h-[calc(100dvh-4.5rem)] px-4 py-8 sm:px-8 sm:py-12">
+    <div className="min-h-[calc(100dvh-3.5rem)] px-4 py-8 sm:px-8 sm:py-12">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         <header className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-accent">

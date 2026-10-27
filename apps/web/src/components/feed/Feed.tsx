@@ -222,7 +222,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       className="relative w-full"
       style={{
         height:
-          'calc(100svh - 4.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))',
+          'calc(100svh - 3.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))',
         marginTop: 'env(safe-area-inset-top, 0px)',
       }}
     >
