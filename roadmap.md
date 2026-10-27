@@ -9,6 +9,9 @@ Cette roadmap transforme les constats de l’[audit contenu et UI/UX](./AUDIT-CO
 travail livrable et vérifiable. Elle privilégie la confiance, la compréhension et la qualité du
 parcours avant une refonte graphique générale.
 
+La [roadmap produit complète](./docs/ROADMAP-PRODUIT.md) complète ce document avec la séquence
+feed mobile → fiabilité → nouvelles interactions → découverte locale → capture et commerce.
+
 ### Déjà réalisé
 
 - Promesse d’accueil et tagline reformulées autour des informations utiles de quartier, sans

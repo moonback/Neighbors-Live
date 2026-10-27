@@ -400,6 +400,8 @@ prévisualisation ne remplace pas la configuration des services Supabase et du w
 - [Audit exhaustif des parcours utilisateur](docs/AUDIT-PARCOURS-UTILISATEUR.md)
 - [Audit contenu et UI/UX](AUDIT-CONTENU-UX.md)
 - [Roadmap produit, contenu et UX](roadmap.md)
+- [Roadmap produit complète : feed mobile, interactions et nouvelles fonctions](docs/ROADMAP-PRODUIT.md)
+- [Roadmap vidéo : capture, édition et lecture](roadmap.video.md)
 - [Décisions techniques et dépendances](docs/DECISIONS.md)
 - [Plan de refactorisation](docs/REFACTOR-PLAN.md)
 - [Consignes de contribution et commandes](CLAUDE.md)
