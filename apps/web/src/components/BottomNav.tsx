@@ -3,6 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Avatar } from '@/components/Avatar';
+
+interface ProfileAvatar {
+  username: string | null;
+  color: string;
+  imageUrl: string | null;
+}
 
 const items = [
   { href: '/', key: 'feed', icon: 'M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z' },
@@ -26,7 +33,13 @@ function isActive(href: string, pathname: string) {
   return pathname.startsWith(href);
 }
 
-export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
+export function BottomNav({
+  isModerator = false,
+  profileAvatar = null,
+}: {
+  isModerator?: boolean;
+  profileAvatar?: ProfileAvatar | null;
+}) {
   const t = useTranslations('common.nav');
   const pathname = usePathname();
   if (pathname === '/admin' || (isModerator && pathname.startsWith('/moderation'))) return null;
@@ -68,18 +81,27 @@ export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
                 aria-current={active ? 'page' : undefined}
                 className={`relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0 px-2 text-[10px] font-medium transition-colors ${active ? 'text-white' : 'text-fog hover:text-white'}`}
               >
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  className="h-6 w-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                >
-                  <path d={item.icon} />
-                </svg>
+                {item.key === 'profile' && profileAvatar?.imageUrl ? (
+                  <Avatar
+                    username={profileAvatar.username}
+                    color={profileAvatar.color}
+                    size={24}
+                    src={profileAvatar.imageUrl}
+                  />
+                ) : (
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  >
+                    <path d={item.icon} />
+                  </svg>
+                )}
                 {t(item.key)}
                 {active && (
                   <span
