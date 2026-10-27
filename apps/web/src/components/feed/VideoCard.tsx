@@ -371,7 +371,7 @@ export function VideoCard({
         </div>
       </div>
 
-      <div className="absolute right-2 bottom-8 z-20 flex flex-col items-center gap-3 text-xs font-semibold text-white">
+      <div className="feed-action-rail absolute right-2 bottom-8 z-20 flex flex-col items-center gap-2 text-xs font-semibold text-white sm:gap-3">
         <ActionButton
           label={t('usefulCount', { count: useful.count })}
           pressed={useful.reacted}
@@ -435,15 +435,15 @@ function ActionButton({
       onClick={onClick}
       aria-pressed={pressed}
       disabled={disabled}
-      className="group flex w-16 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60"
+      className="feed-action-button group flex min-h-11 w-14 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60"
     >
       <span
-        className={`flex h-12 w-12 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-hover:bg-white/20 group-hover:text-white group-active:scale-95 ${pressed ? 'glow bg-accent text-white group-hover:bg-accent/80' : 'glass text-white'}`}
+        className={`feed-action-icon flex h-11 w-11 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-hover:bg-white/20 group-hover:text-white group-active:scale-95 ${pressed ? 'glow bg-accent text-white group-hover:bg-accent/80' : 'glass text-white'}`}
       >
         <svg
           aria-hidden="true"
           viewBox="0 0 24 24"
-          className="h-6 w-6 transition-transform duration-200 ease-out group-hover:scale-110"
+          className="h-5 w-5 transition-transform duration-200 ease-out group-hover:scale-110"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -453,7 +453,7 @@ function ActionButton({
           <path d={icon} />
         </svg>
       </span>
-      <span className="leading-tight drop-shadow">{label}</span>
+      <span className="feed-action-label max-w-full leading-tight drop-shadow">{label}</span>
     </button>
   );
 }

@@ -43,6 +43,8 @@ Les efforts S/M/L désignent une taille relative, pas un engagement de calendrie
 | Publication résiliente | Valider la réservation idempotente et la reprise TUS après perte réseau ou réponse tardive                                                                 | M      | Une seule publication est créée après reprise ; état et erreur sont compréhensibles                                 |
 | Cache et session       | Vérifier navigation hors ligne, déconnexion et changement de compte avec le service worker                                                                 | M      | Aucun contenu privé ne réapparaît depuis le cache après déconnexion ou changement de session                        |
 
+**État au 27 octobre 2026 :** rail mobile compacté et cibles tactiles conservées ; typecheck, lint et Prettier passent. La revue visuelle locale n’a pas pu démarrer (binding SWC natif indisponible, caches SWC refusés). Idempotence et cache privé réseau-seul sont déjà implémentés, mais leurs parcours restent à valider en base, après perte réseau et après déconnexion. Consulter [docs/PROGRESS.md](./PROGRESS.md) pour le détail des limites.
+
 **Dépendances importantes :** la migration d’idempotence ajoutée le 27 octobre doit encore être appliquée/validée côté base et le parcours doit être vérifié. Le rendu mobile récent est codé, mais reste à confirmer dans un navigateur ou appareil réel ; voir [l’état vérifié du projet](./PROGRESS.md). Les consignes `AGENTS.md` demandent l’exploration ARTEMIS avant d’écrire de nouveaux tests mobiles.
 
 ## Phase 1 — interactions utiles dans le feed (P1)
