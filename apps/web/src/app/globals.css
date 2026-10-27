@@ -1,20 +1,20 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-ink: #070707;
-  --color-panel: #151515;
-  --color-line: #303030;
-  --color-fog: #b3b3b3;
-  --color-accent: #25f4ee;
-  --color-blue: #25f4ee;
-  --color-alert: #fe2c55;
+  --color-ink: #070a1c;
+  --color-panel: #111633;
+  --color-line: #252c55;
+  --color-fog: #a3abd0;
+  --color-accent: #2563eb;
+  --color-blue: #38bdf8;
+  --color-alert: #ff4d6d;
   --font-sans:
     var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 :root {
   color-scheme: dark;
-  --brand-gradient: linear-gradient(110deg, #25f4ee 0%, #fe2c55 100%);
+  --brand-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 48%, #0ea5e9 100%);
 }
 
 :root[data-theme='light'] {
@@ -34,8 +34,8 @@ body {
 
 body {
   background-image:
-    radial-gradient(60rem 40rem at -10% -10%, rgb(37 244 238 / 0.1), transparent 60%),
-    radial-gradient(50rem 40rem at 110% 110%, rgb(254 44 85 / 0.08), transparent 60%);
+    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.1), transparent 60%),
+    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.08), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -54,7 +54,7 @@ body {
 }
 
 @utility glass {
-  background-color: rgb(18 18 18 / 0.68);
+  background-color: rgb(17 22 51 / 0.68);
   border: 1px solid rgb(255 255 255 / 0.16);
   -webkit-backdrop-filter: blur(16px) saturate(145%);
   backdrop-filter: blur(16px) saturate(145%);
@@ -64,7 +64,7 @@ body {
 }
 
 .feed-header {
-  background: linear-gradient(180deg, rgb(0 0 0 / 0.58), rgb(0 0 0 / 0.2) 72%, transparent);
+  background: linear-gradient(180deg, rgb(7 10 28 / 0.58), rgb(7 10 28 / 0.2) 72%, transparent);
 }
 
 .bottom-nav {
@@ -76,7 +76,7 @@ body {
 }
 
 .record-button {
-  background-image: linear-gradient(110deg, #25f4ee 0%, #fe2c55 100%);
+  background-image: var(--brand-gradient);
   box-shadow:
     -4px 0 0 #25f4ee,
     4px 0 0 #fe2c55;
@@ -87,7 +87,7 @@ body {
   inset: auto 0 0;
   z-index: 15;
   height: 55%;
-  background: linear-gradient(0deg, rgb(0 0 0 / 0.78), transparent 90%);
+  background: linear-gradient(0deg, rgb(7 10 28 / 0.78), transparent 90%);
   content: '';
   pointer-events: none;
 }
@@ -99,12 +99,12 @@ body {
 }
 
 .video-avatar-ring {
-  background-image: linear-gradient(135deg, #25f4ee, #fe2c55);
+  background-image: var(--brand-gradient);
 }
 
 .video-expiry-chip {
   border: 1px solid rgb(255 255 255 / 0.16);
-  background-color: rgb(0 0 0 / 0.4);
+  background-color: rgb(17 22 51 / 0.4);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
@@ -118,8 +118,8 @@ body {
 }
 
 .feed-action-button[aria-pressed='true'] .feed-action-icon {
-  background-color: #fe2c55;
-  filter: drop-shadow(0 1px 6px rgb(254 44 85 / 0.5));
+  background-color: var(--color-accent);
+  filter: drop-shadow(0 1px 6px rgb(37 99 235 / 0.5));
 }
 
 .feed-action-label {
@@ -164,8 +164,8 @@ body {
 :root[data-theme='light'] body {
   color: #172033;
   background-image:
-    radial-gradient(60rem 40rem at -10% -10%, rgb(37 244 238 / 0.08), transparent 60%),
-    radial-gradient(50rem 40rem at 110% 110%, rgb(254 44 85 / 0.06), transparent 60%);
+    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.08), transparent 60%),
+    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.06), transparent 60%);
 }
 
 :root[data-theme='light'] .glass {
@@ -174,7 +174,7 @@ body {
 }
 
 :root[data-theme='light'] .video-card {
-  --color-ink: #070707;
+  --color-ink: #070a1c;
 }
 
 :root[data-theme='light'] .video-card .text-white {
@@ -186,12 +186,12 @@ body {
 }
 
 :root[data-theme='light'] .video-card .glass {
-  background-color: rgb(0 0 0 / 0.72);
+  background-color: rgb(7 10 28 / 0.72);
   border-color: rgb(255 255 255 / 0.2);
 }
 
 :root[data-theme='light'] .feed-header .glass {
-  background-color: rgb(0 0 0 / 0.68);
+  background-color: rgb(7 10 28 / 0.68);
   border-color: rgb(255 255 255 / 0.18);
 }
 
@@ -234,13 +234,12 @@ body {
 
 @utility glow {
   box-shadow:
-    0 10px 30px -10px rgb(254 44 85 / 0.45),
-    0 0 18px -8px rgb(37 244 238 / 0.55),
+    0 10px 30px -10px rgb(37 99 235 / 0.7),
     inset 0 1px 0 rgb(255 255 255 / 0.15);
 }
 
 @utility text-brand {
-  background-image: linear-gradient(90deg, #25f4ee 0%, #fe2c55 100%);
+  background-image: linear-gradient(90deg, #38bdf8 0%, #2563eb 50%, #0ea5e9 100%);
   background-clip: text;
   color: transparent;
 }

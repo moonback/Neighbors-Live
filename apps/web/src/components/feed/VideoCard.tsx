@@ -438,7 +438,7 @@ function ActionButton({
       className="feed-action-button group flex min-h-11 w-14 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60"
     >
       <span
-        className={`feed-action-icon flex h-11 w-11 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-active:scale-95 ${pressed ? 'glow bg-alert text-white' : 'text-white'}`}
+        className={`feed-action-icon flex h-11 w-11 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-active:scale-95 ${pressed ? 'glow bg-accent text-white' : 'text-white'}`}
       >
         <svg
           aria-hidden="true"
