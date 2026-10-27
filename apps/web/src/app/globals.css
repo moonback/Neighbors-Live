@@ -34,8 +34,8 @@ body {
 
 body {
   background-image:
-    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.16), transparent 60%),
-    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.12), transparent 60%);
+    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.1), transparent 60%),
+    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.08), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -54,13 +54,76 @@ body {
 }
 
 @utility glass {
-  background-color: rgb(17 22 51 / 0.7);
-  border: 1px solid rgb(255 255 255 / 0.14);
-  -webkit-backdrop-filter: blur(18px) saturate(155%);
-  backdrop-filter: blur(18px) saturate(155%);
+  background-color: rgb(17 22 51 / 0.68);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  backdrop-filter: blur(16px) saturate(145%);
   box-shadow:
     0 12px 32px rgb(0 0 0 / 0.2),
     inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+.feed-header {
+  background: linear-gradient(180deg, rgb(7 10 28 / 0.58), rgb(7 10 28 / 0.2) 72%, transparent);
+}
+
+.bottom-nav {
+  background-color: rgb(0 0 0 / 0.96);
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  box-shadow: 0 -8px 28px rgb(0 0 0 / 0.38);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.record-button {
+  background-image: var(--brand-gradient);
+  box-shadow:
+    -4px 0 0 #25f4ee,
+    4px 0 0 #fe2c55;
+}
+
+.video-card::after {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 15;
+  height: 55%;
+  background: linear-gradient(0deg, rgb(7 10 28 / 0.78), transparent 90%);
+  content: '';
+  pointer-events: none;
+}
+
+.video-overlay-copy {
+  text-shadow:
+    0 1px 3px rgb(0 0 0 / 0.95),
+    0 2px 12px rgb(0 0 0 / 0.8);
+}
+
+.video-avatar-ring {
+  background-image: var(--brand-gradient);
+}
+
+.video-expiry-chip {
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background-color: rgb(17 22 51 / 0.4);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.feed-action-icon {
+  color: #fff;
+  border: 0;
+  background-color: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 1px 4px rgb(0 0 0 / 0.9));
+}
+
+.feed-action-button[aria-pressed='true'] .feed-action-icon {
+  background-color: var(--color-accent);
+  filter: drop-shadow(0 1px 6px rgb(37 99 235 / 0.5));
+}
+
+.feed-action-label {
+  text-shadow: 0 1px 4px rgb(0 0 0 / 0.95);
 }
 
 /* Keep feed actions inside short mobile viewports without shrinking tap targets. */
@@ -101,8 +164,8 @@ body {
 :root[data-theme='light'] body {
   color: #172033;
   background-image:
-    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.09), transparent 60%),
-    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.08), transparent 60%);
+    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.08), transparent 60%),
+    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.06), transparent 60%);
 }
 
 :root[data-theme='light'] .glass {
@@ -110,21 +173,15 @@ body {
   border-color: rgb(23 32 51 / 0.1);
 }
 
-:root[data-theme='light'] .feed-header.glass {
-  background-color: rgb(7 10 28 / 0.76);
-  border-color: rgb(255 255 255 / 0.2);
-}
-
-:root[data-theme='light'] .bottom-nav.glass {
-  background-color: rgb(7 10 28 / 0.86);
-  border-color: rgb(255 255 255 / 0.16);
-}
-
 :root[data-theme='light'] .video-card {
   --color-ink: #070a1c;
 }
 
 :root[data-theme='light'] .video-card .text-white {
+  color: #fff;
+}
+
+:root[data-theme='light'] .bottom-nav .text-white {
   color: #fff;
 }
 

@@ -86,13 +86,13 @@ export function AlertsBanner({
       <button
         type="button"
         onClick={onShow}
-        className="flex min-h-10 w-full items-center gap-2 overflow-hidden rounded-full bg-rose-600 px-3 text-left text-xs font-bold text-white shadow-lg shadow-rose-950/20 transition hover:bg-rose-700 focus-visible:outline-white sm:text-sm"
+        className="flex min-h-9 w-full items-center gap-1.5 overflow-hidden rounded-full bg-rose-600 px-2.5 text-left text-[11px] font-bold text-white shadow-lg shadow-rose-950/20 transition hover:bg-rose-700 focus-visible:outline-white sm:text-xs"
         aria-label={`${t('banner', { count: alerts.size })} — ${t('show')}`}
       >
         <svg
           aria-hidden="true"
           viewBox="0 0 24 24"
-          className="h-4 w-4 shrink-0"
+          className="h-3.5 w-3.5 shrink-0"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
