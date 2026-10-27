@@ -4,6 +4,8 @@
   "slogan": "Les infos utiles, à deux pas de chez vous.",
   "nav": {
     "label": "Navigation principale",
+    "exploreGroup": "Explorer",
+    "accountGroup": "Mon espace",
     "feed": "Accueil",
     "discover": "Découvrir",
     "map": "Carte",

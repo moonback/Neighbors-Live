@@ -14,7 +14,7 @@ interface ProfileAvatar {
   imageUrl: string | null;
 }
 
-const links = [
+const exploreLinks = [
   { href: '/', key: 'feed', icon: 'M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z' },
   {
     href: '/decouvrir',
@@ -31,13 +31,20 @@ const links = [
     key: 'shops',
     icon: 'M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0 2.7 2.7 0 005.3 0M10 20v-5h4v5',
   },
+] as const;
+
+const accountLinks = [
   { href: '/me', key: 'profile', icon: 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9a8 8 0 0116 0' },
+  {
+    href: '/parametres',
+    key: 'settings',
+    icon: 'M12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0-6v2m0 15v2m9-9h-2m-14 0H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64',
+  },
 ] as const;
 
 function isActive(href: string, pathname: string) {
   if (href === '/') return pathname === '/';
-  if (href === '/me')
-    return ['/me', '/u/', '/parametres'].some((path) => pathname.startsWith(path));
+  if (href === '/me') return pathname.startsWith('/me') || pathname.startsWith('/u/');
   if (href === '/commerces/decouvrir') return pathname.startsWith('/commerces');
   return pathname.startsWith(href);
 }
@@ -77,29 +84,36 @@ export function AppShell({
   return (
     <div className="app-shell min-h-dvh lg:flex">
       {showNavigation && (
-        <aside className="app-sidebar sticky top-0 hidden h-dvh w-64 shrink-0 flex-col px-4 py-6 lg:flex">
-          <Link href="/" aria-label={t('appName')} className="mb-9 px-2">
+        <aside className="app-sidebar sticky top-0 hidden h-dvh w-56 shrink-0 flex-col px-3 py-5 lg:flex">
+          <Link href="/" aria-label={t('appName')} className="mb-6 px-2">
             <Logo name={t('appName')} tagline={t('slogan')} size={30} />
           </Link>
-          <nav aria-label={t('nav.label')} className="flex flex-col gap-1">
-            {links.slice(0, 3).map((item) => {
-              const active = isActive(item.href, pathname);
-              return (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className="app-sidebar-link flex min-h-12 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition"
-                >
-                  <Icon path={item.icon} />
-                  {t(`nav.${item.key}`)}
-                </Link>
-              );
-            })}
+          <nav aria-label={t('nav.label')} className="flex flex-col gap-4">
+            <section>
+              <h2 className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-fog/70">
+                {t('nav.exploreGroup')}
+              </h2>
+              <div className="flex flex-col gap-0.5">
+                {exploreLinks.map((item) => {
+                  const active = isActive(item.href, pathname);
+                  return (
+                    <Link
+                      key={item.key}
+                      href={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      className="app-sidebar-link flex min-h-11 items-center gap-2.5 rounded-xl px-3 text-sm font-semibold transition-colors"
+                    >
+                      <Icon path={item.icon} />
+                      {t(`nav.${item.key}`)}
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
             <Link
               href="/filmer"
               aria-current={immersive ? 'page' : undefined}
-              className="app-record-link my-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-bold text-white transition"
+              className="app-record-link flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold text-white transition"
             >
               <svg
                 aria-hidden="true"
@@ -114,33 +128,40 @@ export function AppShell({
               </svg>
               {t('nav.record')}
             </Link>
-            {links.slice(3).map((item) => {
-              const active = isActive(item.href, pathname);
-              return (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className="app-sidebar-link flex min-h-12 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition"
-                >
-                  {item.key === 'profile' && profileAvatar?.imageUrl ? (
-                    <Avatar
-                      username={profileAvatar.username}
-                      color={profileAvatar.color}
-                      size={22}
-                      src={profileAvatar.imageUrl}
-                    />
-                  ) : (
-                    <Icon path={item.icon} />
-                  )}
-                  {t(`nav.${item.key}`)}
-                </Link>
-              );
-            })}
+            <section>
+              <h2 className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-fog/70">
+                {t('nav.accountGroup')}
+              </h2>
+              <div className="flex flex-col gap-0.5">
+                {accountLinks.map((item) => {
+                  const active = isActive(item.href, pathname);
+                  return (
+                    <Link
+                      key={item.key}
+                      href={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      className="app-sidebar-link flex min-h-11 items-center gap-2.5 rounded-xl px-3 text-sm font-semibold transition-colors"
+                    >
+                      {item.key === 'profile' && profileAvatar?.imageUrl ? (
+                        <Avatar
+                          username={profileAvatar.username}
+                          color={profileAvatar.color}
+                          size={20}
+                          src={profileAvatar.imageUrl}
+                        />
+                      ) : (
+                        <Icon path={item.icon} />
+                      )}
+                      {t(`nav.${item.key}`)}
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
           </nav>
-          <div className="app-sidebar-note mt-auto rounded-2xl p-4">
+          <div className="app-sidebar-note mt-auto rounded-xl p-3">
             <Logo name={t('appName')} size={22} />
-            <p className="mt-3 text-xs leading-relaxed text-fog">{t('tagline')}</p>
+            <p className="mt-2 text-xs leading-relaxed text-fog">{t('tagline')}</p>
           </div>
         </aside>
       )}

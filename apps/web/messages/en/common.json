@@ -4,6 +4,8 @@
   "slogan": "Useful local updates, just around the corner.",
   "nav": {
     "label": "Main navigation",
+    "exploreGroup": "Explore",
+    "accountGroup": "Your space",
     "feed": "Home",
     "discover": "Discover",
     "map": "Map",
