@@ -76,10 +76,43 @@ body {
 }
 
 .record-button {
-  background-image: var(--brand-gradient);
-  box-shadow:
-    -4px 0 0 #25f4ee,
-    4px 0 0 #fe2c55;
+  background-color: var(--color-accent);
+  box-shadow: 0 4px 14px rgb(37 99 235 / 0.4);
+  animation: record-button-float 2.4s ease-in-out infinite;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.record-button:hover {
+  box-shadow: 0 6px 20px rgb(37 99 235 / 0.55);
+  transform: translateY(-2px);
+}
+
+.record-button:active {
+  transform: scale(0.94);
+}
+
+.record-button svg {
+  transition: transform 220ms ease;
+}
+
+.record-button:hover svg {
+  transform: rotate(90deg);
+}
+
+@keyframes record-button-float {
+  0%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 4px 14px rgb(37 99 235 / 0.35);
+  }
+
+  50% {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgb(37 99 235 / 0.5);
+  }
 }
 
 .video-card::after {
@@ -256,6 +289,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .record-button {
+    animation: none;
+    transition: none;
+  }
+
   *,
   *::before,
   *::after {
