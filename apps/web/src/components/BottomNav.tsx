@@ -33,7 +33,7 @@ export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
   return (
     <nav
       aria-label={t('label')}
-      className="bottom-nav glass fixed inset-x-0 bottom-0 z-40 rounded-t-3xl pb-[env(safe-area-inset-bottom)]"
+      className="bottom-nav fixed inset-x-0 bottom-0 z-40 rounded-t-3xl pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="mx-auto flex max-w-lg items-center justify-around px-2">
         {items.map((item) => {
@@ -43,7 +43,7 @@ export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
                 <Link
                   href={item.href}
                   aria-label={t(item.key)}
-                  className="glow -mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white ring-4 ring-ink transition-transform active:scale-95"
+                  className="record-button -mt-7 flex h-14 w-14 items-center justify-center rounded-full text-white ring-4 ring-black transition-transform active:scale-95"
                 >
                   <svg
                     aria-hidden="true"
@@ -71,7 +71,7 @@ export function BottomNav({ isModerator = false }: { isModerator?: boolean }) {
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 24 24"
-                  className={`h-6 w-6 ${active ? 'text-accent' : ''}`}
+                  className="h-6 w-6 text-white"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.8"

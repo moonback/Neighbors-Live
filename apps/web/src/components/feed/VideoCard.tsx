@@ -198,7 +198,7 @@ export function VideoCard({
 
   return (
     <article
-      className="video-card relative h-full w-full snap-start snap-always overflow-hidden bg-black"
+      className="video-card isolate relative h-full w-full snap-start snap-always overflow-hidden bg-black"
       aria-label={`${tc(item.category)} — ${item.caption}`}
       data-testid="feed-item"
       data-video-id={item.id}
@@ -257,7 +257,7 @@ export function VideoCard({
         type="button"
         onClick={onToggleFit}
         aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
-        className="glass absolute right-4 top-[10.5rem] z-20 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="glass absolute right-4 top-[10.5rem] z-30 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         <svg
           aria-hidden="true"
@@ -279,13 +279,13 @@ export function VideoCard({
       {load && mediaState === 'loading' && (
         <p
           role="status"
-          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 rounded-full bg-black/70 px-4 py-2 text-sm text-white"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-30 -translate-x-1/2 rounded-full bg-black/70 px-4 py-2 text-sm text-white"
         >
           {t('mediaLoading')}
         </p>
       )}
       {load && mediaState === 'error' && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 p-6 text-center">
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-3 bg-black/70 p-6 text-center">
           <p role="alert" className="text-sm text-white">
             {t('mediaUnavailable')}
           </p>
@@ -303,20 +303,20 @@ export function VideoCard({
         onClick={togglePlay}
         aria-label={paused ? t('play') : t('pause')}
         disabled={mediaState !== 'ready'}
-        className={`glass absolute left-1/2 top-1/2 flex h-18 w-18 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-[opacity,transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:hidden ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
+        className={`glass absolute left-1/2 top-1/2 z-30 flex h-18 w-18 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-[opacity,transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:hidden ${paused ? 'opacity-100' : 'opacity-0 focus:opacity-100'}`}
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor">
           {paused ? <path d="M7 4.5v15l12-7.5z" /> : <path d="M6 5h4v14H6zm8 0h4v14h-4z" />}
         </svg>
       </button>
 
-      <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10">
-        <div className="glass pointer-events-auto flex w-fit max-w-[calc(100%-5rem)] flex-col gap-2.5 rounded-3xl p-4 shadow-2xl shadow-black/30">
+      <div className="pointer-events-none absolute inset-x-4 right-[5.25rem] bottom-3 z-20">
+        <div className="video-overlay-copy pointer-events-auto flex w-fit max-w-full flex-col gap-2.5 text-white">
           <Link
             href={`/u/${item.author.username}`}
             className="flex min-h-11 w-fit items-center gap-2.5 rounded-full pr-2 text-sm font-semibold text-white"
           >
-            <span className="rounded-full bg-accent p-0.5">
+            <span className="video-avatar-ring rounded-full p-0.5">
               <Avatar
                 username={item.author.username}
                 color={item.author.color}
@@ -345,7 +345,7 @@ export function VideoCard({
                 {t('merchant')}
               </span>
             )}
-            <span className="glass rounded-full px-2.5 py-1 text-white/80">
+            <span className="video-expiry-chip rounded-full px-2.5 py-1 text-white/90">
               {t('expires', { when: format.relativeTime(new Date(item.expiresAt), now) })}
             </span>
           </div>
@@ -407,7 +407,7 @@ export function VideoCard({
       {toast && (
         <p
           role="status"
-          className="absolute left-1/2 top-20 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-sm text-white"
+          className="absolute left-1/2 top-20 z-40 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-sm text-white"
         >
           {toast}
         </p>
@@ -438,7 +438,7 @@ function ActionButton({
       className="feed-action-button group flex min-h-11 w-14 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60"
     >
       <span
-        className={`feed-action-icon flex h-11 w-11 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-hover:bg-white/20 group-hover:text-white group-active:scale-95 ${pressed ? 'glow bg-accent text-white group-hover:bg-accent/80' : 'glass text-white'}`}
+        className={`feed-action-icon flex h-11 w-11 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-active:scale-95 ${pressed ? 'glow bg-alert text-white' : 'text-white'}`}
       >
         <svg
           aria-hidden="true"

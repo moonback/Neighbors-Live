@@ -237,7 +237,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       )}
 
       {coords && (
-        <header className="feed-header glass absolute inset-x-3 top-2 z-20 flex flex-col gap-2 rounded-3xl px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 text-white sm:inset-x-4 sm:top-3 sm:px-4">
+        <header className="feed-header absolute inset-x-0 top-0 z-20 flex flex-col gap-2 px-3 pt-3 pb-3 text-white sm:px-4">
           <h1 className="sr-only">{t('title')}</h1>
           <div className="flex min-w-0 items-center gap-2">
             <Logo name={tc('appName')} size={26} className="shrink-0" />
