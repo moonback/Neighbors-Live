@@ -237,10 +237,10 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       )}
 
       {coords && (
-        <header className="feed-header absolute inset-x-0 top-0 z-20 flex flex-col gap-2 px-3 pt-3 pb-3 text-white sm:px-4">
+        <header className="feed-header absolute inset-x-0 top-0 z-20 flex flex-col gap-1.5 px-3 pt-2 pb-2 text-white sm:px-4">
           <h1 className="sr-only">{t('title')}</h1>
-          <div className="flex min-w-0 items-center gap-2">
-            <Logo name={tc('appName')} size={26} className="shrink-0" />
+          <div className="flex min-w-0 items-center gap-1.5">
+            <Logo name={tc('appName')} size={22} className="shrink-0" />
             <AlertsBanner
               lat={coords.lat}
               lng={coords.lng}
@@ -250,11 +250,11 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
             <label className="sr-only" htmlFor="feed-radius">
               {t('filters.radius')}
             </label>
-            <div className="glass ml-auto flex shrink-0 items-center gap-1.5 rounded-full pl-3">
+            <div className="glass ml-auto flex shrink-0 items-center gap-1 rounded-full pl-2.5">
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
-                className="h-4 w-4 text-accent"
+                className="h-3.5 w-3.5 text-accent"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -266,7 +266,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
                 id="feed-radius"
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
-                className="min-h-10 appearance-none rounded-full bg-transparent pr-4 text-sm font-semibold focus:outline-none"
+                className="min-h-9 appearance-none rounded-full bg-transparent pr-3 text-xs font-semibold focus:outline-none"
               >
                 {RADII_M.map((r) => (
                   <option key={r} value={r} className="bg-panel">
@@ -283,7 +283,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
               aria-expanded={isCategoryMenuOpen}
               aria-controls="feed-category-options"
               onClick={() => setIsCategoryMenuOpen((open) => !open)}
-              className="glass inline-flex min-h-10 max-w-full items-center gap-2 rounded-full px-4 text-sm font-semibold text-white shadow-lg shadow-black/10"
+              className="glass inline-flex min-h-9 max-w-full items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-white shadow-lg shadow-black/10"
             >
               {category ? (
                 <CategoryIcon category={category} />
