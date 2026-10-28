@@ -218,6 +218,10 @@ export function VideoCard({
   }
 
   const distance = item.distanceM === null ? null : formatDistance(item.distanceM, locale);
+  const distanceLabel = distance ? t(distance.unit, { value: distance.value }) : null;
+  const publishedWhen = item.publishedAt
+    ? format.relativeTime(new Date(item.publishedAt), now)
+    : format.relativeTime(new Date(item.expiresAt), now);
 
   return (
     <article
@@ -372,6 +376,18 @@ export function VideoCard({
               {t('expires', { when: format.relativeTime(new Date(item.expiresAt), now) })}
             </span>
           </div>
+          <p className="text-[11px] text-white/75">
+            {distanceLabel
+              ? t('whyThisVideo', {
+                  distance: distanceLabel,
+                  category: tc(item.category),
+                  when: publishedWhen,
+                })
+              : t('whyThisVideoFallback', {
+                  category: tc(item.category),
+                  when: publishedWhen,
+                })}
+          </p>
           {item.caption && (
             <div className="flex flex-col items-start gap-1">
               <p

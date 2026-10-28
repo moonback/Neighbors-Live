@@ -4,6 +4,8 @@
   "km": "{value} km",
   "m": "{value} m",
   "expires": "expire {when}",
+  "whyThisVideo": "À {distance} • {category} • {when}",
+  "whyThisVideoFallback": "{category} • {when}",
   "play": "Lire la vidéo",
   "pause": "Mettre en pause",
   "showEntireVideo": "Voir la vidéo entière",

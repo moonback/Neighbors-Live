@@ -23,7 +23,6 @@ export function SavedVideos() {
   function removeSaved(id: string) {
     toggleSavedVideo(id);
     setVideos((current) => current.filter((video) => video.id !== id));
-    window.dispatchEvent(new Event('nl-saved-videos-change'));
   }
 
   return (
@@ -32,7 +31,15 @@ export function SavedVideos() {
         {t('savedVideos')}
       </h2>
       {videos.length === 0 ? (
-        <p className="text-fog">{t('emptySavedVideos')}</p>
+        <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-panel p-4 text-sm text-fog">
+          <p>{t('emptySavedVideos')}</p>
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-ink transition-colors hover:bg-accent/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {t('browseFeed')}
+          </Link>
+        </div>
       ) : (
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {videos.map((video) => (
