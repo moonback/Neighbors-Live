@@ -84,13 +84,13 @@ export function AppShell({
   return (
     <div className="app-shell min-h-dvh lg:flex">
       {showNavigation && (
-        <aside className="app-sidebar sticky top-0 hidden h-dvh w-56 shrink-0 flex-col px-3 py-5 lg:flex">
-          <Link href="/" aria-label={t('appName')} className="mb-6 px-2">
+        <aside className="app-sidebar sticky top-0 hidden h-dvh w-52 shrink-0 flex-col px-2.5 py-4 lg:flex">
+          <Link href="/" aria-label={t('appName')} className="mb-5 px-2">
             <Logo name={t('appName')} tagline={t('slogan')} size={30} />
           </Link>
-          <nav aria-label={t('nav.label')} className="flex flex-col gap-4">
+          <nav aria-label={t('nav.label')} className="flex flex-col gap-3">
             <section>
-              <h2 className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-fog/70">
+              <h2 className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-fog/60">
                 {t('nav.exploreGroup')}
               </h2>
               <div className="flex flex-col gap-0.5">
@@ -101,7 +101,7 @@ export function AppShell({
                       key={item.key}
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
-                      className="app-sidebar-link flex min-h-11 items-center gap-2.5 rounded-xl px-3 text-sm font-semibold transition-colors"
+                      className="app-sidebar-link flex min-h-10 items-center gap-2 rounded-lg px-2.5 text-[13px] font-semibold transition-colors"
                     >
                       <Icon path={item.icon} />
                       {t(`nav.${item.key}`)}
@@ -113,7 +113,7 @@ export function AppShell({
             <Link
               href="/filmer"
               aria-current={immersive ? 'page' : undefined}
-              className="app-record-link flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold text-white transition"
+              className="app-record-link flex min-h-10 items-center justify-center gap-2 rounded-lg px-3 text-[13px] font-bold text-white transition"
             >
               <svg
                 aria-hidden="true"
@@ -129,7 +129,7 @@ export function AppShell({
               {t('nav.record')}
             </Link>
             <section>
-              <h2 className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-fog/70">
+              <h2 className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-fog/60">
                 {t('nav.accountGroup')}
               </h2>
               <div className="flex flex-col gap-0.5">
@@ -140,7 +140,7 @@ export function AppShell({
                       key={item.key}
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
-                      className="app-sidebar-link flex min-h-11 items-center gap-2.5 rounded-xl px-3 text-sm font-semibold transition-colors"
+                      className="app-sidebar-link flex min-h-10 items-center gap-2 rounded-lg px-2.5 text-[13px] font-semibold transition-colors"
                     >
                       {item.key === 'profile' && profileAvatar?.imageUrl ? (
                         <Avatar
@@ -159,9 +159,9 @@ export function AppShell({
               </div>
             </section>
           </nav>
-          <div className="app-sidebar-note mt-auto rounded-xl p-3">
-            <Logo name={t('appName')} size={22} />
-            <p className="mt-2 text-xs leading-relaxed text-fog">{t('tagline')}</p>
+          <div className="app-sidebar-note mt-auto rounded-lg p-2.5">
+            <Logo name={t('appName')} size={20} />
+            <p className="mt-1.5 text-[11px] leading-relaxed text-fog">{t('tagline')}</p>
           </div>
         </aside>
       )}
