@@ -107,7 +107,27 @@ select throws_ok(
   'accuracy_too_low', 'create_video: accuracy > 100 m rejected');
 select throws_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'not_merchant', 'create_video: shop category requires approved merchant');
 
-insert into public.merchant_profiles (user_id, business_name, status, daily_quota) values ((select shop from u), 'Épicerie', 'approved', 2);
+insert into public.merchant_profiles (user_id, business_name, status, daily_quota) values ((select shop from u), 'Épicerie', 'approved', 3);
+create temp table term_offer as
+select public.create_video(
+  (select shop from u), 'shop', 'Offre test', 48.8722, 2.3767, 12,
+  '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000,
+  now() + interval '1 day', gen_random_uuid(), 'Hors boissons'
+) as id;
+select is(
+  (select offer_terms from public.videos where id = (select id from term_offer)),
+  'Hors boissons',
+  'create_video: stores structured offer terms'
+);
+select throws_ok(
+  $$select public.create_video(
+    (select eve from u), 'help', 'Aide', 48.8722, 2.3767, 12,
+    '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000,
+    now() + interval '1 day', gen_random_uuid(), 'Conditions'
+  )$$,
+  'invalid_offer_terms',
+  'create_video: offer terms are restricted to shop category'
+);
 select lives_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'merchant offer 1');
 select lives_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'merchant offer 2');
 select throws_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'merchant_quota_exceeded', 'create_video: merchant daily quota');
@@ -174,6 +194,14 @@ select is((select count(*)::integer from public.videos where id = (select v from
 
 select ok(jsonb_array_length(public.export_my_data((select eve from u)) -> 'videos') >= 5, 'export_my_data: includes own videos');
 select ok((public.export_my_data((select eve from u)) -> 'videos' -> 0) ? 'lat', 'export_my_data: includes own exact positions');
+select ok(
+  exists (
+    select 1
+    from jsonb_array_elements(public.export_my_data((select shop from u)) -> 'videos') as exported_video(video)
+    where video ->> 'offer_terms' = 'Hors boissons'
+  ),
+  'export_my_data: includes structured offer terms'
+);
 select ok(cardinality(public.prepare_account_deletion((select eve from u))) > 0, 'prepare_account_deletion: lists files');
 delete from auth.users where id = (select eve from u);
 select is((select count(*)::integer from public.videos where author_id = (select eve from u)), 0, 'account deletion cascades to videos');
