@@ -34,6 +34,7 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
   const [error, setError] = useState(false);
   const [actionError, setActionError] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -59,14 +60,17 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
   }, [kind]);
 
   async function removeVideo(videoId: string) {
+    if (kind === 'hidden' && !window.confirm(t('restoreHiddenConfirm'))) return;
     setPendingId(videoId);
     setActionError(false);
+    setFeedback(null);
     const result = await api<{ ids: string[] }>(ENDPOINTS[kind], {
       method: 'DELETE',
       body: { videoId },
     });
     if (result.ok) {
       setVideos((current) => current.filter((video) => video.id !== videoId));
+      setFeedback(kind === 'saved' ? t('savedRemovedFeedback') : t('hiddenRestoredFeedback'));
       window.dispatchEvent(new Event('nl-saved-videos-change'));
       window.dispatchEvent(new Event('nl-hidden-videos-change'));
     } else {
@@ -79,6 +83,7 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
   const emptyText = kind === 'saved' ? t('emptySavedVideos') : t('emptyHiddenVideos');
   const actionText = kind === 'saved' ? t('removeSaved') : t('restoreHidden');
   const dateKey = kind === 'saved' ? 'savedOn' : 'hiddenOn';
+  const description = kind === 'saved' ? t('savedVideosDescription') : t('hiddenVideosDescription');
 
   return (
     <section aria-labelledby={`${kind}-videos-heading`} className="flex flex-col gap-3">
@@ -87,7 +92,7 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
           <h2 id={`${kind}-videos-heading`} className="text-lg font-semibold">
             {title}
           </h2>
-          <p className="text-sm text-fog">{t('collectionDescription')}</p>
+          <p className="text-sm text-fog">{description}</p>
         </div>
         {!loading && !error && (
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-fog">
@@ -96,6 +101,11 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
         )}
       </header>
 
+      {feedback && (
+        <p role="status" aria-live="polite" className="rounded-xl border border-green-400/20 bg-green-950/20 p-3 text-sm text-white">
+          {feedback}
+        </p>
+      )}
       {loading ? (
         <p
           role="status"
