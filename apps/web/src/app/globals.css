@@ -525,7 +525,14 @@ body {
 
   .feed-radius {
     grid-area: radius;
+    justify-self: end;
+    width: max-content;
     margin-left: 0;
+  }
+
+  .feed-radius-options {
+    right: 0;
+    left: auto;
   }
 
   /* Desktop: full-stage cards with a centred 9:16 video column, overlays at the stage edges. */

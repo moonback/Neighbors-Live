@@ -309,7 +309,7 @@ export function Feed({
               radius={radius}
               onShow={() => changeCategory('alert')}
             />
-            <div ref={radiusMenuRef} className="feed-radius relative ml-auto shrink-0">
+            <div ref={radiusMenuRef} className="feed-radius relative ml-auto w-fit shrink-0">
               <button
                 type="button"
                 aria-label={`${t('filters.radius')}: ${tc(`radius.${radius}`)}`}
@@ -346,40 +346,45 @@ export function Feed({
                   id="feed-radius-options"
                   role="group"
                   aria-label={t('filters.radius')}
-                  className="glass absolute right-0 top-full z-30 mt-2 grid w-36 gap-1 rounded-2xl p-1.5 shadow-xl"
+                  className="feed-radius-options glass absolute right-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-2xl p-2 shadow-2xl"
                 >
-                  {RADII_M.map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      aria-pressed={radius === value}
-                      onClick={() => {
-                        setRadius(value);
-                        setIsRadiusMenuOpen(false);
-                      }}
-                      className={`flex min-h-10 items-center justify-between rounded-xl px-3 text-left text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
-                        radius === value
-                          ? 'bg-accent text-white shadow-lg shadow-blue-950/30'
-                          : 'text-white/85 hover:bg-white/10 hover:text-white'
-                      }`}
-                    >
-                      {tc(`radius.${value}`)}
-                      {radius === value && (
-                        <svg
-                          aria-hidden="true"
-                          viewBox="0 0 20 20"
-                          className="h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="m4 10 4 4 8-8" />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
+                  <p className="border-b border-white/10 px-2 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-fog">
+                    {t('filters.radius')}
+                  </p>
+                  <div className="mt-1 grid gap-1">
+                    {RADII_M.map((value) => (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={radius === value}
+                        onClick={() => {
+                          setRadius(value);
+                          setIsRadiusMenuOpen(false);
+                        }}
+                        className={`flex min-h-10 items-center justify-between rounded-xl px-3 text-left text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                          radius === value
+                            ? 'bg-accent text-white shadow-lg shadow-blue-950/30'
+                            : 'text-white/85 hover:bg-white/10 hover:text-white'
+                        }`}
+                      >
+                        <span>{tc(`radius.${value}`)}</span>
+                        {radius === value && (
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 20 20"
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="m4 10 4 4 8-8" />
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

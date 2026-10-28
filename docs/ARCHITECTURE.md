@@ -134,7 +134,8 @@ modifiable par le client.
   « nouvelle version »).
 - Les filtres de rayon et de catégorie sont partagés entre le feed et la carte, mémorisés localement
   sans position GPS, et peuvent être réinitialisés vers le rayon par défaut de la surface. Le rayon
-  du feed se choisit dans un menu dédié, cohérent avec son interface compacte.
+  du feed se choisit dans un menu dédié, cohérent avec son interface compacte, aligné sur le bouton
+  et affichant clairement la portée active.
 - Le choix du son du feed est une préférence locale au navigateur, synchronisée entre onglets ;
   les vidéos démarrent toujours en muet par défaut pour respecter les restrictions d’autoplay.
 - En-têtes : CSP stricte (nonce), HSTS, `X-Content-Type-Options`, `Referrer-Policy`,
