@@ -286,7 +286,13 @@ export function VideoCard({
   const publishedWhen = item.publishedAt
     ? format.relativeTime(new Date(item.publishedAt), now)
     : format.relativeTime(new Date(item.expiresAt), now);
-  const offerStatus = getOfferStatus(item.category, item.isMerchant, item.expiresAt, 'active', now);
+  const offerStatus = getOfferStatus(
+    item.category,
+    item.author.isMerchant,
+    item.expiresAt,
+    'active',
+    now,
+  );
   const merchantWebsite = item.author.isMerchant ? item.author.merchantWebsite : null;
   const merchantPhone = item.author.isMerchant ? item.author.merchantPhone : null;
   const merchantAddress = item.author.isMerchant ? item.author.merchantAddress : null;

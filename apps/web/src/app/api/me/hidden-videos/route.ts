@@ -45,12 +45,12 @@ export const GET = route(async (req) => {
   const videos = unwrap({ data: videoRows, error: videoError }) ?? [];
   const authorIds = [...new Set(videos.map((video) => video.author_id))];
   const { data: profiles, error: profilesError } = authorIds.length
-    ? await admin.from('profiles').select('id, username').in('id', authorIds)
+    ? await admin.from('profiles').select('id, username, role').in('id', authorIds)
     : { data: [], error: null };
   const authors = new Map(
     (unwrap({ data: profiles, error: profilesError }) ?? []).map((profile) => [
       profile.id,
-      profile.username,
+      { username: profile.username, isMerchant: profile.role === 'merchant' },
     ]),
   );
   const posters = await signMedia(
@@ -69,12 +69,12 @@ export const GET = route(async (req) => {
         savedAt: new Date(row.created_at).getTime(),
         category: video?.category ?? null,
         caption: video?.caption ?? null,
-        authorName: video ? (authors.get(video.author_id) ?? null) : null,
+        authorName: video ? (authors.get(video.author_id)?.username ?? null) : null,
         posterUrl: video?.poster_path ? (posters.get(video.poster_path) ?? null) : null,
         status: video?.status ?? null,
         publishedAt: video?.published_at ?? null,
         expiresAt: video?.expires_at ?? null,
-        isMerchant: video?.is_merchant ?? false,
+        isMerchant: video ? (authors.get(video.author_id)?.isMerchant ?? false) : false,
       };
     }),
   });

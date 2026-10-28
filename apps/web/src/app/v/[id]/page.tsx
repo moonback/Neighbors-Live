@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import { getFormatter } from 'next-intl/server';
 import { z } from 'zod';
 import { hydrate, type PublicVideoRow } from '@/lib/feed';
+import { getOfferStatus } from '@/lib/offer-status';
 import { adminClient } from '@/lib/supabase/admin';
 
 type Params = { params: Promise<{ id: string }> };
@@ -33,7 +35,12 @@ export default async function VideoPage({ params }: Params) {
   const item = await load(id);
   const t = await getTranslations('video');
   const tc = await getTranslations('common');
-  const hasMerchantWebsite = item?.author.isMerchant && Boolean(item.author.merchantWebsite);
+  const format = await getFormatter();
+  const now = new Date();
+  const offerStatus = item
+    ? getOfferStatus(item.category, item.author.isMerchant, item.expiresAt, 'active', now)
+    : null;
+  const hasMerchantWebsite = offerStatus === 'valid' && Boolean(item?.author.merchantWebsite);
   const hasMerchantPhone = item?.author.isMerchant && Boolean(item.author.merchantPhone);
   const hasMerchantAddress = item?.author.isMerchant && Boolean(item.author.merchantAddress);
 
@@ -57,6 +64,24 @@ export default async function VideoPage({ params }: Params) {
           <p className="text-sm font-semibold">{tc(`categories.${item.category}`)}</p>
           {item.caption && <p className="text-lg">{item.caption}</p>}
           <p className="text-sm text-fog">{t('by', { username: item.author.username ?? '' })}</p>
+          {offerStatus && (
+            <p
+              role="status"
+              className={`w-fit rounded-full px-3 py-1 text-sm font-semibold ${
+                offerStatus === 'valid'
+                  ? 'bg-green-800 text-white'
+                  : offerStatus === 'expired'
+                    ? 'bg-white/10 text-fog'
+                    : 'bg-amber-300 text-ink'
+              }`}
+            >
+              {offerStatus === 'valid'
+                ? t('offerStatus.valid', {
+                    when: format.relativeTime(new Date(item.expiresAt), now),
+                  })
+                : t(`offerStatus.${offerStatus}`)}
+            </p>
+          )}
           {(hasMerchantWebsite || hasMerchantPhone || hasMerchantAddress) && (
             <div className="flex flex-wrap gap-2">
               {hasMerchantWebsite && (
