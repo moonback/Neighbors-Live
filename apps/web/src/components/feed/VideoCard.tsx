@@ -490,6 +490,7 @@ export function VideoCard({
         />
         <ActionButton
           label={muted ? t('unmute') : t('mute')}
+          pressed={!muted}
           onClick={onToggleMute}
           icon={
             muted
