@@ -9,6 +9,7 @@ import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
 import { fetchIsVideoHidden, toggleHiddenVideoServer, isVideoHidden } from '@/lib/hidden-videos';
 import { fetchIsVideoSaved, toggleSavedVideoServer, isVideoSaved } from '@/lib/saved-videos';
+import { getOfferStatus } from '@/lib/offer-status';
 import { formatDistance } from './format';
 import { Sheet } from './Sheet';
 
@@ -285,6 +286,7 @@ export function VideoCard({
   const publishedWhen = item.publishedAt
     ? format.relativeTime(new Date(item.publishedAt), now)
     : format.relativeTime(new Date(item.expiresAt), now);
+  const offerStatus = getOfferStatus(item.category, item.isMerchant, item.expiresAt, 'active', now);
   const merchantWebsite = item.author.isMerchant ? item.author.merchantWebsite : null;
   const merchantPhone = item.author.isMerchant ? item.author.merchantPhone : null;
   const merchantAddress = item.author.isMerchant ? item.author.merchantAddress : null;
@@ -438,9 +440,28 @@ export function VideoCard({
                 {t('merchant')}
               </span>
             )}
-            <span className="video-expiry-chip rounded-full px-2.5 py-1 text-white/90">
-              {t('expires', { when: format.relativeTime(new Date(item.expiresAt), now) })}
-            </span>
+            {offerStatus ? (
+              <span
+                role="status"
+                className={`rounded-full px-2.5 py-1 font-semibold ${
+                  offerStatus === 'valid'
+                    ? 'bg-green-700 text-white'
+                    : offerStatus === 'expired'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-amber-300 text-ink'
+                }`}
+              >
+                {offerStatus === 'valid'
+                  ? t('offerStatus.valid', {
+                      when: format.relativeTime(new Date(item.expiresAt), now),
+                    })
+                  : t(`offerStatus.${offerStatus}`)}
+              </span>
+            ) : (
+              <span className="video-expiry-chip rounded-full px-2.5 py-1 text-white/90">
+                {t('expires', { when: format.relativeTime(new Date(item.expiresAt), now) })}
+              </span>
+            )}
           </div>
           <p className="text-[11px] text-white/75">
             {distanceLabel
@@ -490,7 +511,7 @@ export function VideoCard({
           onClick={() => onComments(item)}
           icon="M4 5h16v11H8l-4 4z"
         />
-        {merchantWebsite && (
+        {offerStatus === 'valid' && merchantWebsite && (
           <ActionButton
             label={t('offerView')}
             onClick={() => window.open(merchantWebsite, '_blank', 'noopener,noreferrer')}

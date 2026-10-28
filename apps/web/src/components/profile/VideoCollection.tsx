@@ -5,6 +5,7 @@ import { useFormatter, useNow, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui';
 import { api } from '@/lib/client-api';
+import { getOfferStatus } from '@/lib/offer-status';
 
 type CollectionKind = 'saved' | 'hidden';
 type CollectionVideo = {
@@ -17,6 +18,7 @@ type CollectionVideo = {
   status: string | null;
   publishedAt: string | null;
   expiresAt: string | null;
+  isMerchant: boolean;
 };
 
 const ENDPOINTS: Record<CollectionKind, string> = {
@@ -102,7 +104,11 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
       </header>
 
       {feedback && (
-        <p role="status" aria-live="polite" className="rounded-xl border border-green-400/20 bg-green-950/20 p-3 text-sm text-white">
+        <p
+          role="status"
+          aria-live="polite"
+          className="rounded-xl border border-green-400/20 bg-green-950/20 p-3 text-sm text-white"
+        >
           {feedback}
         </p>
       )}
@@ -145,21 +151,34 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
           ) : (
             <ul className="grid gap-3 sm:grid-cols-2">
               {videos.map((video) => {
+                const offerStatus = getOfferStatus(
+                  video.category,
+                  video.isMerchant,
+                  video.expiresAt,
+                  video.status,
+                  now,
+                );
                 const available =
                   video.status === 'active' &&
-                  (!video.expiresAt || new Date(video.expiresAt).getTime() > now.getTime());
+                  video.expiresAt !== null &&
+                  Number.isFinite(Date.parse(video.expiresAt)) &&
+                  Date.parse(video.expiresAt) > now.getTime();
                 const categoryLabel = video.category
                   ? tc(`categories.${video.category}`)
                   : t('unknownCategory');
                 const date = format.relativeTime(new Date(video.savedAt), now);
                 const unavailableLabel =
-                  video.status === 'hidden'
-                    ? t('videoModerated')
-                    : video.status === 'expired' ||
-                        (video.expiresAt !== null &&
-                          new Date(video.expiresAt).getTime() <= now.getTime())
-                      ? t('videoExpired')
-                      : t('videoUnavailable');
+                  offerStatus === 'expired'
+                    ? t('offerExpired')
+                    : offerStatus === 'invalid'
+                      ? t('offerInvalid')
+                      : video.status === 'hidden'
+                        ? t('videoModerated')
+                        : video.status === 'expired' ||
+                            (video.expiresAt !== null &&
+                              new Date(video.expiresAt).getTime() <= now.getTime())
+                          ? t('videoExpired')
+                          : t('videoUnavailable');
 
                 return (
                   <li
@@ -209,7 +228,14 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
                         <span className="rounded-full bg-accent/15 px-2.5 py-1 text-xs font-semibold text-accent">
                           {categoryLabel}
                         </span>
-                        {!available && (
+                        {offerStatus === 'valid' && video.expiresAt && (
+                          <span className="rounded-full bg-green-700 px-2.5 py-1 text-xs font-semibold text-white">
+                            {t('offerValidUntil', {
+                              when: format.relativeTime(new Date(video.expiresAt), now),
+                            })}
+                          </span>
+                        )}
+                        {(!available || offerStatus === 'invalid') && (
                           <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs text-fog">
                             {unavailableLabel}
                           </span>
@@ -237,7 +263,7 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
                             })}
                           </time>
                         )}
-                        {video.expiresAt && available && (
+                        {video.expiresAt && available && !offerStatus && (
                           <span>
                             {t('videoExpires', {
                               when: format.relativeTime(new Date(video.expiresAt), now),

@@ -49,6 +49,12 @@
   "offerView": "View offer",
   "callBusiness": "Call",
   "directions": "Directions",
+  "offerStatus": {
+    "valid": "Offer valid until {when}",
+    "expired": "Offer expired",
+    "invalid": "Invalid offer — check with the business",
+    "unavailable": "Offer unavailable"
+  },
   "captionMore": "Read more",
   "captionLess": "Show less",
   "commentsPanel": {

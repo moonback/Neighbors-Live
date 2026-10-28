@@ -37,7 +37,9 @@ export const GET = route(async (req) => {
   const admin = adminClient();
   const { data: videoRows, error: videoError } = await admin
     .from('videos')
-    .select('id, author_id, category, caption, poster_path, status, published_at, expires_at')
+    .select(
+      'id, author_id, category, caption, poster_path, status, published_at, expires_at, is_merchant',
+    )
     .in(
       'id',
       saved.map((row) => row.video_id),
@@ -69,6 +71,7 @@ export const GET = route(async (req) => {
         status: video?.status ?? null,
         publishedAt: video?.published_at ?? null,
         expiresAt: video?.expires_at ?? null,
+        isMerchant: video?.is_merchant ?? false,
       };
     }),
   });
