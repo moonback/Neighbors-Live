@@ -13,6 +13,7 @@
   "hiddenVideosDescription": "Hiding a video removes it from your personal feed; it does not delete or report it. You can restore it here.",
   "savedRemovedFeedback": "Video removed from your saved list.",
   "hiddenRestoredFeedback": "Video restored to your feed.",
+  "removePersonalHide": "Remove from my personal list",
   "browseFeed": "Browse videos",
   "removeSaved": "Remove from saved videos",
   "restoreHidden": "Restore to my feed",
