@@ -563,7 +563,7 @@ export function VideoCard({
         </div>
       </div>
 
-      <div className="feed-action-rail absolute right-2 bottom-8 z-20 flex flex-col items-center gap-2 text-xs font-semibold text-white sm:gap-3 lg:right-6 lg:bottom-20">
+      <div className="feed-action-rail absolute right-2 bottom-8 z-20 flex flex-col items-center gap-1 text-xs font-semibold text-white sm:gap-1.5 lg:right-6 lg:bottom-20">
         <ActionButton
           label={t('usefulCount', { count: useful.count })}
           ariaLabel={t(useful.reacted ? 'removeUseful' : 'markUseful')}

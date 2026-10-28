@@ -498,12 +498,12 @@ body {
 
 @media (min-width: 1024px) {
   .feed-stage {
-    width: min(calc(100% - 3rem), 76rem);
-    height: calc(100svh - 2rem);
-    margin: 1rem auto;
+    width: min(calc(100% - 1rem), 84rem);
+    height: calc(100svh - 1rem);
+    margin: 0.5rem auto;
     overflow: hidden;
     border: 1px solid rgb(255 255 255 / 0.08);
-    border-radius: 2rem;
+    border-radius: 1.5rem;
     background:
       radial-gradient(34rem 28rem at 50% 45%, rgb(37 99 235 / 0.12), transparent 72%),
       rgb(255 255 255 / 0.018);
@@ -548,7 +548,7 @@ body {
     left: auto;
   }
 
-  /* Desktop: full-stage cards with a centred 9:16 video column, overlays at the stage edges. */
+  /* Desktop: maximize the video stage while preserving the 9:16 player and edge overlays. */
   .feed-list {
     scrollbar-width: none;
   }
