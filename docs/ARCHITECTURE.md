@@ -61,7 +61,8 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   `nearby_videos` (SECURITY DEFINER, `ST_DWithin` sur `geography`,
   `status='active' AND expires_at > now()`). Le fil « Pour vous » classe les vidéos selon la
   fraîcheur, la distance arrondie, les retours « utile » et une priorité explicite aux alertes,
-  événements, entraide et offres locales ; les préférences de réduction pénalisent une catégorie.
+  événements, entraide et offres locales ; les préférences de réduction, mémorisées dans le
+  navigateur, pénalisent une catégorie.
   Les rubriques Alertes, Événements, Entraide et Offres (bons plans + commerces) sont filtrables,
   et le mode chronologique reste disponible. La pagination encode le mode de tri dans un curseur
   opaque (`score,id,ref,sort`). La route signe en lot les URL vidéo/poster (TTL court) avec la clé

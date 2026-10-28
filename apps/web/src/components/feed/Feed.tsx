@@ -3,6 +3,7 @@
 import {
   CATEGORIES,
   FEED_SECTIONS,
+  FEED_SORTS,
   RADII_M,
   type Category,
   type FeedSection,
@@ -171,6 +172,7 @@ export function Feed({
   const categoryMenuRef = useRef<HTMLDivElement>(null);
   const radiusMenuRef = useRef<HTMLDivElement>(null);
   const loadingMore = useRef(false);
+  const feedRequestVersion = useRef(0);
 
   useEffect(() => {
     if (!isCategoryMenuOpen && !isRadiusMenuOpen) return;
@@ -239,13 +241,16 @@ export function Feed({
   useEffect(() => {
     if (!filtersReady || lat === null) return;
     let alive = true;
+    const requestVersion = ++feedRequestVersion.current;
     const run = async () => {
       setStatus('loading');
+      setCursor(null);
+      loadingMore.current = false;
       const [page, focused] = await Promise.all([
         fetchPage(null),
         focusId ? api<FeedItem>(`/api/videos/${focusId}/media`) : Promise.resolve(null),
       ]);
-      if (!alive) return;
+      if (!alive || requestVersion !== feedRequestVersion.current) return;
       if (!page?.ok) return setStatus('error');
       const visible = page.data.items.filter(
         (item) => !serverHiddenIds.has(item.id) && !isVideoHidden(item.id),
@@ -263,24 +268,30 @@ export function Feed({
     void run();
     return () => {
       alive = false;
+      if (requestVersion === feedRequestVersion.current) feedRequestVersion.current += 1;
     };
   }, [fetchPage, filtersReady, focusId, lat, reloadKey, hiddenVersion, serverHiddenIds]);
 
   const loadMore = useCallback(async () => {
-    if (!cursor || loadingMore.current) return;
+    if (status !== 'ready' || !cursor || loadingMore.current) return;
+    const requestVersion = feedRequestVersion.current;
     loadingMore.current = true;
-    const page = await fetchPage(cursor);
-    loadingMore.current = false;
-    if (page?.ok) {
-      setItems((prev) => [
-        ...prev,
-        ...page.data.items
-          .filter((i) => !serverHiddenIds.has(i.id) && !isVideoHidden(i.id))
-          .filter((i) => !prev.some((p) => p.id === i.id)),
-      ]);
-      setCursor(page.data.nextCursor);
+    try {
+      const page = await fetchPage(cursor);
+      if (requestVersion !== feedRequestVersion.current) return;
+      if (page?.ok) {
+        setItems((prev) => [
+          ...prev,
+          ...page.data.items
+            .filter((i) => !serverHiddenIds.has(i.id) && !isVideoHidden(i.id))
+            .filter((i) => !prev.some((p) => p.id === i.id)),
+        ]);
+        setCursor(page.data.nextCursor);
+      }
+    } finally {
+      if (requestVersion === feedRequestVersion.current) loadingMore.current = false;
     }
-  }, [cursor, fetchPage, serverHiddenIds]);
+  }, [cursor, fetchPage, serverHiddenIds, status]);
 
   const loadMoreRef = useRef(loadMore);
   useEffect(() => {
@@ -577,7 +588,7 @@ export function Feed({
             aria-label={t('sort.label')}
             className="flex w-fit items-center gap-1 rounded-full bg-black/35 p-1"
           >
-            {(['relevance', 'chronological'] as const).map((value) => (
+            {FEED_SORTS.map((value) => (
               <button
                 key={value}
                 type="button"

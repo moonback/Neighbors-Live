@@ -4,6 +4,8 @@ import {
   CAPTION_MAX,
   CATEGORIES,
   COMMENT_MAX,
+  FEED_SECTIONS,
+  FEED_SORTS,
   MAX_ACCURACY_M,
   MAX_RECORDING_MS,
   MAX_UPLOAD_BYTES,
@@ -11,6 +13,7 @@ import {
   MODERATION_ACTIONS,
   RADII_M,
   REPORT_REASONS,
+  type FeedSort,
 } from './constants.ts';
 import { isPlausiblePosition } from './geo.ts';
 import { sanitizeText } from './text.ts';
@@ -120,8 +123,8 @@ export const feedQuerySchema = z.object({
   lng: z.coerce.number(),
   radius: radiusSchema,
   category: categorySchema.optional(),
-  section: z.enum(['alerts', 'events', 'help', 'offers']).optional(),
-  sort: z.enum(['relevance', 'chronological']).default('relevance'),
+  section: z.enum(FEED_SECTIONS).optional(),
+  sort: z.enum(FEED_SORTS).default('relevance'),
   reducedCategories: z
     .string()
     .optional()
@@ -170,7 +173,7 @@ export interface FeedCursor {
   id: string;
   /** Reference time of the scores (ISO), so that pages stay consistent as time passes. */
   ref: string;
-  sort: 'relevance' | 'chronological';
+  sort: FeedSort;
 }
 
 /** Opaque feed cursor: base64url(JSON [score, id, refTime, sort]). */
@@ -182,7 +185,7 @@ const sortedCursorTuple = z.tuple([
   z.number(),
   z.uuid(),
   z.iso.datetime({ offset: true }),
-  z.enum(['relevance', 'chronological']),
+  z.enum(FEED_SORTS),
 ]);
 export function decodeCursor(cursor: string): FeedCursor | null {
   try {
