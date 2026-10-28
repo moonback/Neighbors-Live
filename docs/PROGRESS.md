@@ -4,7 +4,7 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
-Mise à jour 2026-10-28 — nouvelle entrée « En voir plus » dans la navigation, vers la page Découvrir qui présente les vidéos locales en grille asymétrique. Onglets de catégories, compteur réel de mentions utiles, aperçus signés, distances arrondies et géolocalisation uniquement à la demande ; textes FR/EN. Typecheck, lint ciblé, Prettier, 105 tests workspace et build réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache` ; revue visuelle navigateur/appareil réel non effectuée.
+Mise à jour 2026-10-28 — nouvelle entrée « En voir plus » dans la navigation, vers la page Découvrir qui présente les vidéos locales en grille asymétrique. Onglets de catégories, compteur réel de mentions utiles, aperçus signés, distances arrondies et chargement automatique à l’ouverture ; la position n’est utilisée qu’en mémoire pour la requête. Textes FR/EN. Typecheck, lint ciblé, Prettier, 105 tests workspace et build réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache` ; revue visuelle navigateur/appareil réel non effectuée.
 
 Ajustement 2026-10-28 — filtres de catégorie de la grille Découvrir rendus plus compacts, sans fond ni contour ; le filtre sélectionné est indiqué par un soulignement animé, avec réduction des animations selon la préférence système.
 

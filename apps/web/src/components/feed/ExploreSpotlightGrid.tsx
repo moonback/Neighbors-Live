@@ -3,7 +3,7 @@
 import { CATEGORIES, type Category } from '@nl/shared';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
@@ -29,51 +29,61 @@ export function ExploreSpotlightGrid() {
   const [items, setItems] = useState<SpotlightItem[]>([]);
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState<ErrorKind | null>(null);
+  const initialLoadStarted = useRef(false);
 
-  async function loadSpotlight(selectedCategory: Category | null, coords = position) {
-    setError(null);
-    let searchPosition = coords;
+  const loadSpotlight = useCallback(
+    async (selectedCategory: Category | null, coords: { lat: number; lng: number } | null) => {
+      setError(null);
+      let searchPosition = coords;
 
-    if (!searchPosition) {
-      setStatus('locating');
-      try {
-        const fix = await currentPosition();
-        searchPosition = { lat: fix.coords.latitude, lng: fix.coords.longitude };
-        setPosition(searchPosition);
-      } catch (reason) {
-        const denied =
-          typeof reason === 'object' && reason !== null && 'code' in reason && reason.code === 1;
-        setError(denied ? 'denied' : 'locationError');
+      if (!searchPosition) {
+        setStatus('locating');
+        try {
+          const fix = await currentPosition();
+          searchPosition = { lat: fix.coords.latitude, lng: fix.coords.longitude };
+          setPosition(searchPosition);
+        } catch (reason) {
+          const denied =
+            typeof reason === 'object' && reason !== null && 'code' in reason && reason.code === 1;
+          setError(denied ? 'denied' : 'locationError');
+          setStatus('idle');
+          return;
+        }
+      }
+
+      setStatus('loading');
+      const query = new URLSearchParams({
+        lat: String(searchPosition.lat),
+        lng: String(searchPosition.lng),
+        radius: '3000',
+        limit: String(SPOTLIGHT_LIMIT),
+        sort: 'relevance',
+      });
+      if (selectedCategory) query.set('category', selectedCategory);
+
+      const result = await api<{ items: SpotlightItem[] }>(`/api/feed?${query}`);
+      if (!result.ok) {
+        setError('fetchError');
         setStatus('idle');
         return;
       }
-    }
 
-    setStatus('loading');
-    const query = new URLSearchParams({
-      lat: String(searchPosition.lat),
-      lng: String(searchPosition.lng),
-      radius: '3000',
-      limit: String(SPOTLIGHT_LIMIT),
-      sort: 'relevance',
-    });
-    if (selectedCategory) query.set('category', selectedCategory);
+      setItems(result.data.items.slice(0, SPOTLIGHT_LIMIT));
+      setStatus('ready');
+    },
+    [],
+  );
 
-    const result = await api<{ items: SpotlightItem[] }>(`/api/feed?${query}`);
-    if (!result.ok) {
-      setError('fetchError');
-      setStatus('idle');
-      return;
-    }
-
-    setItems(result.data.items.slice(0, SPOTLIGHT_LIMIT));
-    setStatus('ready');
-  }
+  useEffect(() => {
+    if (initialLoadStarted.current) return;
+    initialLoadStarted.current = true;
+    void loadSpotlight(null, null);
+  }, [loadSpotlight]);
 
   function selectCategory(nextCategory: Category | null) {
     setCategory(nextCategory);
     setItems([]);
-    if (status === 'ready') void loadSpotlight(nextCategory);
+    if (status === 'ready') void loadSpotlight(nextCategory, position);
   }
 
   const busy = status === 'locating' || status === 'loading';
@@ -87,9 +97,13 @@ export function ExploreSpotlightGrid() {
           </h2>
           <p className="mt-1 max-w-xl text-sm leading-relaxed text-fog">{t('subtitle')}</p>
         </div>
-        {status !== 'ready' && (
-          <Button onClick={() => void loadSpotlight(category)} disabled={busy} className="shrink-0">
-            {busy ? t(status) : error ? t('retry') : t('show')}
+        {error && (
+          <Button
+            onClick={() => void loadSpotlight(category, position)}
+            disabled={busy}
+            className="shrink-0"
+          >
+            {t('retry')}
           </Button>
         )}
       </header>
