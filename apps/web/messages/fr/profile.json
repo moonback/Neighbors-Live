@@ -13,6 +13,7 @@
   "hiddenVideosDescription": "Masquer une vidéo la retire de votre feed personnel, sans la supprimer ni la signaler. Vous pouvez la rétablir ici.",
   "savedRemovedFeedback": "Vidéo retirée de vos enregistrements.",
   "hiddenRestoredFeedback": "Vidéo rétablie dans votre feed.",
+  "removePersonalHide": "Retirer de ma liste personnelle",
   "browseFeed": "Découvrir les vidéos",
   "removeSaved": "Retirer des enregistrements",
   "restoreHidden": "Rétablir dans mon feed",
