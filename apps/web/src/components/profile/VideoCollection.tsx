@@ -251,7 +251,11 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
                         disabled={pendingId === video.id}
                         onClick={() => void removeVideo(video.id)}
                       >
-                        {pendingId === video.id ? t('collectionUpdating') : actionText}
+                        {pendingId === video.id
+                          ? t('collectionUpdating')
+                          : kind === 'hidden' && video.status === 'hidden'
+                            ? t('removePersonalHide')
+                            : actionText}
                       </Button>
                     </div>
                   </li>
