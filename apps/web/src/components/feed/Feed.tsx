@@ -396,18 +396,35 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
         <div className="flex h-full flex-col items-center justify-center gap-4 p-6 pt-36 text-center">
           <Illustration />
           <h2 className="text-2xl font-bold">{t('empty.title')}</h2>
-          <p className="max-w-xs text-fog">{t('empty.body')}</p>
+          <p className="max-w-sm text-fog">
+            {category
+              ? t('empty.filtered', {
+                  category: tc(`categories.${category}`),
+                  radius: tc(`radius.${radius}`),
+                })
+              : t('empty.radius', { radius: tc(`radius.${radius}`) })}
+          </p>
+          <p className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/80">
+            {t('empty.searchArea', { radius: tc(`radius.${radius}`) })}
+          </p>
           <Link
             href="/filmer"
             className="glow rounded-2xl bg-accent px-6 py-3 font-semibold text-ink"
           >
             {t('empty.cta')}
           </Link>
-          {wider && (
-            <Button variant="secondary" onClick={() => setRadius(wider)}>
-              {t('empty.wider', { radius: tc(`radius.${wider}`) })}
-            </Button>
-          )}
+          <div className="flex flex-wrap justify-center gap-2">
+            {category && (
+              <Button variant="secondary" onClick={() => setCategory(null)}>
+                {t('empty.clearCategory')}
+              </Button>
+            )}
+            {wider && (
+              <Button variant="secondary" onClick={() => setRadius(wider)}>
+                {t('empty.wider', { radius: tc(`radius.${wider}`) })}
+              </Button>
+            )}
+          </div>
         </div>
       )}
 

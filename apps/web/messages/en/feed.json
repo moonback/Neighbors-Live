@@ -35,9 +35,12 @@
     "login": "Sign in"
   },
   "empty": {
-    "title": "Nothing nearby yet",
-    "body": "Be the first to show what’s happening in the neighborhood.",
+    "title": "No results in this area",
+    "radius": "No videos are available within {radius}. Try expanding the area or check back later.",
+    "filtered": "No videos in the “{category}” category are available within {radius}. You can clear this filter or expand the area.",
+    "searchArea": "Search area: {radius} around you",
     "cta": "Record a video",
+    "clearCategory": "Show all categories",
     "wider": "Expand to {radius}"
   },
   "error": "Could not load videos.",
