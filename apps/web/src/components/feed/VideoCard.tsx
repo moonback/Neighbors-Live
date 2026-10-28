@@ -91,9 +91,9 @@ export function VideoCard({
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    if (active && autoplay) void video.play().catch(() => setPaused(true));
-    if (!active || !autoplay) video.pause();
-  }, [active, autoplay, mediaReloadKey, src]);
+    if (active && autoplay && !shareOpen) void video.play().catch(() => setPaused(true));
+    if (!active || !autoplay || shareOpen) video.pause();
+  }, [active, autoplay, mediaReloadKey, shareOpen, src]);
 
   const requestMediaUrl = useCallback(async () => {
     const generation = ++mediaRequest.current.generation;

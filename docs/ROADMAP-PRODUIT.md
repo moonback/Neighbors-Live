@@ -51,15 +51,15 @@ Les efforts S/M/L désignent une taille relative, pas un engagement de calendrie
 
 **Résultat attendu :** une personne peut retrouver, comprendre et transmettre une vidéo utile sans ajouter de mécanique sociale superflue.
 
-| Fonction / bouton          | Interaction proposée                                                                                          | Priorité | Dépendances et garde-fous                                                                                                |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **Enregistrer**            | Ajouter une vidéo aux éléments sauvegardés, avec confirmation et action « Retirer »                           | P1       | Nouveau modèle de sauvegarde privé, RLS, export/suppression du compte, état vide ; aucun favori public                   |
-| **Copier le lien**         | Ajouter « Copier le lien » au menu partager avec retour « Lien copié » et aperçu partageable                  | P1       | Route publique à jeton ou page de partage ; contrôler expiration, révocation, retrait/modération et absence de GPS exact |
-| **Pourquoi cette vidéo ?** | Expliquer en une phrase la proximité approximative, la catégorie et l’ordre de fraîcheur/utilité              | P1       | Ne pas révéler la position de l’auteur ou une coordonnée précise                                                         |
-| **Masquer cette vidéo**    | Retirer immédiatement l’élément du feed de la personne et proposer éventuellement « Masquer cette catégorie » | P1       | Préférence locale/compte clairement décrite ; action réversible dans les réglages                                        |
-| **Annuler “Utile”**        | Rendre la réaction réversible et annoncer l’état au lecteur d’écran                                           | P1       | Vérifier API, limitation de fréquence, état optimiste puis reprise en cas d’erreur                                       |
-| Commentaires accessibles   | Ouvrir le panneau commentaires sans perdre la position dans le feed ; distinguer chargement, vide et erreur   | P1       | Tester clavier, focus, ouverture/fermeture et reprise de lecture                                                         |
-| Contrôle du son            | Bouton avec état explicite « Activer le son / Couper le son », mémorisé selon une règle claire                | P1       | Respecter les restrictions autoplay Safari/iOS et préférences de mouvement                                               |
+| Fonction / bouton          | Interaction proposée                                                                                          | Priorité | Dépendances et garde-fous                                                                                                      |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Enregistrer**            | Ajouter une vidéo aux éléments sauvegardés, avec confirmation et action « Retirer »                           | P1       | Nouveau modèle de sauvegarde privé, RLS, export/suppression du compte, état vide ; aucun favori public                         |
+| **Copier le lien**         | Ajouter « Copier le lien » au menu partager avec retour « Lien copié » et aperçu partageable                  | P1       | Aperçu public existant `/v/[id]` et URL média signée courte ; contrôler expiration, retrait/modération et absence de GPS exact |
+| **Pourquoi cette vidéo ?** | Expliquer en une phrase la proximité approximative, la catégorie et l’ordre de fraîcheur/utilité              | P1       | Ne pas révéler la position de l’auteur ou une coordonnée précise                                                               |
+| **Masquer cette vidéo**    | Retirer immédiatement l’élément du feed de la personne et proposer éventuellement « Masquer cette catégorie » | P1       | Préférence locale/compte clairement décrite ; action réversible dans les réglages                                              |
+| **Annuler “Utile”**        | Rendre la réaction réversible et annoncer l’état au lecteur d’écran                                           | P1       | Vérifier API, limitation de fréquence, état optimiste puis reprise en cas d’erreur                                             |
+| Commentaires accessibles   | Ouvrir le panneau commentaires sans perdre la position dans le feed ; distinguer chargement, vide et erreur   | P1       | Tester clavier, focus, ouverture/fermeture et reprise de lecture                                                               |
+| Contrôle du son            | Bouton avec état explicite « Activer le son / Couper le son », mémorisé selon une règle claire                | P1       | Respecter les restrictions autoplay Safari/iOS et préférences de mouvement                                                     |
 
 ### Détails de comportement à standardiser
 
@@ -67,6 +67,8 @@ Les efforts S/M/L désignent une taille relative, pas un engagement de calendrie
 - Partager conserve le comportement natif de partage quand il est disponible, puis propose la copie de lien.
 - Signaler demande une catégorie et confirme la réception sans révéler l’identité de la personne qui a signalé.
 - Les commandes « Enregistrer » et « Masquer » restent disponibles depuis le menu secondaire si le rail est déjà dense.
+
+**Avancement au 28 octobre 2026 :** sauvegarde/masquage et explication de pertinence sont intégrés ; le partage propose désormais le partage natif et la copie explicite du lien vers l’aperçu public. Les commentaires distinguent chargement, vide et erreur (avec nouvel essai) ; l’ouverture des commentaires, du signalement ou du partage suspend la lecture sans démonter le feed. Tests clavier, focus et vérification visuelle de ces panneaux restent à effectuer.
 
 ## Phase 2 — découverte du quartier et alertes plus utiles (P1/P2)
 
@@ -84,7 +86,7 @@ Les efforts S/M/L désignent une taille relative, pas un engagement de calendrie
 
 **État au 28 octobre 2026 :** le rayon courant est affiché dans l’état vide du feed ; le message distingue la recherche générale d’une recherche filtrée par catégorie. Les actions « Voir toutes les catégories » et « Élargir à… » offrent une sortie directe. Rayon et catégorie restent mémorisés et partagés avec la carte via les filtres locaux. Le passage carte → feed propose un retour direct et restaure le cadrage/zoom conservé uniquement en mémoire pendant la navigation client ; le parcours a besoin d’une validation visuelle dans le navigateur.
 
-**À clarifier avant implémentation :** le rayon du feed peut atteindre 10 km, tandis que la diffusion d’alertes temps réel est actuellement limitée à 5 km. L’interface et les réglages ne doivent pas laisser croire que ces deux portées sont identiques.
+**Limite actuelle documentée :** le rayon du feed peut atteindre 10 km, tandis que la diffusion d’alertes temps réel est limitée à 5 km en raison du nombre de canaux Realtime. Lorsque le rayon dépasse 5 km, l’interface l’explique même si aucune alerte n’est présente ; les réglages et compteurs ne doivent pas laisser croire que les deux portées sont identiques.
 
 ## Phase 3 — capture plus simple et accessible (P1/P2)
 

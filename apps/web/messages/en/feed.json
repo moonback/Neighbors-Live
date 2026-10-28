@@ -11,7 +11,7 @@
     "banner": "{count, plural, one {# nearby alert} other {# nearby alerts}}",
     "new": "New alert: {caption}",
     "show": "Show alerts",
-    "liveLimit": "New live alerts are delivered within 5 km.",
+    "liveLimit": "Search covers your selected radius, but new live alerts are delivered only within 5 km.",
     "notice": "Alerts are community posts, not official alerts. In an emergency, call 112."
   },
   "location": {

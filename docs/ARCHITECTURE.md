@@ -65,13 +65,17 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
 - Le lien public `/v/[id]` affiche uniquement les vidéos encore publiables via un aperçu et des URL
   média signées à durée courte ; aucune coordonnée exacte n'est incluse. Le feed propose le partage
   natif ou la copie explicite de ce lien.
+- Les panneaux de commentaires, de signalement et de partage suspendent la lecture du feed ; le
+  conteneur de défilement reste monté pour conserver la vidéo et sa position au retour.
 - Carte : `GET /api/map` (même RPC, format GeoJSON) ; MapLibre GL, clustering côté source GeoJSON,
   style de tuiles via `NEXT_PUBLIC_MAP_STYLE_URL`. Le viewport cartographique courant est conservé
   uniquement en mémoire pendant la navigation client vers le feed et retour ; il n'est pas ajouté à
   l'URL ni persisté dans le navigateur ou en base.
 - Temps réel : trigger à l'activation d'une alerte → `realtime.send` sur le topic
   `alerts:<cellule H3 rés. 7>` avec un payload public uniquement (id, catégorie, position floutée).
-  Le client s'abonne aux cellules couvrant son rayon. Pas de `postgres_changes` sur `videos`.
+  Le client s'abonne aux cellules couvrant son rayon, limité à 5 km (limite actuelle de canaux
+  Realtime) ; la recherche du feed peut aller jusqu'à 10 km et l'interface indique cette différence
+  même en l'absence de résultats. Pas de `postgres_changes` sur `videos`.
 
 ## Vie privée de la position
 

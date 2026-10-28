@@ -140,7 +140,7 @@ export function Feed({
     () => new Set(signedIn ? readHiddenVideoIds() : []),
   );
   const serverHiddenIds = signedIn ? hiddenIds : EMPTY_HIDDEN_IDS;
-  const autoplay = !prefersReducedMotion;
+  const autoplay = !prefersReducedMotion && commentsFor === null && reportFor === null;
   const listRef = useRef<HTMLDivElement>(null);
   const categoryMenuRef = useRef<HTMLDivElement>(null);
   const loadingMore = useRef(false);
