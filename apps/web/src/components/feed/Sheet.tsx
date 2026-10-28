@@ -9,12 +9,14 @@ export function Sheet({
   onClose,
   closeLabel,
   children,
+  position = 'center',
 }: {
   open: boolean;
   title: string;
   onClose: () => void;
   closeLabel: string;
   children: ReactNode;
+  position?: 'center' | 'bottom';
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -30,7 +32,11 @@ export function Sheet({
       aria-labelledby={titleId}
       onClose={onClose}
       onClick={(e) => e.target === e.currentTarget && onClose()}
-      className="mb-0 mt-auto max-h-[80dvh] w-full max-w-lg rounded-t-2xl border border-line bg-panel p-0 text-white backdrop:bg-black/60 sm:m-auto sm:rounded-2xl"
+      className={`mb-0 mt-auto max-h-[80dvh] w-full max-w-lg rounded-t-2xl border border-line bg-panel p-0 text-white backdrop:bg-black/60 ${
+        position === 'bottom'
+          ? 'sm:mb-0 sm:mt-auto sm:rounded-t-2xl sm:rounded-b-none'
+          : 'sm:m-auto sm:rounded-2xl'
+      }`}
     >
       <div className="flex max-h-[80dvh] flex-col">
         <header className="flex items-center justify-between border-b border-line px-4 py-3">

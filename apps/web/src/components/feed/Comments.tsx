@@ -102,7 +102,13 @@ export function Comments({
   }
 
   return (
-    <Sheet open={videoId !== null} title={t('title')} onClose={onClose} closeLabel={tc('close')}>
+    <Sheet
+      open={videoId !== null}
+      title={t('title')}
+      onClose={onClose}
+      closeLabel={tc('close')}
+      position="bottom"
+    >
       <div className="flex flex-col gap-4">
         {signedIn ? (
           <form onSubmit={send} className="flex gap-2">
