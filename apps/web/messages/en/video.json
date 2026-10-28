@@ -13,6 +13,8 @@
   "playbackError": "Could not play the video. Tap to try again.",
   "playbackProgress": "Video progress",
   "usefulError": "Your reaction could not be saved. Please try again.",
+  "usefulToast": "Thanks, your Useful vote was recorded.",
+  "removeUsefulToast": "Your Useful vote was removed.",
   "unmute": "Turn sound on",
   "mute": "Mute",
   "useful": "Useful",

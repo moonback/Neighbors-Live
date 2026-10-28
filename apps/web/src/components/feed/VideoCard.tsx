@@ -189,6 +189,8 @@ export function VideoCard({
     );
     if (res.ok) {
       setUseful({ reacted: res.data.reacted, count: res.data.usefulCount });
+      setToast(t(res.data.reacted ? 'usefulToast' : 'removeUsefulToast'));
+      setTimeout(() => setToast(null), 2000);
     } else {
       setToast(t('usefulError'));
       setTimeout(() => setToast(null), 3000);

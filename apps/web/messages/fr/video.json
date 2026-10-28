@@ -13,6 +13,8 @@
   "playbackError": "Lecture impossible. Touchez pour réessayer.",
   "playbackProgress": "Progression de la vidéo",
   "usefulError": "Votre réaction n’a pas pu être enregistrée. Réessayez.",
+  "usefulToast": "Merci, votre vote « Utile » a été pris en compte.",
+  "removeUsefulToast": "Votre vote « Utile » a été retiré.",
   "unmute": "Activer le son",
   "mute": "Couper le son",
   "useful": "Utile",

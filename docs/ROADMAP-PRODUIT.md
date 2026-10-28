@@ -68,7 +68,7 @@ Les efforts S/M/L désignent une taille relative, pas un engagement de calendrie
 - Signaler demande une catégorie et confirme la réception sans révéler l’identité de la personne qui a signalé.
 - Les commandes « Enregistrer » et « Masquer » restent disponibles depuis le menu secondaire si le rail est déjà dense.
 
-**Avancement au 28 octobre 2026 :** sauvegarde/masquage et explication de pertinence sont intégrés ; le partage propose désormais le partage natif et la copie explicite du lien vers l’aperçu public. La réaction « Utile » est réversible via l’API et son libellé accessible distingue l’ajout du retrait. Les commentaires distinguent chargement, vide et erreur (avec nouvel essai) ; l’ouverture des commentaires, du signalement ou du partage suspend la lecture sans démonter le feed. Tests clavier, focus et vérification visuelle de ces panneaux restent à effectuer.
+**Avancement au 28 octobre 2026 :** sauvegarde/masquage et explication de pertinence sont intégrés ; le partage propose désormais le partage natif et la copie explicite du lien vers l’aperçu public. La réaction « Utile » est réversible via l’API, son libellé accessible distingue l’ajout du retrait, et une annonce confirme chaque modification après acceptation serveur. Les commentaires distinguent chargement, vide et erreur (avec nouvel essai) ; l’ouverture des commentaires, du signalement ou du partage suspend la lecture sans démonter le feed. Tests clavier, focus et vérification visuelle de ces panneaux restent à effectuer.
 
 ## Phase 2 — découverte du quartier et alertes plus utiles (P1/P2)
 
