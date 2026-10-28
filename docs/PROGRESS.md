@@ -14,6 +14,8 @@ Correction 2026-10-28 — le menu des catégories est aligné sur le bord droit 
 
 Mise à jour 2026-10-28 — le choix du rayon dans le feed remplace le menu natif par un déclencheur compact et un panneau de sélection assorti aux filtres de catégorie, avec rayon actif mis en évidence et fermeture par clic extérieur ou Échap. Typecheck, 100 tests workspace, build, ESLint et Prettier ciblés réussis ; rendu navigateur/appareil réel non vérifié.
 
+Amélioration 2026-10-28 — le sélecteur de rayon affiche un titre explicite, un choix actif plus lisible et un menu de largeur/position ancrées au bouton. Typecheck, 100 tests workspace, build, ESLint et Prettier ciblés réussis ; rendu navigateur/appareil réel non vérifié.
+
 Mise à jour 2026-10-28 — feed desktop (≥1024 px) : carte pleine scène avec colonne vidéo 9:16 centrée sur fond flouté, logo/filtres en haut à gauche, rayon en haut à droite, auteur/légende en bas à gauche, actions à l’extrême droite, flèches précédent/suivant à côté de la vidéo, barre de contrôle (lecture, temps, son, ajustement) et progression en bas. Mobile inchangé. Typecheck, 100 tests, build, ESLint et Prettier ciblés réussis ; rendu vérifié dans le navigateur avec des données simulées (pas de Supabase local), lecture vidéo réelle non vérifiée.
 
 Jalon capture : 2026-10-28 — l’écran d’erreur caméra propose désormais un bouton explicite de réessai, afin de reprendre le flux sans quitter l’écran ni perdre le contexte. Typecheck et tests application validés.
