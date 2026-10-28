@@ -139,4 +139,15 @@ describe('video report route', () => {
     expect(response.status).toBe(409);
     await expect(response.json()).resolves.toEqual({ error: 'already_reported' });
   });
+
+  it('returns too many requests when the database rate limit is reached', async () => {
+    mocks.insert.mockResolvedValue({ error: { code: 'P0001', message: 'rate_limited' } });
+
+    const response = await POST(request({ reason: 'spam' }), {
+      params: Promise.resolve({ id: videoId }),
+    });
+
+    expect(response.status).toBe(429);
+    await expect(response.json()).resolves.toEqual({ error: 'rate_limited' });
+  });
 });
