@@ -47,6 +47,8 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
     setRadius,
     category,
     setCategory,
+    reset: resetFilters,
+    customized: filtersCustomized,
     ready: filtersReady,
   } = useNeighborhoodFilters(initialRadius, null);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -288,8 +290,10 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
         open={filtersOpen}
         category={category}
         radius={radius}
+        canReset={filtersCustomized}
         onCategoryChange={setCategory}
         onRadiusChange={setRadius}
+        onReset={resetFilters}
         onClose={() => setFiltersOpen(false)}
       />
 

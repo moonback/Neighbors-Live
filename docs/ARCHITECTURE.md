@@ -117,6 +117,8 @@ modifiable par le client.
 - Serwist : precache de l'app shell, `NetworkFirst` pour l'API, `CacheFirst` pour les images et
   tuiles, **pas de cache des vidéos signées**, page `/offline`, mise à jour douce (bannière
   « nouvelle version »).
+- Les filtres de rayon et de catégorie sont partagés entre le feed et la carte, mémorisés localement
+  sans position GPS, et peuvent être réinitialisés vers le rayon par défaut de la surface.
 - En-têtes : CSP stricte (nonce), HSTS, `X-Content-Type-Options`, `Referrer-Policy`,
   `Permissions-Policy` (caméra/micro/géoloc en `self`).
 

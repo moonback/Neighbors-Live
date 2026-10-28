@@ -3,7 +3,8 @@
   "filters": {
     "button": "Filters",
     "title": "Map filters",
-    "active": "Active filters"
+    "active": "Active filters",
+    "reset": "Reset filters"
   },
   "locate": "Find my location",
   "open": "Open in feed",

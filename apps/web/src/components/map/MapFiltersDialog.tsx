@@ -9,15 +9,19 @@ export function MapFiltersDialog({
   open,
   category,
   radius,
+  canReset,
   onCategoryChange,
   onRadiusChange,
+  onReset,
   onClose,
 }: {
   open: boolean;
   category: Category | null;
   radius: number;
+  canReset: boolean;
   onCategoryChange: (category: Category | null) => void;
   onRadiusChange: (radius: number) => void;
+  onReset: () => void;
   onClose: () => void;
 }) {
   const t = useTranslations('map.filters');
@@ -64,6 +68,15 @@ export function MapFiltersDialog({
             ))}
           </select>
         </div>
+        {canReset && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/15 px-4 text-sm font-semibold text-white/90 transition-colors hover:border-accent/70 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {t('reset')}
+          </button>
+        )}
       </div>
     </Sheet>
   );
