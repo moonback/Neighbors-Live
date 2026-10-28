@@ -39,6 +39,7 @@ entraide, offres de commerces et objets perdus ou trouvés.
   plateforme et durée maximale de 30 secondes. L’import d’une vidéo depuis la galerie n’est pas
   proposé.
 - Réactions « Utile », commentaires, partage et signalements.
+- Vidéos enregistrées et masquées synchronisées au compte, avec gestion depuis le profil.
 - Profils publics avec vidéos, réputation et badges; préférences, décisions de modération, export et
   suppression du compte dans les pages personnelles.
 - Installation PWA, page hors ligne et notifications Web Push lorsque le navigateur, les permissions

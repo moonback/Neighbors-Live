@@ -22,6 +22,8 @@
   "unknownCategory": "Vidéo",
   "openCollectionVideo": "Ouvrir la vidéo de catégorie {category}",
   "videoUnavailable": "Vidéo indisponible",
+  "videoExpired": "Vidéo expirée",
+  "videoModerated": "Vidéo masquée par la modération",
   "noCaption": "Aucune légende",
   "collectionAuthor": "Par @{name}",
   "savedOn": "Enregistrée {when}",

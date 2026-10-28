@@ -22,6 +22,8 @@
   "unknownCategory": "Video",
   "openCollectionVideo": "Open {category} video",
   "videoUnavailable": "Video unavailable",
+  "videoExpired": "Video expired",
+  "videoModerated": "Video hidden by moderators",
   "noCaption": "No caption",
   "collectionAuthor": "By @{name}",
   "savedOn": "Saved {when}",

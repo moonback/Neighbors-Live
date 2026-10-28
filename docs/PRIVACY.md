@@ -17,6 +17,10 @@ brouillons.
   Les requêtes de position du feed ne sont pas conservées par l’application.
 - Les réactions, commentaires, signalements, décisions de modération, demandes commerce et
   préférences nécessaires aux fonctionnalités sont stockés selon les règles d’accès de la base.
+- Les vidéos enregistrées et masquées sont associées au compte afin de suivre l’utilisateur entre
+  ses appareils. Ces listes sont privées, accessibles uniquement à leur propriétaire via RLS et
+  supprimées avec le compte ou la vidéo correspondante. Les miniatures sont fournies par URL signée
+  temporaire et ne sont pas stockées dans ces préférences.
 - Les abonnements push contiennent l’endpoint et les clés fournis par le navigateur ainsi qu’une
   zone approximative choisie à partir de la position. La position brute n’est pas conservée pour
   cette préférence.

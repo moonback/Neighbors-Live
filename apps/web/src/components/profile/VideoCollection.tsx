@@ -142,6 +142,14 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
                   ? tc(`categories.${video.category}`)
                   : t('unknownCategory');
                 const date = format.relativeTime(new Date(video.savedAt), now);
+                const unavailableLabel =
+                  video.status === 'hidden'
+                    ? t('videoModerated')
+                    : video.status === 'expired' ||
+                        (video.expiresAt !== null &&
+                          new Date(video.expiresAt).getTime() <= now.getTime())
+                      ? t('videoExpired')
+                      : t('videoUnavailable');
 
                 return (
                   <li
@@ -182,7 +190,7 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
                           categoryLabel
                         )}
                         <span className="relative rounded-full bg-black/75 px-2 py-1">
-                          {t('videoUnavailable')}
+                          {unavailableLabel}
                         </span>
                       </div>
                     )}
@@ -193,7 +201,7 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
                         </span>
                         {!available && (
                           <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs text-fog">
-                            {t('videoUnavailable')}
+                            {unavailableLabel}
                           </span>
                         )}
                       </div>
