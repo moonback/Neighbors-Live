@@ -503,21 +503,21 @@ body {
     transform: translateX(-50%);
   }
 
+  /* Desktop: full-stage cards with a centred 9:16 video column, overlays at the stage edges. */
   .feed-list {
-    width: min(100% - 2rem, 29rem);
-    height: calc(100% - 2rem);
-    margin: 1rem auto;
-    overflow: hidden;
-    border-radius: 1.5rem;
-    box-shadow: 0 24px 70px rgb(0 0 0 / 0.34);
+    scrollbar-width: none;
   }
 
-  .feed-list > [data-index] {
-    padding: 0.25rem;
+  .feed-list .video-card > video {
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 9 / 16;
+    margin-inline: auto;
   }
 
-  .feed-list .video-card {
-    border-radius: 1.25rem;
+  /* Just right of the video column (stage height = 100svh - 2rem). */
+  .feed-nav {
+    left: calc(50% + (100svh - 2rem) * 9 / 32 + 1.5rem);
   }
 }
 

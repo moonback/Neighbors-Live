@@ -1,6 +1,8 @@
 {
   "title": "Around me",
   "returnToMap": "Back to map",
+  "previousVideo": "Previous video",
+  "nextVideo": "Next video",
   "filters": {
     "label": "Filter by category",
     "all": "All",

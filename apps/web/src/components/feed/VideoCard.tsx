@@ -57,7 +57,8 @@ export function VideoCard({
   const [saved, setSaved] = useState(() => isVideoSaved(item.id));
   const [hidden, setHidden] = useState(() => isVideoHidden(item.id));
   const [collectionPending, setCollectionPending] = useState<'saved' | 'hidden' | null>(null);
-  const [progress, setProgress] = useState(0);
+  const [time, setTime] = useState({ current: 0, duration: 0 });
+  const progress = time.duration > 0 ? (time.current / time.duration) * 100 : 0;
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -304,16 +305,15 @@ export function VideoCard({
       data-testid="feed-item"
       data-video-id={item.id}
     >
-      {fit === 'contain' && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-[-2rem] z-0 bg-black bg-cover bg-center transition-opacity duration-300"
-          style={{
-            backgroundImage: item.posterUrl ? `url("${item.posterUrl}")` : undefined,
-            filter: 'blur(28px) brightness(0.42)',
-          }}
-        />
-      )}
+      {/* Desktop always shows the blurred backdrop around the centred 9:16 column. */}
+      <div
+        aria-hidden="true"
+        className={`absolute inset-[-2rem] z-0 bg-black bg-cover bg-center transition-opacity duration-300 ${fit === 'contain' ? '' : 'hidden lg:block'}`}
+        style={{
+          backgroundImage: item.posterUrl ? `url("${item.posterUrl}")` : undefined,
+          filter: 'blur(28px) brightness(0.42)',
+        }}
+      />
       <video
         key={`${item.id}:${mediaReloadKey}`}
         ref={ref}
@@ -332,7 +332,7 @@ export function VideoCard({
         onTimeUpdate={(event) => {
           const video = event.currentTarget;
           if (Number.isFinite(video.duration) && video.duration > 0) {
-            setProgress((video.currentTime / video.duration) * 100);
+            setTime({ current: video.currentTime, duration: video.duration });
           }
         }}
         onError={() => {
@@ -347,18 +347,60 @@ export function VideoCard({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(progress)}
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-0.5 bg-white/30"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-0.5 bg-white/30 lg:inset-x-6 lg:bottom-16 lg:h-1 lg:rounded-full"
       >
         <div
-          className="h-full bg-white/90 transition-[width] duration-200"
+          className="h-full rounded-full bg-white/90 transition-[width] duration-200 lg:bg-accent"
           style={{ width: `${progress}%` }}
         />
+      </div>
+      <div className="absolute inset-x-6 bottom-3 z-30 hidden items-center gap-3 text-white lg:flex">
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={paused ? t('play') : t('pause')}
+          disabled={mediaState !== 'ready'}
+          className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white disabled:opacity-50"
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+            {paused ? <path d="M7 4.5v15l12-7.5z" /> : <path d="M6 5h4v14H6zm8 0h4v14h-4z" />}
+          </svg>
+        </button>
+        <span className="text-sm tabular-nums text-white/80">
+          {formatClock(time.current)} / {formatClock(time.duration)}
+        </span>
+        <button
+          type="button"
+          onClick={onToggleMute}
+          aria-label={muted ? t('unmute') : t('mute')}
+          aria-pressed={!muted}
+          className="ml-auto flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path
+              d={
+                muted
+                  ? 'M4 9h4l5-4v14l-5-4H4zM17 9l4 6m0-6l-4 6'
+                  : 'M4 9h4l5-4v14l-5-4H4zM16 8a5 5 0 010 8m2.5-10.5a8.5 8.5 0 010 13'
+              }
+            />
+          </svg>
+        </button>
       </div>
       <button
         type="button"
         onClick={onToggleFit}
         aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
-        className="glass absolute right-4 top-[10.5rem] z-30 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="glass absolute right-4 top-[10.5rem] z-30 lg:top-6 lg:right-auto lg:left-6 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         <svg
           aria-hidden="true"
@@ -411,7 +453,7 @@ export function VideoCard({
         </svg>
       </button>
 
-      <div className="pointer-events-none absolute inset-x-4 right-[5.25rem] bottom-3 z-20">
+      <div className="pointer-events-none absolute inset-x-4 right-[5.25rem] bottom-3 z-20 lg:bottom-20 lg:left-8 lg:right-auto lg:max-w-xl">
         <div className="video-overlay-copy pointer-events-auto flex w-fit max-w-full flex-col gap-2.5 text-white">
           <Link
             href={`/u/${item.author.username}`}
@@ -520,7 +562,7 @@ export function VideoCard({
         </div>
       </div>
 
-      <div className="feed-action-rail absolute right-2 bottom-8 z-20 flex flex-col items-center gap-2 text-xs font-semibold text-white sm:gap-3">
+      <div className="feed-action-rail absolute right-2 bottom-8 z-20 flex flex-col items-center gap-2 text-xs font-semibold text-white sm:gap-3 lg:right-6 lg:bottom-20">
         <ActionButton
           label={t('usefulCount', { count: useful.count })}
           ariaLabel={t(useful.reacted ? 'removeUseful' : 'markUseful')}
@@ -592,6 +634,7 @@ export function VideoCard({
           label={muted ? t('unmute') : t('mute')}
           pressed={!muted}
           onClick={onToggleMute}
+          className="lg:hidden"
           icon={
             muted
               ? 'M4 9h4l5-4v14l-5-4H4zM17 9l4 6m0-6l-4 6'
@@ -635,6 +678,11 @@ export function VideoCard({
   );
 }
 
+function formatClock(seconds: number) {
+  const s = Math.floor(seconds);
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
+
 function ActionButton({
   label,
   ariaLabel,
@@ -642,6 +690,7 @@ function ActionButton({
   onClick,
   pressed,
   disabled = false,
+  className = '',
 }: {
   label: string;
   ariaLabel?: string;
@@ -649,6 +698,7 @@ function ActionButton({
   onClick: () => void;
   pressed?: boolean;
   disabled?: boolean;
+  className?: string;
 }) {
   return (
     <button
@@ -657,7 +707,7 @@ function ActionButton({
       aria-label={ariaLabel}
       aria-pressed={pressed}
       disabled={disabled}
-      className="feed-action-button group flex min-h-11 w-14 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60"
+      className={`${className} feed-action-button group flex min-h-11 w-14 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60`}
     >
       <span
         className={`feed-action-icon flex h-11 w-11 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-active:scale-95 ${pressed ? 'glow bg-accent text-white' : 'text-white'}`}

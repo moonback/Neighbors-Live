@@ -275,6 +275,10 @@ export function Feed({
     return () => observer.disconnect();
   }, [items]);
 
+  const goTo = (index: number) =>
+    listRef.current
+      ?.querySelector(`[data-index="${index}"]`)
+      ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   const goLogin = () => router.push('/login?next=/');
   const wider = RADII_M.find((r) => r > radius);
 
@@ -514,6 +518,37 @@ export function Feed({
           <p className="py-6 text-center text-sm text-fog" role="status">
             {cursor ? t('loadingMore') : t('end')}
           </p>
+        </div>
+      )}
+
+      {items.length > 1 && (
+        <div className="feed-nav absolute top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-4 lg:flex">
+          {[
+            { index: active - 1, label: t('previousVideo'), d: 'm6 15 6-6 6 6' },
+            { index: active + 1, label: t('nextVideo'), d: 'm6 9 6 6 6-6' },
+          ].map(({ index, label, d }) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => goTo(index)}
+              disabled={index < 0 || index >= items.length}
+              aria-label={label}
+              className="glass flex h-14 w-14 items-center justify-center rounded-full text-white transition-[transform,opacity] hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-40"
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d={d} />
+              </svg>
+            </button>
+          ))}
         </div>
       )}
 

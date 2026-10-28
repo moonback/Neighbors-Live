@@ -1,6 +1,8 @@
 {
   "title": "Autour de moi",
   "returnToMap": "Retour à la carte",
+  "previousVideo": "Vidéo précédente",
+  "nextVideo": "Vidéo suivante",
   "filters": {
     "label": "Filtrer par catégorie",
     "all": "Tout",
