@@ -14,7 +14,8 @@
     "denied": "Camera or microphone access was denied. Allow it in this site’s browser settings, then try again.",
     "notFound": "No camera is available on this device.",
     "unsupported": "This browser cannot record video. Try Safari on iOS or Chrome on Android.",
-    "generic": "Could not start the camera."
+    "generic": "Could not start the camera.",
+    "retry": "Retry camera"
   },
   "switch": "Switch camera",
   "switchFailed": "Couldn’t open that camera, back to the previous one.",

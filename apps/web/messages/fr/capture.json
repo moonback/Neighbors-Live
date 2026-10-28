@@ -14,7 +14,8 @@
     "denied": "L’accès à la caméra ou au micro est refusé. Autorisez-le dans les réglages du navigateur pour ce site, puis réessayez.",
     "notFound": "Aucune caméra disponible sur cet appareil.",
     "unsupported": "Ce navigateur ne permet pas d’enregistrer une vidéo. Essayez avec Safari (iOS) ou Chrome (Android).",
-    "generic": "Impossible de démarrer la caméra."
+    "generic": "Impossible de démarrer la caméra.",
+    "retry": "Réessayer la caméra"
   },
   "switch": "Changer de caméra",
   "switchFailed": "Impossible d’ouvrir cette caméra, retour à la précédente.",

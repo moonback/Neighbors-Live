@@ -4,7 +4,7 @@ import { MAX_RECORDING_MS } from '@nl/shared';
 import { useTranslations } from 'next-intl';
 import type { PointerEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Notice } from '@/components/ui';
+import { Button, Notice } from '@/components/ui';
 import { pickMimeType } from '@/lib/recorder';
 
 export interface Recording {
@@ -412,10 +412,20 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const remaining = Math.max(0, Math.ceil((MAX_RECORDING_MS - elapsed) / 1000));
   const mirrored = current?.front ?? target.facing === 'user';
 
+  const retryCamera = useCallback(() => {
+    setError(null);
+    setReady(false);
+    setCurrent(null);
+    setTarget((prev) => ({ deviceId: prev.deviceId, facing: prev.facing }));
+  }, []);
+
   if (error) {
     return (
       <div className="mx-auto flex h-full max-w-md flex-col items-center justify-center gap-4 p-6 text-center">
         <Notice kind="error">{t(`errors.${error}`)}</Notice>
+        <Button type="button" onClick={retryCamera} className="w-full">
+          {t('errors.retry')}
+        </Button>
       </div>
     );
   }
