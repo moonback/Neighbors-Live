@@ -1,5 +1,6 @@
 {
   "title": "Profil de {username}",
+  "profileActions": "Actions du profil",
   "reputation": "Réputation",
   "memberSince": "Membre depuis {date}",
   "activeVideos": "Vidéos en ligne",

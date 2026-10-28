@@ -65,144 +65,124 @@ export default async function ProfilePage({ params }: Params) {
   const since = format.dateTime(new Date(profile.created_at), { month: 'long', year: 'numeric' });
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6 p-4 pb-8 sm:p-6">
-      <header className="relative flex flex-col items-center gap-3 overflow-hidden rounded-3xl border border-white/[0.07] bg-panel/80 px-5 pt-32 pb-6 text-center">
+    <div className="mx-auto flex max-w-4xl flex-col gap-5 p-3 pb-8 sm:p-5">
+      <header className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-panel/80">
         {profile.cover_path ? (
           // eslint-disable-next-line @next/next/no-img-element -- public profile image URL
           <img
             src={profileImageUrl(profile.cover_path) ?? undefined}
             alt=""
             aria-hidden="true"
-            className="absolute inset-x-0 top-0 h-40 w-full object-cover"
+            className="absolute inset-x-0 top-0 h-16 w-full object-cover sm:h-20"
           />
         ) : null}
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/30 to-panel"
+          className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/30 to-panel sm:h-20"
         />
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-28 bg-accent opacity-25 blur-2xl"
-        />
-        {isOwner && (
-          <Link
-            href="/parametres"
-            aria-label={tc('nav.settings')}
-            className="glass absolute top-3 right-3 flex h-11 w-11 items-center justify-center rounded-full text-white"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinejoin="round"
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-12 bg-accent/20 blur-2xl" />
+        <div className="relative flex flex-col gap-3 px-3 pb-3 pt-9 sm:gap-4 sm:px-5 sm:pb-4">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <span className="glow shrink-0 rounded-full bg-accent p-0.5">
+              <span className="block rounded-full bg-ink p-0.5">
+                <Avatar
+                  username={profile.username}
+                  color={profile.avatar_color}
+                  size={64}
+                  src={profileImageUrl(profile.avatar_path)}
+                />
+              </span>
+            </span>
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-xl font-bold sm:text-2xl">@{profile.username}</h1>
+              <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]">
+                {isModerator && (
+                  <span className="rounded-full bg-accent px-2 py-0.5 font-semibold text-white">
+                    {tc('badges.moderator')}
+                  </span>
+                )}
+                {profile.role === 'merchant' && (
+                  <span className="rounded-full bg-amber-400 px-2 py-0.5 font-semibold text-ink">
+                    {tc('badges.merchant')}
+                  </span>
+                )}
+                {profile.role === 'admin' && (
+                  <span className="rounded-full bg-fog px-2 py-0.5 font-semibold text-ink">
+                    {tc('badges.admin')}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 truncate text-xs text-fog">{t('memberSince', { date: since })}</p>
+            </div>
+            <dl className="hidden shrink-0 divide-x divide-white/10 rounded-xl border border-white/[0.07] bg-black/10 sm:flex">
+              <div className="px-3 py-2 text-center">
+                <dd className="text-lg font-bold tabular-nums">{list.length}</dd>
+                <dt className="text-[11px] text-fog">{t('activeVideos')}</dt>
+              </div>
+              <div className="px-3 py-2 text-center">
+                <dd className="text-lg font-bold tabular-nums">{profile.reputation}</dd>
+                <dt className="text-[11px] text-fog">{t('reputation')}</dt>
+              </div>
+            </dl>
+          </div>
+
+          <dl className="grid grid-cols-2 divide-x divide-white/10 rounded-xl border border-white/[0.07] bg-black/10 sm:hidden">
+            <div className="flex items-center justify-center gap-2 px-2 py-1.5">
+              <dd className="text-sm font-bold tabular-nums">{list.length}</dd>
+              <dt className="text-xs text-fog">{t('activeVideos')}</dt>
+            </div>
+            <div className="flex items-center justify-center gap-2 px-2 py-1.5">
+              <dd className="text-sm font-bold tabular-nums">{profile.reputation}</dd>
+              <dt className="text-xs text-fog">{t('reputation')}</dt>
+            </div>
+          </dl>
+
+          {profile.bio && (
+            <p className="line-clamp-2 whitespace-pre-line text-sm leading-snug text-white/85 sm:max-w-2xl">
+              {profile.bio}
+            </p>
+          )}
+          {merchantData && (
+            <div className="flex flex-wrap gap-1.5 text-xs text-fog">
+              {merchantData.website && (
+                <a
+                  href={merchantData.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-8 items-center rounded-full border border-white/10 px-2.5 text-white hover:border-accent/60"
+                >
+                  {merchantData.business_name || 'Website'}
+                </a>
+              )}
+              {merchantData.phone && (
+                <a
+                  href={`tel:${merchantData.phone}`}
+                  className="inline-flex min-h-8 items-center rounded-full border border-white/10 px-2.5 text-white hover:border-accent/60"
+                >
+                  {merchantData.phone}
+                </a>
+              )}
+              {merchantData.address && (
+                <span className="inline-flex min-h-8 items-center rounded-full border border-white/10 px-2.5 text-white">
+                  {merchantData.address}
+                </span>
+              )}
+            </div>
+          )}
+          {isOwner && (
+            <nav
+              aria-label={t('profileActions')}
+              className="grid grid-cols-2 gap-1.5 text-xs sm:flex sm:flex-wrap"
             >
-              <circle cx="12" cy="12" r="3" />
-              <path d="M19.4 12a7.4 7.4 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14.5 3h-5l-.4 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6a7.4 7.4 0 000 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 002 1.2l.4 2.6h5l.4-2.6a7 7 0 002-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z" />
-            </svg>
-          </Link>
-        )}
-        <span className="glow relative rounded-full bg-accent p-1">
-          <span className="block rounded-full bg-ink p-0.5">
-            <Avatar
-              username={profile.username}
-              color={profile.avatar_color}
-              size={88}
-              src={profileImageUrl(profile.avatar_path)}
-            />
-          </span>
-        </span>
-        <h1 className="relative max-w-full truncate text-2xl font-bold">@{profile.username}</h1>
-        <div className="relative flex flex-wrap justify-center gap-2 text-xs">
-          {isModerator && (
-            <span className="rounded-full bg-accent px-2.5 py-1 font-semibold text-ink">
-              {tc('badges.moderator')}
-            </span>
-          )}
-          {profile.role === 'merchant' && (
-            <span className="rounded-full bg-amber-400 px-2.5 py-1 font-semibold text-ink">
-              {tc('badges.merchant')}
-            </span>
-          )}
-          {profile.role === 'admin' && (
-            <span className="rounded-full bg-fog px-2.5 py-1 font-semibold text-ink">
-              {tc('badges.admin')}
-            </span>
+              <ProfileAction href="/parametres" primary>
+                {t('edit')}
+              </ProfileAction>
+              <ProfileAction href="/me/sauvegardes">{t('savedVideos')}</ProfileAction>
+              <ProfileAction href="/me/masquees">{t('hiddenVideos')}</ProfileAction>
+              <ProfileAction href="/me/decisions">{t('decisions')}</ProfileAction>
+            </nav>
           )}
         </div>
-        <dl className="relative mt-2 grid w-full max-w-sm grid-cols-2 divide-x divide-white/10">
-          <div className="flex flex-col-reverse">
-            <dt className="text-xs text-fog">{t('activeVideos')}</dt>
-            <dd className="text-xl font-bold tabular-nums">{list.length}</dd>
-          </div>
-          <div className="flex flex-col-reverse">
-            <dt className="text-xs text-fog">{t('reputation')}</dt>
-            <dd className="text-xl font-bold tabular-nums">{profile.reputation}</dd>
-          </div>
-        </dl>
-        <p className="relative text-xs text-fog">{t('memberSince', { date: since })}</p>
-        {profile.bio && (
-          <p className="relative max-w-md whitespace-pre-line text-sm leading-relaxed text-white/85">
-            {profile.bio}
-          </p>
-        )}
-        {merchantData && (
-          <div className="relative flex max-w-md flex-wrap justify-center gap-2 text-xs text-fog">
-            {merchantData.website && (
-              <a
-                href={merchantData.website}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-white/10 px-2.5 py-1 text-white hover:border-accent/60"
-              >
-                {merchantData.business_name || 'Website'}
-              </a>
-            )}
-            {merchantData.phone && (
-              <a
-                href={`tel:${merchantData.phone}`}
-                className="rounded-full border border-white/10 px-2.5 py-1 text-white hover:border-accent/60"
-              >
-                {merchantData.phone}
-              </a>
-            )}
-            {merchantData.address && (
-              <span className="rounded-full border border-white/10 px-2.5 py-1 text-white">
-                {merchantData.address}
-              </span>
-            )}
-          </div>
-        )}
-        {isOwner && (
-          <nav className="relative mt-2 grid w-full max-w-sm grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-            <Link
-              href="/parametres"
-              className="glow inline-flex min-h-11 items-center justify-center rounded-2xl bg-accent px-4 font-semibold text-white"
-            >
-              {t('edit')}
-            </Link>
-            <Link
-              href="/me/sauvegardes"
-              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 font-semibold hover:border-accent/60"
-            >
-              {t('savedVideos')}
-            </Link>
-            <Link
-              href="/me/masquees"
-              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 font-semibold hover:border-accent/60"
-            >
-              {t('hiddenVideos')}
-            </Link>
-            <Link
-              href="/me/decisions"
-              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 font-semibold hover:border-accent/60"
-            >
-              {t('decisions')}
-            </Link>
-          </nav>
-        )}
       </header>
 
       <section aria-labelledby="active-videos" className="flex flex-col gap-3">
@@ -253,5 +233,28 @@ export default async function ProfilePage({ params }: Params) {
         </>
       )}
     </div>
+  );
+}
+
+function ProfileAction({
+  href,
+  primary = false,
+  children,
+}: {
+  href: string;
+  primary?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`inline-flex min-h-10 items-center justify-center rounded-xl px-3 text-center font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:min-h-9 ${
+        primary
+          ? 'bg-accent text-white hover:brightness-110'
+          : 'border border-white/10 bg-white/[0.04] text-white/90 hover:border-accent/60 hover:text-white'
+      }`}
+    >
+      {children}
+    </Link>
   );
 }

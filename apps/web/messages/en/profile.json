@@ -1,5 +1,6 @@
 {
   "title": "{username}’s profile",
+  "profileActions": "Profile actions",
   "reputation": "Reputation",
   "memberSince": "Member since {date}",
   "activeVideos": "Videos online",
