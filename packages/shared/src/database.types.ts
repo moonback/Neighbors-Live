@@ -231,32 +231,41 @@ export type Database = {
       };
       merchant_profiles: {
         Row: {
+          address: string;
           business_name: string;
           created_at: string;
           daily_quota: number | null;
           description: string;
+          phone: string;
           reviewed_by: string | null;
           status: Database['public']['Enums']['merchant_status'];
           user_id: string;
+          website: string;
         };
         ComputedFields: never;
         Insert: {
+          address?: string;
           business_name: string;
           created_at?: string;
           daily_quota?: number | null;
           description?: string;
+          phone?: string;
           reviewed_by?: string | null;
           status?: Database['public']['Enums']['merchant_status'];
           user_id: string;
+          website?: string;
         };
         Update: {
+          address?: string;
           business_name?: string;
           created_at?: string;
           daily_quota?: number | null;
           description?: string;
+          phone?: string;
           reviewed_by?: string | null;
           status?: Database['public']['Enums']['merchant_status'];
           user_id?: string;
+          website?: string;
         };
         Relationships: [
           {

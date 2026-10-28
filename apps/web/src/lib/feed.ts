@@ -15,6 +15,9 @@ export interface FeedItem {
     color: string;
     avatarUrl: string | null;
     isMerchant: boolean;
+    merchantWebsite: string | null;
+    merchantPhone: string | null;
+    merchantAddress: string | null;
   };
   publishedAt: string | null;
   expiresAt: string;
@@ -37,6 +40,9 @@ export interface PublicVideoRow {
   author_username: string | null;
   author_color: string;
   author_is_merchant?: boolean;
+  author_website?: string | null;
+  author_phone?: string | null;
+  author_address?: string | null;
   category: Category;
   caption: string;
   published_at: string | null;
@@ -88,6 +94,9 @@ export async function hydrate(
         color: r.author_color,
         avatarUrl: avatarUrls.get(r.author_id) ?? null,
         isMerchant: Boolean(r.author_is_merchant ?? r.is_merchant),
+        merchantWebsite: r.author_website ?? null,
+        merchantPhone: r.author_phone ?? null,
+        merchantAddress: r.author_address ?? null,
       },
       publishedAt: r.published_at,
       expiresAt: r.expires_at,

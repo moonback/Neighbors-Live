@@ -13,11 +13,16 @@ export function MerchantForm() {
   const router = useRouter();
   const [businessName, setBusinessName] = useState('');
   const [description, setDescription] = useState('');
+  const [website, setWebsite] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const res = await api('/api/merchant', { body: { businessName, description } });
+    const res = await api('/api/merchant', {
+      body: { businessName, description, website, phone, address },
+    });
     if (!res.ok) return setError(errorText(res.error));
     router.refresh();
   }
@@ -41,6 +46,36 @@ export function MerchantForm() {
           maxLength={280}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+        />
+      </Field>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Field label={t('website')} htmlFor="m-website">
+          <input
+            id="m-website"
+            type="url"
+            className={inputClass}
+            value={website}
+            placeholder="https://"
+            onChange={(e) => setWebsite(e.target.value)}
+          />
+        </Field>
+        <Field label={t('phone')} htmlFor="m-phone">
+          <input
+            id="m-phone"
+            className={inputClass}
+            value={phone}
+            maxLength={30}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </Field>
+      </div>
+      <Field label={t('address')} htmlFor="m-address">
+        <input
+          id="m-address"
+          className={inputClass}
+          value={address}
+          maxLength={200}
+          onChange={(e) => setAddress(e.target.value)}
         />
       </Field>
       {error && <Notice kind="error">{error}</Notice>}

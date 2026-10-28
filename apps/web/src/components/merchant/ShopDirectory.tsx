@@ -11,6 +11,9 @@ interface Entry {
   avatarUrl: string | null;
   name: string;
   description: string;
+  website?: string | null;
+  phone?: string | null;
+  address?: string | null;
 }
 
 export function ShopDirectory({ entries }: { entries: Entry[] }) {
@@ -20,7 +23,9 @@ export function ShopDirectory({ entries }: { entries: Entry[] }) {
   const filtered = useMemo(
     () =>
       entries.filter((entry) =>
-        `${entry.name} ${entry.description}`.toLocaleLowerCase().includes(normalizedQuery),
+        `${entry.name} ${entry.description} ${entry.address ?? ''} ${entry.website ?? ''} ${entry.phone ?? ''}`
+          .toLocaleLowerCase()
+          .includes(normalizedQuery),
       ),
     [entries, normalizedQuery],
   );
@@ -87,6 +92,32 @@ export function ShopDirectory({ entries }: { entries: Entry[] }) {
                   <span className="block text-xs text-fog">@{entry.username}</span>
                   <span className="mt-1 line-clamp-2 block text-sm leading-snug text-fog">
                     {entry.description || t('noDescription')}
+                  </span>
+                  <span className="mt-2 flex flex-wrap gap-2 text-[11px] text-fog">
+                    {entry.website && (
+                      <span
+                        className="rounded-full border border-white/10 px-2 py-1"
+                        title={entry.website}
+                      >
+                        {t('website')}
+                      </span>
+                    )}
+                    {entry.phone && (
+                      <span
+                        className="rounded-full border border-white/10 px-2 py-1"
+                        title={entry.phone}
+                      >
+                        {t('phone')}
+                      </span>
+                    )}
+                    {entry.address && (
+                      <span
+                        className="rounded-full border border-white/10 px-2 py-1"
+                        title={entry.address}
+                      >
+                        {t('address')}
+                      </span>
+                    )}
                   </span>
                 </span>
                 <span className="glow flex h-9 shrink-0 items-center gap-1 rounded-xl bg-accent px-3 text-xs font-semibold text-white transition group-hover:brightness-110">

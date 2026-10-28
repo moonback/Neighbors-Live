@@ -36,7 +36,7 @@ export default async function MerchantPage() {
   const format = await getFormatter();
   const { data: merchant, error: merchantError } = await supabase
     .from('merchant_profiles')
-    .select('business_name, status, created_at')
+    .select('business_name, status, created_at, website, phone, address')
     .eq('user_id', viewer.id)
     .maybeSingle();
   const quota = merchant?.status === 'approved' ? await merchantQuota(viewer.id) : null;
@@ -100,6 +100,31 @@ export default async function MerchantPage() {
             <Notice kind="success">
               {t('approved')} — {merchant.business_name}
             </Notice>
+            <div className="flex flex-wrap gap-2 text-sm text-fog">
+              {merchant.website && (
+                <a
+                  href={merchant.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-line px-2 py-1 font-medium text-white hover:border-accent"
+                >
+                  {t('website')}
+                </a>
+              )}
+              {merchant.phone && (
+                <a
+                  href={`tel:${merchant.phone}`}
+                  className="rounded-full border border-line px-2 py-1 font-medium text-white hover:border-accent"
+                >
+                  {t('phone')}
+                </a>
+              )}
+              {merchant.address && (
+                <span className="rounded-full border border-line px-2 py-1 font-medium text-white">
+                  {merchant.address}
+                </span>
+              )}
+            </div>
             <p>{t('quota', quota)}</p>
             <p className="text-sm text-fog">{t('rules')}</p>
             {quota.used < quota.quota && (

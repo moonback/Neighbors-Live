@@ -425,6 +425,9 @@ create function public.nearby_videos(
   author_username text,
   author_color text,
   author_is_merchant boolean,
+  author_website text,
+  author_phone text,
+  author_address text,
   category public.video_category,
   caption text,
   published_at timestamptz,
@@ -463,6 +466,7 @@ begin
     from base b
   )
   select sc.id, sc.author_id, p.username, p.avatar_color, p.role = 'merchant',
+         coalesce(mp.website, ''), coalesce(mp.phone, ''), coalesce(mp.address, ''),
          sc.category, sc.caption, sc.published_at, sc.expires_at, sc.useful_count, sc.comment_count,
          sc.is_merchant,
          extensions.st_y(sc.public_location::extensions.geometry),
@@ -470,6 +474,7 @@ begin
          public.bucket_distance(sc.d), sc.s
   from scored sc
   join public.profiles p on p.id = sc.author_id
+  left join public.merchant_profiles mp on mp.user_id = sc.author_id and mp.status = 'approved'
   where p_cursor_score is null or (sc.s, sc.id) < (p_cursor_score, p_cursor_id)
   order by sc.s desc, sc.id desc
   limit least(greatest(p_limit, 1), 20);

@@ -16,7 +16,7 @@ export default async function ShopDirectoryPage() {
   const supabase = await createClient();
   const merchants = await supabase
     .from('merchant_profiles')
-    .select('user_id, business_name, description')
+    .select('user_id, business_name, description, website, phone, address')
     .eq('status', 'approved')
     .order('business_name')
     .limit(100);
@@ -75,6 +75,9 @@ export default async function ShopDirectoryPage() {
         avatarUrl: avatars.get(merchant.user_id) ?? null,
         name: merchant.business_name,
         description: merchant.description,
+        website: merchant.website ?? null,
+        phone: merchant.phone ?? null,
+        address: merchant.address ?? null,
       },
     ];
   });

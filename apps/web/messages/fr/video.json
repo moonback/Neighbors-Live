@@ -46,6 +46,9 @@
   },
   "report": "Signaler",
   "merchant": "Commerce",
+  "offerView": "Voir l’offre",
+  "callBusiness": "Appeler",
+  "directions": "Itinéraire",
   "captionMore": "Lire la suite",
   "captionLess": "Réduire",
   "commentsPanel": {

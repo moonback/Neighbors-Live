@@ -285,6 +285,9 @@ export function VideoCard({
   const publishedWhen = item.publishedAt
     ? format.relativeTime(new Date(item.publishedAt), now)
     : format.relativeTime(new Date(item.expiresAt), now);
+  const merchantWebsite = item.author.isMerchant ? item.author.merchantWebsite : null;
+  const merchantPhone = item.author.isMerchant ? item.author.merchantPhone : null;
+  const merchantAddress = item.author.isMerchant ? item.author.merchantAddress : null;
 
   return (
     <article
@@ -487,6 +490,36 @@ export function VideoCard({
           onClick={() => onComments(item)}
           icon="M4 5h16v11H8l-4 4z"
         />
+        {merchantWebsite && (
+          <ActionButton
+            label={t('offerView')}
+            onClick={() => window.open(merchantWebsite, '_blank', 'noopener,noreferrer')}
+            icon="M5 7h14v11H5zm2-3h10v3H7z"
+          />
+        )}
+        {merchantPhone && (
+          <ActionButton
+            label={t('callBusiness')}
+            onClick={() => {
+              window.location.href = `tel:${merchantPhone}`;
+            }}
+            icon="M5 4.5h3l1 4-2 2.5a14 14 0 0010.5 10.5l2.5-2-4-1v-3a2 2 0 011.5-2.2l2.5-.5a2 2 0 011.8 2l-.3 4a2 2 0 01-2 1.8A18 18 0 014.7 6.7a2 2 0 011.8-2l4-.3A2 2 0 0113.3 6l-.5 2.5A2 2 0 0110.6 10.5z"
+          />
+        )}
+        {merchantAddress && (
+          <ActionButton
+            label={t('directions')}
+            onClick={() => {
+              const query = encodeURIComponent(merchantAddress);
+              window.open(
+                `https://www.google.com/maps/search/?api=1&query=${query}`,
+                '_blank',
+                'noopener,noreferrer',
+              );
+            }}
+            icon="M12 21s6-4.9 6-11a6 6 0 10-12 0c0 6.1 6 11 6 11zm0-8.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
+          />
+        )}
         <ActionButton
           label={saved ? t('saved') : t('save')}
           pressed={saved}

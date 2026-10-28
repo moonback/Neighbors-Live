@@ -31,7 +31,7 @@ export default async function ProfilePage({ params }: Params) {
     .maybeSingle();
   if (!profile) notFound();
 
-  const [viewer, zones, videos, t, tc, format] = await Promise.all([
+  const [viewer, zones, videos, merchant, t, tc, format] = await Promise.all([
     getViewer(),
     admin
       .from('zone_moderators')
@@ -45,12 +45,21 @@ export default async function ProfilePage({ params }: Params) {
       .gt('expires_at', new Date().toISOString())
       .order('published_at', { ascending: false })
       .limit(30),
+    profile.role === 'merchant'
+      ? admin
+          .from('merchant_profiles')
+          .select('business_name, description, website, phone, address')
+          .eq('user_id', profile.id)
+          .eq('status', 'approved')
+          .maybeSingle()
+      : Promise.resolve(null),
     getTranslations('profile'),
     getTranslations('common'),
     getFormatter(),
   ]);
   const isOwner = viewer?.id === profile.id;
   const list = videos.data ?? [];
+  const merchantData = merchant && !merchant.error ? merchant.data : null;
   const posters = await signMedia(list.map((v) => v.poster_path));
   const isModerator = (zones.count ?? 0) > 0;
   const since = format.dateTime(new Date(profile.created_at), { month: 'long', year: 'numeric' });
@@ -138,6 +147,33 @@ export default async function ProfilePage({ params }: Params) {
           <p className="relative max-w-md whitespace-pre-line text-sm leading-relaxed text-white/85">
             {profile.bio}
           </p>
+        )}
+        {merchantData && (
+          <div className="relative flex max-w-md flex-wrap justify-center gap-2 text-xs text-fog">
+            {merchantData.website && (
+              <a
+                href={merchantData.website}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/10 px-2.5 py-1 text-white hover:border-accent/60"
+              >
+                {merchantData.business_name || 'Website'}
+              </a>
+            )}
+            {merchantData.phone && (
+              <a
+                href={`tel:${merchantData.phone}`}
+                className="rounded-full border border-white/10 px-2.5 py-1 text-white hover:border-accent/60"
+              >
+                {merchantData.phone}
+              </a>
+            )}
+            {merchantData.address && (
+              <span className="rounded-full border border-white/10 px-2.5 py-1 text-white">
+                {merchantData.address}
+              </span>
+            )}
+          </div>
         )}
         {isOwner && (
           <nav className="relative mt-2 grid w-full max-w-sm grid-cols-2 gap-2 text-sm sm:grid-cols-4">

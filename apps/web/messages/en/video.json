@@ -46,6 +46,9 @@
   },
   "report": "Report",
   "merchant": "Business",
+  "offerView": "View offer",
+  "callBusiness": "Call",
+  "directions": "Directions",
   "captionMore": "Read more",
   "captionLess": "Show less",
   "commentsPanel": {
