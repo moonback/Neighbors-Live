@@ -14,8 +14,8 @@
   "savedRemovedFeedback": "Vidéo retirée de vos enregistrements.",
   "hiddenRestoredFeedback": "Vidéo rétablie dans votre feed.",
   "browseFeed": "Découvrir les vidéos",
-  "removeSaved": "Retirer",
-  "restoreHidden": "Rétablir dans le feed",
+  "removeSaved": "Retirer des enregistrements",
+  "restoreHidden": "Rétablir dans mon feed",
   "collectionDescription": "Gérez vos vidéos enregistrées et celles que vous ne souhaitez plus voir dans le feed.",
   "collectionCount": "{count, plural, =0 {Aucune vidéo} one {# vidéo} other {# vidéos}}",
   "collectionLoading": "Chargement de vos vidéos…",
@@ -48,8 +48,8 @@
   },
   "edit": "Modifier le profil",
   "decisions": "Décisions de modération",
-  "withdraw": "Retirer",
-  "withdrawConfirm": "Retirer définitivement cette vidéo ? Les fichiers seront supprimés.",
+  "withdraw": "Supprimer ma vidéo",
+  "withdrawConfirm": "Supprimer définitivement cette vidéo ? Ses fichiers seront supprimés et cette action ne pourra pas être annulée.",
   "withdrawn": "Vidéo retirée.",
   "notFound": "Ce profil n’existe pas."
 }
