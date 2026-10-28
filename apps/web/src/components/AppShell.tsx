@@ -18,7 +18,7 @@ const exploreLinks = [
   { href: '/', key: 'feed', icon: 'M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z' },
   {
     href: '/decouvrir',
-    key: 'discover',
+    key: 'more',
     icon: 'M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z',
   },
   {

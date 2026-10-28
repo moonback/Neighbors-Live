@@ -4,6 +4,8 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
+Mise à jour 2026-10-28 — nouvelle entrée « En voir plus » dans la navigation, vers la page Découvrir qui présente les vidéos locales en grille asymétrique. Onglets de catégories, compteur réel de mentions utiles, aperçus signés, distances arrondies et géolocalisation uniquement à la demande ; textes FR/EN. Typecheck, lint ciblé, Prettier, 105 tests workspace et build réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache` ; revue visuelle navigateur/appareil réel non effectuée.
+
 Mise à jour 2026-10-28 — fil « Pour vous dans le quartier » : rubriques rapides Alertes, Événements, Entraide et Offres (bons plans + commerces), classement par pertinence locale avec « Pourquoi cette vidéo ? », réduction de priorité par catégorie mémorisée dans le navigateur, tri chronologique conservé et masquage individuel réutilisé. Typecheck, 105 tests workspace, build, ESLint ciblé, Prettier et contrôle des diffs réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache`. Tests pgTAP non exécutés : PostgreSQL local indisponible sur `127.0.0.1:56422`, donc la migration `20261029000500` reste à appliquer et vérifier. Revue visuelle navigateur et appareil réel non effectuée.
 
 Mise à jour 2026-10-28 — échelle typographique Tailwind réduite de 10 % dans toute l’application ; les espacements et dimensions des composants restent inchangés. Typecheck, 105 tests workspace, build et Prettier réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`. Revue visuelle navigateur et appareil réel non effectuée.

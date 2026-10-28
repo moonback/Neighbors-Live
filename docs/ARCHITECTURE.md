@@ -131,6 +131,10 @@ modifiable par le client.
 
 - Next.js App Router, TS strict, Tailwind. `next-intl` sans préfixe d'URL (locale en cookie/réglage),
   `fr` par défaut, `en` prêt.
+- La page `/decouvrir` est accessible depuis la navigation sous « En voir plus » ; sa grille
+  thématique charge à la demande les vidéos du rayon de 3 km via `/api/feed`, avec filtres par
+  catégorie, posters signés à durée courte, compteurs de réactions utiles et distances arrondies.
+  La géolocalisation n'est demandée qu'à l'action de chargement et n'est pas persistée.
 - `@supabase/ssr` (cookies) pour l'auth par e-mail et mot de passe ; pseudo à l'inscription et
   callback PKCE pour les liens de confirmation ou de récupération.
 - Mutations sensibles par route handlers (vérif `Origin`, Zod, rate limit) ; lectures simples via
