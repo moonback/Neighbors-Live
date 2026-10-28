@@ -1,6 +1,18 @@
 export const CATEGORIES = ['alert', 'deal', 'event', 'help', 'shop', 'lost'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
+export const FEED_SECTIONS = ['alerts', 'events', 'help', 'offers'] as const;
+export type FeedSection = (typeof FEED_SECTIONS)[number];
+export const FEED_SECTION_CATEGORIES: Record<FeedSection, Category[]> = {
+  alerts: ['alert'],
+  events: ['event'],
+  help: ['help'],
+  offers: ['deal', 'shop'],
+};
+
+export const FEED_SORTS = ['relevance', 'chronological'] as const;
+export type FeedSort = (typeof FEED_SORTS)[number];
+
 export const RADII_M = [300, 1000, 3000, 5000, 10000] as const;
 export type Radius = (typeof RADII_M)[number];
 

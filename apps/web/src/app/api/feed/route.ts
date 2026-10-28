@@ -1,4 +1,4 @@
-import { decodeCursor, encodeCursor, feedQuerySchema } from '@nl/shared';
+import { decodeCursor, encodeCursor, FEED_SECTION_CATEGORIES, feedQuerySchema } from '@nl/shared';
 import { z } from 'zod';
 import { ApiError, json, route, unwrap } from '@/lib/api';
 import { hydrate, type PublicVideoRow } from '@/lib/feed';
@@ -6,9 +6,13 @@ import { adminClient } from '@/lib/supabase/admin';
 import { getUser } from '@/lib/supabase/server';
 
 const PAGE = 8;
-const querySchema = feedQuerySchema.extend({
-  limit: z.coerce.number().int().min(1).max(20).optional(),
-});
+const querySchema = feedQuerySchema
+  .extend({
+    limit: z.coerce.number().int().min(1).max(20).optional(),
+  })
+  .refine((query) => !(query.category && query.section), {
+    message: 'category_and_section_conflict',
+  });
 
 /**
  * Hyperlocal feed, cursor-paginated. The query position is used for this request only: it is
@@ -18,8 +22,10 @@ export const GET = route(async (req) => {
   const q = querySchema.parse(Object.fromEntries(req.nextUrl.searchParams));
   const cursor = q.cursor ? decodeCursor(q.cursor) : null;
   if (q.cursor && !cursor) throw new ApiError('invalid_input', 422);
+  if (cursor && cursor.sort !== q.sort) throw new ApiError('invalid_input', 422);
   const ref = cursor?.ref ?? new Date().toISOString();
   const limit = q.limit ?? PAGE;
+  const sectionCategories = q.section ? FEED_SECTION_CATEGORIES[q.section] : null;
 
   const rows = unwrap(
     await adminClient().rpc('nearby_videos', {
@@ -31,6 +37,9 @@ export const GET = route(async (req) => {
       p_cursor_id: cursor?.id,
       p_ref_time: ref,
       p_limit: limit,
+      p_sort_mode: q.sort,
+      p_categories: sectionCategories ?? undefined,
+      p_reduced_categories: q.reducedCategories,
     }),
   );
   const user = await getUser();
@@ -47,6 +56,8 @@ export const GET = route(async (req) => {
   );
   const last = rows.at(-1);
   const nextCursor =
-    rows.length === limit && last ? encodeCursor({ score: last.score, id: last.id, ref }) : null;
+    rows.length === limit && last
+      ? encodeCursor({ score: last.score, id: last.id, ref, sort: q.sort })
+      : null;
   return json({ items, nextCursor });
 });

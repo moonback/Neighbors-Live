@@ -55,6 +55,31 @@ select set_eq(
   $$select id from public.nearby_videos(48.8722, 2.3767, 3000, 'alert')$$,
   $$select (select alert_v from nv)$$,
   'nearby_videos: category filter');
+select set_eq(
+  $$select id from public.nearby_videos(
+    48.8722, 2.3767, 3000,
+    p_categories => array['alert'::public.video_category, 'shop'::public.video_category]
+  )$$,
+  $$select (select alert_v from nv)$$,
+  'nearby_videos: category sections support multiple categories');
+select ok(
+  (select reduced.score < regular.score
+   from public.nearby_videos(
+     48.8722, 2.3767, 3000,
+     p_ref_time => now(),
+     p_reduced_categories => array['alert'::public.video_category]
+   ) reduced
+   join public.nearby_videos(48.8722, 2.3767, 3000, p_ref_time => now()) regular
+     on regular.id = reduced.id
+   where reduced.id = (select alert_v from nv)),
+  'nearby_videos: reduced categories receive a lower relevance score');
+update public.videos set published_at = now() - interval '2 days' where id = (select near_v from nv);
+update public.videos set published_at = now() - interval '1 hour' where id = (select alert_v from nv);
+update public.videos set published_at = now() - interval '4 days' where id = (select far_v from nv);
+select is(
+  (select id from public.nearby_videos(48.8722, 2.3767, 3000, p_sort_mode => 'chronological') limit 1),
+  (select alert_v from nv),
+  'nearby_videos: chronological mode orders by publication time');
 select ok(
   (select bool_and(distance_m % 100 = 0) from public.nearby_videos(48.8722, 2.3767, 3000)),
   'nearby_videos: distances bucketed to 100 m');

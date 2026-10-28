@@ -7,7 +7,22 @@
     "label": "Filtrer par catégorie",
     "all": "Tout",
     "radius": "Rayon",
-    "reset": "Réinitialiser les filtres"
+    "reset": "Réinitialiser les filtres",
+    "reduceCategory": "Voir moins de vidéos « {category} »",
+    "restoreCategory": "Ne plus réduire « {category} »"
+  },
+  "sections": {
+    "label": "Rubriques du quartier",
+    "all": "Tout",
+    "alerts": "Alertes",
+    "events": "Événements",
+    "help": "Entraide",
+    "offers": "Offres"
+  },
+  "sort": {
+    "label": "Ordre du fil",
+    "relevance": "Pour vous",
+    "chronological": "Plus récentes"
   },
   "alerts": {
     "banner": "{count, plural, one {# alerte proche} other {# alertes proches}}",

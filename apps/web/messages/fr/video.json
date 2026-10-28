@@ -4,8 +4,20 @@
   "km": "{value} km",
   "m": "{value} m",
   "expires": "expire {when}",
-  "whyThisVideo": "À {distance} • {category} • {when}",
-  "whyThisVideoFallback": "{category} • {when}",
+  "whyButton": "Pourquoi cette vidéo ?",
+  "whyPanel": {
+    "title": "Pourquoi cette vidéo ?",
+    "close": "Fermer les critères de pertinence",
+    "sort": {
+      "relevance": "Le fil « Pour vous » combine proximité, catégorie, fraîcheur et retours utiles du quartier.",
+      "chronological": "Le fil est trié par date de publication, de la plus récente à la plus ancienne."
+    },
+    "distance": "Elle a été publiée à environ {distance} de votre zone de recherche (distance arrondie).",
+    "category": "La rubrique « {category} » fait partie des informations locales du fil.",
+    "freshness": "Publication : {when}.",
+    "useful": "Retours « Utile » du voisinage : {count}.",
+    "reducedCategory": "Vous avez choisi de moins voir cette catégorie : elle est donc moins prioritaire dans le fil « Pour vous »."
+  },
   "play": "Lire la vidéo",
   "pause": "Mettre en pause",
   "showEntireVideo": "Voir la vidéo entière",

@@ -1,16 +1,29 @@
 'use client';
 
-import { CATEGORIES, RADII_M, type Category } from '@nl/shared';
+import {
+  CATEGORIES,
+  FEED_SECTIONS,
+  RADII_M,
+  type Category,
+  type FeedSection,
+  type FeedSort,
+} from '@nl/shared';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
 import { fetchHiddenVideoIds, isVideoHidden, readHiddenVideoIds } from '@/lib/hidden-videos';
+import {
+  getReducedCategoriesSnapshot,
+  parseReducedCategories,
+  setReducedCategories,
+  subscribeToReducedCategories,
+} from '@/lib/feed-preferences';
 import { useLocation } from '@/lib/useLocation';
 import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
 import { getVideoMuted, setVideoMuted, subscribeToVideoMuted } from '@/lib/video-preferences';
@@ -109,13 +122,17 @@ export function Feed({
     router.replace(query ? `/?${query}` : '/', { scroll: false });
   };
   const changeCategory = (nextCategory: Category | null) => {
+    setSection(null);
     setCategory(nextCategory);
     clearCategoryQuery();
   };
   const handleResetFilters = () => {
     resetFilters();
+    setSection(null);
     clearCategoryQuery();
   };
+  const [section, setSection] = useState<FeedSection | null>(null);
+  const [sortMode, setSortMode] = useState<FeedSort>('relevance');
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isRadiusMenuOpen, setIsRadiusMenuOpen] = useState(false);
   const [items, setItems] = useState<FeedItem[]>([]);
@@ -138,6 +155,15 @@ export function Feed({
   const [hiddenVersion, setHiddenVersion] = useState(0);
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(
     () => new Set(signedIn ? readHiddenVideoIds() : []),
+  );
+  const reducedSnapshot = useSyncExternalStore(
+    subscribeToReducedCategories,
+    getReducedCategoriesSnapshot,
+    () => '',
+  );
+  const reducedCategories = useMemo(
+    () => parseReducedCategories(reducedSnapshot),
+    [reducedSnapshot],
   );
   const serverHiddenIds = signedIn ? hiddenIds : EMPTY_HIDDEN_IDS;
   const autoplay = !prefersReducedMotion && commentsFor === null && reportFor === null;
@@ -200,10 +226,13 @@ export function Feed({
         radius: String(radius),
       });
       if (category) qs.set('category', category);
+      if (section) qs.set('section', section);
+      if (sortMode !== 'relevance') qs.set('sort', sortMode);
+      if (reducedSnapshot) qs.set('reducedCategories', reducedSnapshot);
       if (after) qs.set('cursor', after);
       return api<{ items: FeedItem[]; nextCursor: string | null }>(`/api/feed?${qs}`);
     },
-    [lat, lng, radius, category],
+    [lat, lng, radius, category, section, sortMode, reducedSnapshot],
   );
 
   // First page (and focused deep-linked video) whenever position or filters change.
@@ -436,7 +465,7 @@ export function Feed({
                 className="feed-category-options glass absolute left-0 top-full z-30 mt-2 grid max-h-[min(60svh,24rem)] w-[min(20rem,calc(100vw-2rem))] grid-cols-2 gap-2 overflow-y-auto rounded-2xl p-3 shadow-xl"
               >
                 <FilterChip
-                  active={category === null}
+                  active={category === null && section === null}
                   onClick={() => {
                     changeCategory(null);
                     setIsCategoryMenuOpen(false);
@@ -446,22 +475,66 @@ export function Feed({
                   {t('filters.all')}
                 </FilterChip>
                 {CATEGORIES.map((c) => (
-                  <FilterChip
-                    key={c}
-                    active={category === c}
-                    onClick={() => {
-                      changeCategory(c);
-                      setIsCategoryMenuOpen(false);
-                    }}
-                    className="w-full justify-start rounded-xl px-3"
-                  >
-                    <CategoryIcon category={c} />
-                    {tc(`categories.${c}`)}
-                  </FilterChip>
+                  <div key={c} className="flex min-w-0 items-center gap-1">
+                    <FilterChip
+                      active={category === c}
+                      onClick={() => {
+                        changeCategory(c);
+                        setIsCategoryMenuOpen(false);
+                      }}
+                      className="min-w-0 flex-1 justify-start rounded-xl px-3"
+                    >
+                      <CategoryIcon category={c} />
+                      <span className="truncate">{tc(`categories.${c}`)}</span>
+                    </FilterChip>
+                    <button
+                      type="button"
+                      aria-label={t(
+                        reducedCategories.includes(c)
+                          ? 'filters.restoreCategory'
+                          : 'filters.reduceCategory',
+                        { category: tc(`categories.${c}`) },
+                      )}
+                      aria-pressed={reducedCategories.includes(c)}
+                      title={t(
+                        reducedCategories.includes(c)
+                          ? 'filters.restoreCategory'
+                          : 'filters.reduceCategory',
+                        { category: tc(`categories.${c}`) },
+                      )}
+                      onClick={() => {
+                        const next = reducedCategories.includes(c)
+                          ? reducedCategories.filter((item) => item !== c)
+                          : [...reducedCategories, c];
+                        setReducedCategories(next);
+                      }}
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${
+                        reducedCategories.includes(c)
+                          ? 'bg-accent text-white'
+                          : 'text-white/75 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      >
+                        {reducedCategories.includes(c) ? (
+                          <path d="M5 12h14" />
+                        ) : (
+                          <path d="M5 12h14M12 5v14" />
+                        )}
+                      </svg>
+                    </button>
+                  </div>
                 ))}
               </nav>
             )}
-            {filtersCustomized && (
+            {(filtersCustomized || section !== null) && (
               <button
                 type="button"
                 onClick={handleResetFilters}
@@ -470,6 +543,53 @@ export function Feed({
                 {t('filters.reset')}
               </button>
             )}
+          </div>
+          <nav
+            aria-label={t('sections.label')}
+            className="feed-section-filters flex w-full max-w-full gap-1.5 overflow-x-auto pb-0.5"
+          >
+            <SectionChip
+              active={section === null && category === null}
+              onClick={() => {
+                setSection(null);
+                setCategory(null);
+                clearCategoryQuery();
+              }}
+            >
+              {t('sections.all')}
+            </SectionChip>
+            {FEED_SECTIONS.map((value) => (
+              <SectionChip
+                key={value}
+                active={section === value}
+                onClick={() => {
+                  setCategory(null);
+                  clearCategoryQuery();
+                  setSection(value);
+                }}
+              >
+                {t(`sections.${value}`)}
+              </SectionChip>
+            ))}
+          </nav>
+          <div
+            role="group"
+            aria-label={t('sort.label')}
+            className="flex w-fit items-center gap-1 rounded-full bg-black/35 p-1"
+          >
+            {(['relevance', 'chronological'] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={sortMode === value}
+                onClick={() => setSortMode(value)}
+                className={`min-h-8 rounded-full px-3 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${
+                  sortMode === value ? 'bg-white text-ink' : 'text-white/80 hover:text-white'
+                }`}
+              >
+                {t(`sort.${value}`)}
+              </button>
+            ))}
           </div>
           {category === 'alert' && (
             <p className="rounded-xl border border-alert/50 bg-black/80 px-3 py-2 text-sm text-white">
@@ -563,6 +683,8 @@ export function Feed({
                 onToggleFit={() => saveVideoFit(videoFit === 'cover' ? 'contain' : 'cover')}
                 autoplay={autoplay}
                 onToggleMute={() => setVideoMuted(!muted)}
+                sortMode={sortMode}
+                reducedCategory={reducedCategories.includes(item.category)}
                 onComments={(i) => setCommentsFor(i.id)}
                 onReport={(i) => setReportFor(i.id)}
                 onAuthRequired={goLogin}
@@ -617,6 +739,29 @@ export function Feed({
       )}
       {reportFor && <ReportDialog videoId={reportFor} onClose={() => setReportFor(null)} />}
     </div>
+  );
+}
+
+function SectionChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`min-h-9 shrink-0 rounded-full px-3 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${
+        active ? 'bg-accent text-white' : 'glass text-white/85 hover:text-white'
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 

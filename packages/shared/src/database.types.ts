@@ -988,7 +988,10 @@ export type Database = {
           p_limit?: number;
           p_lng: number;
           p_radius_m: number;
+          p_categories?: Database['public']['Enums']['video_category'][];
+          p_reduced_categories?: Database['public']['Enums']['video_category'][];
           p_ref_time?: string;
+          p_sort_mode?: string;
         };
         Returns: {
           author_color: string;

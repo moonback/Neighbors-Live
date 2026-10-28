@@ -41,7 +41,7 @@ select ok(not has_function_privilege('authenticated', 'public.create_video(uuid,
 select ok(not has_function_privilege('authenticated', 'public.moderate_video(uuid, uuid, public.moderation_kind, text)', 'execute'), 'moderate_video is service-only');
 select ok(not has_function_privilege('anon', 'public.expire_videos()', 'execute'), 'expire_videos is service-only');
 select ok(not has_function_privilege('authenticated', 'public.export_my_data(uuid)', 'execute'), 'export_my_data is service-only');
-select ok(has_function_privilege('anon', 'public.nearby_videos(double precision, double precision, integer, public.video_category, double precision, uuid, timestamptz, integer)', 'execute'), 'nearby_videos is public');
+select ok(has_function_privilege('anon', 'public.nearby_videos(double precision, double precision, integer, public.video_category, double precision, uuid, timestamptz, integer, text, public.video_category[], public.video_category[])', 'execute'), 'nearby_videos is public');
 
 -- Private buckets and scheduled expiry.
 select is((select count(*)::integer from storage.buckets where id in ('raw-videos', 'videos') and not public), 2, 'video buckets are private');

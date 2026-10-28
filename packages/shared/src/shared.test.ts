@@ -5,6 +5,7 @@ import {
   createVideoSchema,
   decodeCursor,
   encodeCursor,
+  feedQuerySchema,
   haversineMeters,
   isPlausibleMove,
   isPlausiblePosition,
@@ -161,8 +162,40 @@ describe('schemas', () => {
 
   it('round-trips cursors and rejects garbage', () => {
     const id = '7b0f8f9e-6c2d-4c1a-9a51-3b6c1c3e2f10';
-    const cursor = { score: 0.42, id, ref: '2026-10-25T10:00:00.000Z' };
+    const cursor = {
+      score: 0.42,
+      id,
+      ref: '2026-10-25T10:00:00.000Z',
+      sort: 'chronological' as const,
+    };
     expect(decodeCursor(encodeCursor(cursor))).toEqual(cursor);
     expect(decodeCursor('not-a-cursor')).toBeNull();
+    const legacy = Buffer.from(JSON.stringify([cursor.score, cursor.id, cursor.ref])).toString(
+      'base64url',
+    );
+    expect(decodeCursor(legacy)).toEqual({ ...cursor, sort: 'relevance' });
+  });
+
+  it('validates feed section, sort order, and reduced categories', () => {
+    const parsed = feedQuerySchema.parse({
+      lat: paris.lat,
+      lng: paris.lng,
+      radius: 1000,
+      section: 'offers',
+      sort: 'chronological',
+      reducedCategories: 'alert,help',
+    });
+
+    expect(parsed.section).toBe('offers');
+    expect(parsed.sort).toBe('chronological');
+    expect(parsed.reducedCategories).toEqual(['alert', 'help']);
+    expect(
+      feedQuerySchema.safeParse({
+        lat: paris.lat,
+        lng: paris.lng,
+        radius: 1000,
+        reducedCategories: 'not-a-category',
+      }).success,
+    ).toBe(false);
   });
 });

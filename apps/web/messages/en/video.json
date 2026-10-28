@@ -4,8 +4,20 @@
   "km": "{value} km",
   "m": "{value} m",
   "expires": "expires {when}",
-  "whyThisVideo": "About {distance} away • {category} • {when}",
-  "whyThisVideoFallback": "{category} • {when}",
+  "whyButton": "Why this video?",
+  "whyPanel": {
+    "title": "Why this video?",
+    "close": "Close relevance details",
+    "sort": {
+      "relevance": "The “For you” feed combines proximity, category, freshness, and useful feedback from the neighborhood.",
+      "chronological": "The feed is ordered by publication date, newest first."
+    },
+    "distance": "It was posted about {distance} from your search area (distance is rounded).",
+    "category": "“{category}” is one of the local topics in this feed.",
+    "freshness": "Posted: {when}.",
+    "useful": "Useful feedback from neighbors: {count}.",
+    "reducedCategory": "You chose to see less of this category, so it has lower priority in the “For you” feed."
+  },
   "play": "Play video",
   "pause": "Pause video",
   "showEntireVideo": "Show the entire video",

@@ -1,6 +1,6 @@
 'use client';
 
-import { CATEGORY_COLORS } from '@nl/shared';
+import { CATEGORY_COLORS, type FeedSort } from '@nl/shared';
 import Link from 'next/link';
 import { useFormatter, useLocale, useTranslations, useNow } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -23,6 +23,8 @@ interface Props {
   onToggleFit: () => void;
   autoplay: boolean;
   onToggleMute: () => void;
+  sortMode: FeedSort;
+  reducedCategory: boolean;
   onComments: (item: FeedItem) => void;
   onReport: (item: FeedItem) => void;
   onAuthRequired: () => void;
@@ -38,6 +40,8 @@ export function VideoCard({
   onToggleFit,
   autoplay,
   onToggleMute,
+  sortMode,
+  reducedCategory,
   onComments,
   onReport,
   onAuthRequired,
@@ -90,12 +94,14 @@ export function VideoCard({
   const [useful, setUseful] = useState({ reacted: item.reacted, count: item.usefulCount });
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [whyOpen, setWhyOpen] = useState(false);
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    if (active && autoplay && !shareOpen) void video.play().catch(() => setPaused(true));
-    if (!active || !autoplay || shareOpen) video.pause();
-  }, [active, autoplay, mediaReloadKey, shareOpen, src]);
+    if (active && autoplay && !shareOpen && !whyOpen)
+      void video.play().catch(() => setPaused(true));
+    if (!active || !autoplay || shareOpen || whyOpen) video.pause();
+  }, [active, autoplay, mediaReloadKey, shareOpen, src, whyOpen]);
 
   const requestMediaUrl = useCallback(async () => {
     const generation = ++mediaRequest.current.generation;
@@ -511,18 +517,13 @@ export function VideoCard({
               </span>
             )}
           </div>
-          <p className="text-[11px] text-white/75">
-            {distanceLabel
-              ? t('whyThisVideo', {
-                  distance: distanceLabel,
-                  category: tc(item.category),
-                  when: publishedWhen,
-                })
-              : t('whyThisVideoFallback', {
-                  category: tc(item.category),
-                  when: publishedWhen,
-                })}
-          </p>
+          <button
+            type="button"
+            onClick={() => setWhyOpen(true)}
+            className="min-h-11 w-fit rounded-lg px-1 text-left text-xs font-semibold text-white/80 underline underline-offset-4 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {t('whyButton')}
+          </button>
           {item.caption && (
             <div className="flex flex-col items-start gap-1">
               <p
@@ -672,6 +673,21 @@ export function VideoCard({
           >
             {t('sharePanel.copyLink')}
           </button>
+        </div>
+      </Sheet>
+      <Sheet
+        open={whyOpen}
+        title={t('whyPanel.title')}
+        onClose={() => setWhyOpen(false)}
+        closeLabel={t('whyPanel.close')}
+      >
+        <div className="space-y-3 text-sm text-white/85">
+          <p>{t(`whyPanel.sort.${sortMode}`)}</p>
+          {distanceLabel && <p>{t('whyPanel.distance', { distance: distanceLabel })}</p>}
+          <p>{t('whyPanel.category', { category: tc(item.category) })}</p>
+          <p>{t('whyPanel.freshness', { when: publishedWhen })}</p>
+          <p>{t('whyPanel.useful', { count: useful.count })}</p>
+          {reducedCategory && sortMode === 'relevance' && <p>{t('whyPanel.reducedCategory')}</p>}
         </div>
       </Sheet>
     </article>

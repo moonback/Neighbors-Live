@@ -7,7 +7,22 @@
     "label": "Filter by category",
     "all": "All",
     "radius": "Radius",
-    "reset": "Reset filters"
+    "reset": "Reset filters",
+    "reduceCategory": "Show fewer “{category}” videos",
+    "restoreCategory": "Stop reducing “{category}” videos"
+  },
+  "sections": {
+    "label": "Neighborhood topics",
+    "all": "All",
+    "alerts": "Alerts",
+    "events": "Events",
+    "help": "Mutual aid",
+    "offers": "Offers"
+  },
+  "sort": {
+    "label": "Feed order",
+    "relevance": "For you",
+    "chronological": "Newest"
   },
   "alerts": {
     "banner": "{count, plural, one {# nearby alert} other {# nearby alerts}}",

@@ -120,6 +120,13 @@ export const feedQuerySchema = z.object({
   lng: z.coerce.number(),
   radius: radiusSchema,
   category: categorySchema.optional(),
+  section: z.enum(['alerts', 'events', 'help', 'offers']).optional(),
+  sort: z.enum(['relevance', 'chronological']).default('relevance'),
+  reducedCategories: z
+    .string()
+    .optional()
+    .transform((value) => (value ? value.split(',') : []))
+    .pipe(z.array(categorySchema).max(6)),
   cursor: z.string().max(200).optional(),
 });
 
@@ -163,18 +170,35 @@ export interface FeedCursor {
   id: string;
   /** Reference time of the scores (ISO), so that pages stay consistent as time passes. */
   ref: string;
+  sort: 'relevance' | 'chronological';
 }
 
-/** Opaque feed cursor: base64url(JSON [score, id, refTime]). */
+/** Opaque feed cursor: base64url(JSON [score, id, refTime, sort]). */
 export const encodeCursor = (c: FeedCursor): string =>
-  Buffer.from(JSON.stringify([c.score, c.id, c.ref])).toString('base64url');
+  Buffer.from(JSON.stringify([c.score, c.id, c.ref, c.sort])).toString('base64url');
 
 const cursorTuple = z.tuple([z.number(), z.uuid(), z.iso.datetime({ offset: true })]);
+const sortedCursorTuple = z.tuple([
+  z.number(),
+  z.uuid(),
+  z.iso.datetime({ offset: true }),
+  z.enum(['relevance', 'chronological']),
+]);
 export function decodeCursor(cursor: string): FeedCursor | null {
   try {
-    const parsed = cursorTuple.safeParse(JSON.parse(Buffer.from(cursor, 'base64url').toString()));
-    return parsed.success
-      ? { score: parsed.data[0], id: parsed.data[1], ref: parsed.data[2] }
+    const data: unknown = JSON.parse(Buffer.from(cursor, 'base64url').toString());
+    const sorted = sortedCursorTuple.safeParse(data);
+    if (sorted.success) {
+      return {
+        score: sorted.data[0],
+        id: sorted.data[1],
+        ref: sorted.data[2],
+        sort: sorted.data[3],
+      };
+    }
+    const legacy = cursorTuple.safeParse(data);
+    return legacy.success
+      ? { score: legacy.data[0], id: legacy.data[1], ref: legacy.data[2], sort: 'relevance' }
       : null;
   } catch {
     return null;

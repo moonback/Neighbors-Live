@@ -57,10 +57,15 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
 
 **Lecture (feed / carte)**
 
-- `GET /api/feed?lat&lng&radius&category&cursor` → RPC `nearby_videos` (SECURITY DEFINER,
-  `ST_DWithin` sur `geography`, `status='active' AND expires_at > now()`), tri par score
-  (fraîcheur décroissante pondérée par « utile » et distance), pagination par curseur opaque
-  (`score,id`). La route signe en lot les URL vidéo/poster (TTL court) avec la clé service.
+- `GET /api/feed?lat&lng&radius&section&category&sort&reducedCategories&cursor` → RPC
+  `nearby_videos` (SECURITY DEFINER, `ST_DWithin` sur `geography`,
+  `status='active' AND expires_at > now()`). Le fil « Pour vous » classe les vidéos selon la
+  fraîcheur, la distance arrondie, les retours « utile » et une priorité explicite aux alertes,
+  événements, entraide et offres locales ; les préférences de réduction pénalisent une catégorie.
+  Les rubriques Alertes, Événements, Entraide et Offres (bons plans + commerces) sont filtrables,
+  et le mode chronologique reste disponible. La pagination encode le mode de tri dans un curseur
+  opaque (`score,id,ref,sort`). La route signe en lot les URL vidéo/poster (TTL court) avec la clé
+  service.
 - La position de la requête n'est ni stockée ni journalisée.
 - Le lien public `/v/[id]` affiche uniquement les vidéos encore publiables via un aperçu et des URL
   média signées à durée courte ; aucune coordonnée exacte n'est incluse. Le feed propose le partage
