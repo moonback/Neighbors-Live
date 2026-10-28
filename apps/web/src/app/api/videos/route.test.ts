@@ -57,6 +57,7 @@ describe('video reservation route', () => {
         merchantHours: 24,
         offerTerms: 'Hors boissons',
       }),
+      {},
     );
 
     expect(response.status).toBe(201);
