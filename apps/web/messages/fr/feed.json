@@ -4,7 +4,8 @@
   "filters": {
     "label": "Filtrer par catégorie",
     "all": "Tout",
-    "radius": "Rayon"
+    "radius": "Rayon",
+    "reset": "Réinitialiser les filtres"
   },
   "alerts": {
     "banner": "{count, plural, one {# alerte proche} other {# alertes proches}}",

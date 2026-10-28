@@ -73,5 +73,7 @@ export function useNeighborhoodFilters(initialRadius: number, initialCategory: C
     ready,
     setRadius: (nextRadius: number) => saveFilters({ radius: nextRadius, category }),
     setCategory: (nextCategory: Category | null) => saveFilters({ radius, category: nextCategory }),
+    reset: () => saveFilters({ radius: initialRadius, category: null }),
+    customized: radius !== initialRadius || category !== null,
   };
 }

@@ -3,7 +3,8 @@
   "filters": {
     "button": "Filtres",
     "title": "Filtres de la carte",
-    "active": "Filtres actifs"
+    "active": "Filtres actifs",
+    "reset": "Réinitialiser les filtres"
   },
   "locate": "Me localiser",
   "open": "Ouvrir dans le feed",

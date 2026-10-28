@@ -4,7 +4,8 @@
   "filters": {
     "label": "Filter by category",
     "all": "All",
-    "radius": "Radius"
+    "radius": "Radius",
+    "reset": "Reset filters"
   },
   "alerts": {
     "banner": "{count, plural, one {# nearby alert} other {# nearby alerts}}",

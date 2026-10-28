@@ -96,8 +96,26 @@ export function Feed({
     setRadius,
     category,
     setCategory,
+    reset: resetFilters,
+    customized: filtersCustomized,
     ready: filtersReady,
   } = useNeighborhoodFilters(initialRadius, initialCategory);
+  const clearCategoryQuery = () => {
+    if (!initialCategory) return;
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('category')) return;
+    params.delete('category');
+    const query = params.toString();
+    router.replace(query ? `/?${query}` : '/', { scroll: false });
+  };
+  const changeCategory = (nextCategory: Category | null) => {
+    setCategory(nextCategory);
+    clearCategoryQuery();
+  };
+  const handleResetFilters = () => {
+    resetFilters();
+    clearCategoryQuery();
+  };
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -280,7 +298,7 @@ export function Feed({
               lat={coords.lat}
               lng={coords.lng}
               radius={radius}
-              onShow={() => setCategory('alert')}
+              onShow={() => changeCategory('alert')}
             />
             <label className="sr-only" htmlFor="feed-radius">
               {t('filters.radius')}
@@ -311,7 +329,10 @@ export function Feed({
               </select>
             </div>
           </div>
-          <div ref={categoryMenuRef} className="relative w-fit max-w-full pl-0.5">
+          <div
+            ref={categoryMenuRef}
+            className="relative flex w-fit max-w-full items-center gap-2 pl-0.5"
+          >
             <button
               type="button"
               aria-label={`${t('filters.label')}: ${category ? tc(`categories.${category}`) : t('filters.all')}`}
@@ -357,7 +378,7 @@ export function Feed({
                 <FilterChip
                   active={category === null}
                   onClick={() => {
-                    setCategory(null);
+                    changeCategory(null);
                     setIsCategoryMenuOpen(false);
                   }}
                   className="w-full justify-start rounded-xl px-3"
@@ -369,7 +390,7 @@ export function Feed({
                     key={c}
                     active={category === c}
                     onClick={() => {
-                      setCategory(c);
+                      changeCategory(c);
                       setIsCategoryMenuOpen(false);
                     }}
                     className="w-full justify-start rounded-xl px-3"
@@ -379,6 +400,15 @@ export function Feed({
                   </FilterChip>
                 ))}
               </nav>
+            )}
+            {filtersCustomized && (
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="glass inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-white/90 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {t('filters.reset')}
+              </button>
             )}
           </div>
           {category === 'alert' && (
@@ -443,7 +473,7 @@ export function Feed({
           </Link>
           <div className="flex flex-wrap justify-center gap-2">
             {category && (
-              <Button variant="secondary" onClick={() => setCategory(null)}>
+              <Button variant="secondary" onClick={() => changeCategory(null)}>
                 {t('empty.clearCategory')}
               </Button>
             )}
