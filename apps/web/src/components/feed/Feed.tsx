@@ -11,7 +11,7 @@ import { Logo } from '@/components/Logo';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
-import { isVideoHidden } from '@/lib/hidden-videos';
+import { fetchHiddenVideoIds, isVideoHidden, readHiddenVideoIds } from '@/lib/hidden-videos';
 import { useLocation } from '@/lib/useLocation';
 import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
 import { AlertsBanner } from './AlertsBanner';
@@ -38,6 +38,7 @@ type VideoFit = 'cover' | 'contain';
 const VIDEO_FIT_KEY = 'nl-video-fit';
 const VIDEO_FIT_EVENT = 'nl-video-fit-change';
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const EMPTY_HIDDEN_IDS = new Set<string>();
 
 function getVideoFitSnapshot(): VideoFit {
   if (typeof window === 'undefined') return 'cover';
@@ -108,6 +109,10 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
   const [reportFor, setReportFor] = useState<string | null>(null);
   const [hiddenVersion, setHiddenVersion] = useState(0);
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(
+    () => new Set(signedIn ? readHiddenVideoIds() : []),
+  );
+  const serverHiddenIds = signedIn ? hiddenIds : EMPTY_HIDDEN_IDS;
   const autoplay = !prefersReducedMotion;
   const listRef = useRef<HTMLDivElement>(null);
   const categoryMenuRef = useRef<HTMLDivElement>(null);
@@ -132,10 +137,23 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   }, [isCategoryMenuOpen]);
 
   useEffect(() => {
-    const handle = () => setHiddenVersion((value) => value + 1);
+    const handle = () => {
+      setHiddenVersion((value) => value + 1);
+      if (!signedIn) return;
+      void fetchHiddenVideoIds()
+        .then((ids) => setHiddenIds(new Set(ids)))
+        .catch(() => setHiddenIds(new Set()));
+    };
     window.addEventListener('nl-hidden-videos-change', handle);
     return () => window.removeEventListener('nl-hidden-videos-change', handle);
-  }, []);
+  }, [signedIn]);
+
+  useEffect(() => {
+    if (!signedIn) return;
+    void fetchHiddenVideoIds()
+      .then((ids) => setHiddenIds(new Set(ids)))
+      .catch(() => setHiddenIds(new Set()));
+  }, [signedIn]);
 
   const lat = location.status === 'ok' ? location.lat : null;
   const lng = location.status === 'ok' ? location.lng : null;
@@ -169,8 +187,13 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       ]);
       if (!alive) return;
       if (!page?.ok) return setStatus('error');
-      const visible = page.data.items.filter((item) => !isVideoHidden(item.id));
-      const first = focused?.ok && !isVideoHidden(focused.data.id) ? [focused.data] : [];
+      const visible = page.data.items.filter(
+        (item) => !serverHiddenIds.has(item.id) && !isVideoHidden(item.id),
+      );
+      const first =
+        focused?.ok && !serverHiddenIds.has(focused.data.id) && !isVideoHidden(focused.data.id)
+          ? [focused.data]
+          : [];
       setItems([...first, ...visible.filter((i) => i.id !== focusId)]);
       setCursor(page.data.nextCursor);
       setActive(0);
@@ -181,7 +204,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
     return () => {
       alive = false;
     };
-  }, [fetchPage, filtersReady, focusId, lat, reloadKey, hiddenVersion]);
+  }, [fetchPage, filtersReady, focusId, lat, reloadKey, hiddenVersion, serverHiddenIds]);
 
   const loadMore = useCallback(async () => {
     if (!cursor || loadingMore.current) return;
@@ -192,12 +215,12 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       setItems((prev) => [
         ...prev,
         ...page.data.items
-          .filter((i) => !isVideoHidden(i.id))
+          .filter((i) => !serverHiddenIds.has(i.id) && !isVideoHidden(i.id))
           .filter((i) => !prev.some((p) => p.id === i.id)),
       ]);
       setCursor(page.data.nextCursor);
     }
-  }, [cursor, fetchPage]);
+  }, [cursor, fetchPage, serverHiddenIds]);
 
   const loadMoreRef = useRef(loadMore);
   useEffect(() => {

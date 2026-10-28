@@ -1,3 +1,5 @@
+import { api } from '@/lib/client-api';
+
 type StorageLike = Pick<Storage, 'getItem' | 'setItem'>;
 
 const STORAGE_KEY = 'nl-hidden-videos';
@@ -49,4 +51,28 @@ export function toggleHiddenVideo(videoId: string, storage?: StorageLike | null)
   }
 
   return { hidden: !exists, ids: next };
+}
+
+export async function fetchHiddenVideoIds(): Promise<string[]> {
+  const res = await api<{ ids: string[] }>('/api/me/hidden-videos');
+  if (!res.ok) throw new Error(`Could not load hidden videos: ${res.error}`);
+  return res.data.ids;
+}
+
+export async function fetchIsVideoHidden(videoId: string): Promise<boolean> {
+  const res = await api<{ hidden: boolean }>(
+    `/api/me/hidden-videos?videoId=${encodeURIComponent(videoId)}`,
+  );
+  if (!res.ok) throw new Error(`Could not read hidden video state: ${res.error}`);
+  return res.data.hidden;
+}
+
+export async function toggleHiddenVideoServer(videoId: string) {
+  const currentHidden = await fetchIsVideoHidden(videoId);
+  const res = await api<{ hidden: boolean; ids: string[] }>('/api/me/hidden-videos', {
+    method: currentHidden ? 'DELETE' : 'POST',
+    body: { videoId },
+  });
+  if (!res.ok) throw new Error(`Could not update hidden video state: ${res.error}`);
+  return res.data;
 }

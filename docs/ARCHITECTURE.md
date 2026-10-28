@@ -81,7 +81,8 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
 ## Modèle de données (résumé)
 
 `profiles` (pseudo unique, bio, couleur avatar, rôle `user|merchant|admin`, réputation, banni,
-réglages) · `videos` · `media_jobs` · `reactions` · `comments` · `reports` (unique par
+réglages) · `videos` · `media_jobs` · `reactions` · `saved_videos` et `hidden_videos` (listes privées
+par utilisateur, accessibles via des routes authentifiées et policies RLS) · `comments` · `reports` (unique par
 vidéo+reporter) · `moderation_actions` (append-only : aucun UPDATE/DELETE, même service) ·
 `appeals` · `zone_moderators(user_id, h3_cell)` · `push_subscriptions` · `merchant_profiles` ·
 `rate_limits(key, window_start, count)` · `notification_outbox`.

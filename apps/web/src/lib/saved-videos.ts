@@ -1,12 +1,17 @@
+import { api } from '@/lib/client-api';
+
 type StorageLike = Pick<Storage, 'getItem' | 'setItem'>;
 
 export type SavedVideoRecord = {
   id: string;
-  category?: string;
-  caption?: string;
-  posterUrl?: string;
-  authorName?: string;
+  category?: string | null;
+  caption?: string | null;
+  posterUrl?: string | null;
+  authorName?: string | null;
   savedAt: number;
+  status?: string | null;
+  publishedAt?: string | null;
+  expiresAt?: string | null;
 };
 
 const STORAGE_KEY = 'nl-saved-videos';
@@ -25,7 +30,7 @@ function normalizeSavedVideos(raw: unknown): SavedVideoRecord[] {
   if (!Array.isArray(raw)) return [];
 
   return raw
-    .map((entry) => {
+    .map((entry): SavedVideoRecord | null => {
       if (typeof entry === 'string') {
         return { id: entry, savedAt: Date.now() };
       }
@@ -39,6 +44,9 @@ function normalizeSavedVideos(raw: unknown): SavedVideoRecord[] {
         posterUrl: typeof candidate.posterUrl === 'string' ? candidate.posterUrl : undefined,
         authorName: typeof candidate.authorName === 'string' ? candidate.authorName : undefined,
         savedAt: typeof candidate.savedAt === 'number' ? candidate.savedAt : Date.now(),
+        status: typeof candidate.status === 'string' ? candidate.status : null,
+        publishedAt: typeof candidate.publishedAt === 'string' ? candidate.publishedAt : null,
+        expiresAt: typeof candidate.expiresAt === 'string' ? candidate.expiresAt : null,
       };
     })
     .filter((entry): entry is SavedVideoRecord => entry !== null);
@@ -98,4 +106,31 @@ export function toggleSavedVideo(
     item: next.find((item) => item.id === videoId) ?? null,
     items: next,
   };
+}
+
+export async function fetchSavedVideos(): Promise<SavedVideoRecord[]> {
+  const res = await api<{ videos: SavedVideoRecord[] }>('/api/me/saved-videos');
+  if (!res.ok) throw new Error(`Could not load saved videos: ${res.error}`);
+  return res.data.videos;
+}
+
+export async function fetchIsVideoSaved(videoId: string): Promise<boolean> {
+  const res = await api<{ saved: boolean }>(
+    `/api/me/saved-videos?videoId=${encodeURIComponent(videoId)}`,
+  );
+  if (!res.ok) throw new Error(`Could not read saved video state: ${res.error}`);
+  return res.data.saved;
+}
+
+export async function toggleSavedVideoServer(videoId: string) {
+  const currentSaved = await fetchIsVideoSaved(videoId);
+  const res = await api<{ saved: boolean; ids: string[]; item: SavedVideoRecord | null }>(
+    '/api/me/saved-videos',
+    {
+      method: currentSaved ? 'DELETE' : 'POST',
+      body: { videoId },
+    },
+  );
+  if (!res.ok) throw new Error(`Could not update saved video state: ${res.error}`);
+  return res.data;
 }

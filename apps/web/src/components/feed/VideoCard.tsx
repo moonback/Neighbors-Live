@@ -7,8 +7,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
-import { isVideoHidden, toggleHiddenVideo } from '@/lib/hidden-videos';
-import { isVideoSaved, toggleSavedVideo } from '@/lib/saved-videos';
+import { fetchIsVideoHidden, toggleHiddenVideoServer, isVideoHidden } from '@/lib/hidden-videos';
+import { fetchIsVideoSaved, toggleSavedVideoServer, isVideoSaved } from '@/lib/saved-videos';
 import { formatDistance } from './format';
 
 interface Props {
@@ -54,14 +54,37 @@ export function VideoCard({
   const [usefulPending, setUsefulPending] = useState(false);
   const [saved, setSaved] = useState(() => isVideoSaved(item.id));
   const [hidden, setHidden] = useState(() => isVideoHidden(item.id));
+  const [collectionPending, setCollectionPending] = useState<'saved' | 'hidden' | null>(null);
   const [progress, setProgress] = useState(0);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!signedIn) return;
+
+    let active = true;
+    void Promise.all([fetchIsVideoSaved(item.id), fetchIsVideoHidden(item.id)])
+      .then(([isSaved, isHidden]) => {
+        if (!active) return;
+        setSaved(isSaved);
+        setHidden(isHidden);
+      })
+      .catch(() => {
+        if (active) {
+          setToast(t('collectionReadError'));
+          setTimeout(() => setToast(null), 3000);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [item.id, signedIn, t]);
   const mediaRetries = useRef(0);
   const mediaRequest = useRef<{
     generation: number;
     controller: AbortController | null;
   }>({ generation: 0, controller: null });
   const [useful, setUseful] = useState({ reacted: item.reacted, count: item.usefulCount });
-  const [toast, setToast] = useState<string | null>(null);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   useEffect(() => {
     const video = ref.current;
@@ -172,22 +195,39 @@ export function VideoCard({
   }
 
   async function toggleSave() {
-    const next = toggleSavedVideo(item.id, {
-      category: item.category,
-      caption: item.caption || undefined,
-      posterUrl: item.posterUrl || undefined,
-      authorName: item.author.username || undefined,
-    });
-    setSaved(next.saved);
-    setToast(next.saved ? t('saveToast') : t('unsaveToast'));
-    setTimeout(() => setToast(null), 2000);
+    if (!signedIn) return onAuthRequired();
+
+    if (collectionPending) return;
+    setCollectionPending('saved');
+    try {
+      const next = await toggleSavedVideoServer(item.id);
+      setSaved(next.saved);
+      setToast(next.saved ? t('saveToast') : t('unsaveToast'));
+      window.dispatchEvent(new Event('nl-saved-videos-change'));
+    } catch {
+      setToast(t('saveError'));
+    } finally {
+      setCollectionPending(null);
+      setTimeout(() => setToast(null), 2000);
+    }
   }
 
   async function toggleHide() {
-    const next = toggleHiddenVideo(item.id);
-    setHidden(next.hidden);
-    setToast(next.hidden ? t('hideToast') : t('unhideToast'));
-    setTimeout(() => setToast(null), 2000);
+    if (!signedIn) return onAuthRequired();
+
+    if (collectionPending) return;
+    setCollectionPending('hidden');
+    try {
+      const next = await toggleHiddenVideoServer(item.id);
+      setHidden(next.hidden);
+      setToast(next.hidden ? t('hideToast') : t('unhideToast'));
+      window.dispatchEvent(new Event('nl-hidden-videos-change'));
+    } catch {
+      setToast(t('hideError'));
+    } finally {
+      setCollectionPending(null);
+      setTimeout(() => setToast(null), 2000);
+    }
   }
 
   async function share() {
@@ -427,12 +467,14 @@ export function VideoCard({
           label={saved ? t('saved') : t('save')}
           pressed={saved}
           onClick={toggleSave}
+          disabled={collectionPending !== null}
           icon="M7 4.5h10a1.5 1.5 0 011.5 1.5v14l-6.5-4.2-6.5 4.2V6A1.5 1.5 0 017 4.5z"
         />
         <ActionButton
           label={hidden ? t('hidden') : t('hide')}
           pressed={hidden}
           onClick={toggleHide}
+          disabled={collectionPending !== null}
           icon="M3 3l18 18M10.5 10.5A2.5 2.5 0 0013.5 13.5M9 6.7A9.7 9.7 0 0112 6c4.2 0 7.9 2.5 9.5 6-.8 1.6-2.2 3-3.9 4.1M6.6 7.5A16.2 16.2 0 002.5 12c1.6 3.5 5.3 6 9.5 6a11 11 0 004.1-.8"
         />
         <ActionButton

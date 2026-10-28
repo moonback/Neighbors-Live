@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { Avatar } from '@/components/Avatar';
+import { HiddenVideos } from '@/components/profile/HiddenVideos';
 import { MyVideos } from '@/components/profile/MyVideos';
 import { SavedVideos } from '@/components/profile/SavedVideos';
 import { signMedia } from '@/lib/media';
@@ -139,7 +140,7 @@ export default async function ProfilePage({ params }: Params) {
           </p>
         )}
         {isOwner && (
-          <nav className="relative mt-2 grid w-full max-w-sm grid-cols-3 gap-2 text-sm">
+          <nav className="relative mt-2 grid w-full max-w-sm grid-cols-2 gap-2 text-sm sm:grid-cols-4">
             <Link
               href="/parametres"
               className="glow inline-flex min-h-11 items-center justify-center rounded-2xl bg-accent px-4 font-semibold text-white"
@@ -151,6 +152,12 @@ export default async function ProfilePage({ params }: Params) {
               className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 font-semibold hover:border-accent/60"
             >
               {t('savedVideos')}
+            </Link>
+            <Link
+              href="/me/masquees"
+              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 font-semibold hover:border-accent/60"
+            >
+              {t('hiddenVideos')}
             </Link>
             <Link
               href="/me/decisions"
@@ -205,6 +212,7 @@ export default async function ProfilePage({ params }: Params) {
       {isOwner && (
         <>
           <SavedVideos />
+          <HiddenVideos />
           <MyVideos />
         </>
       )}

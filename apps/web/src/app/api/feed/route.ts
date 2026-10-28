@@ -34,7 +34,17 @@ export const GET = route(async (req) => {
     }),
   );
   const user = await getUser();
-  const items = await hydrate(rows as PublicVideoRow[], user?.id ?? null);
+  const hiddenIds = new Set<string>();
+  if (user?.id) {
+    const { data } = await adminClient()
+      .from('hidden_videos' as never)
+      .select('video_id')
+      .eq('user_id', user.id);
+    for (const row of data ?? []) hiddenIds.add((row as { video_id: string }).video_id);
+  }
+  const items = (await hydrate(rows as PublicVideoRow[], user?.id ?? null)).filter(
+    (item) => !hiddenIds.has(item.id),
+  );
   const last = rows.at(-1);
   const nextCursor =
     rows.length === limit && last ? encodeCursor({ score: last.score, id: last.id, ref }) : null;

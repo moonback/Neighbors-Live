@@ -12,7 +12,7 @@ select is(
 
 select tables_are('public', array[
   'app_config', 'profiles', 'user_settings', 'merchant_profiles', 'videos', 'media_jobs',
-  'notification_outbox', 'reactions', 'comments', 'reports', 'zone_moderators',
+  'notification_outbox', 'reactions', 'saved_videos', 'hidden_videos', 'comments', 'reports', 'zone_moderators',
   'moderation_actions', 'appeals', 'push_subscriptions', 'rate_limits'
 ]);
 

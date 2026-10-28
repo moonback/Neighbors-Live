@@ -100,6 +100,32 @@ select tests.authenticate_as((select mallory from ids));
 select throws_ok($$insert into public.reactions (video_id, user_id) values ((select active_v from vids), auth.uid())$$, '42501', null, 'reactions: banned user cannot react');
 select tests.clear_authentication();
 
+-- ----------------------------------------------------------- saved / hidden videos
+select tests.authenticate_as((select alice from ids));
+insert into public.saved_videos (user_id, video_id) values (auth.uid(), (select active_v from vids));
+insert into public.hidden_videos (user_id, video_id) values (auth.uid(), (select active_v from vids));
+select is((select count(*)::integer from public.saved_videos), 1, 'saved_videos_read_own: owner sees saved video');
+select is((select count(*)::integer from public.hidden_videos), 1, 'hidden_videos_read_own: owner sees hidden video');
+select throws_ok($$insert into public.saved_videos (user_id, video_id) values ((select bob from ids), (select active_v from vids))$$, '42501', null, 'saved_videos_write_own: cannot save as another user');
+select throws_ok($$insert into public.hidden_videos (user_id, video_id) values ((select bob from ids), (select active_v from vids))$$, '42501', null, 'hidden_videos_write_own: cannot hide as another user');
+select throws_ok($$insert into public.saved_videos (user_id, video_id) values (auth.uid(), (select hidden_v from vids))$$, '42501', null, 'saved_videos_write_own: hidden video cannot be saved');
+select tests.authenticate_as((select bob from ids));
+select is((select count(*)::integer from public.saved_videos), 0, 'saved_videos_read_own: other users cannot see saves');
+select is((select count(*)::integer from public.hidden_videos), 0, 'hidden_videos_read_own: other users cannot see hidden videos');
+delete from public.saved_videos;
+delete from public.hidden_videos;
+select tests.clear_authentication();
+select is((select count(*)::integer from public.saved_videos), 1, 'saved_videos_delete_own: cannot delete another user save');
+select is((select count(*)::integer from public.hidden_videos), 1, 'hidden_videos_delete_own: cannot restore another user video');
+select tests.authenticate_anon();
+select throws_ok($$select * from public.saved_videos$$, '42501', null, 'saved_videos: anonymous access denied');
+select throws_ok($$select * from public.hidden_videos$$, '42501', null, 'hidden_videos: anonymous access denied');
+select tests.clear_authentication();
+select tests.authenticate_as((select mallory from ids));
+select throws_ok($$insert into public.saved_videos (user_id, video_id) values (auth.uid(), (select active_v from vids))$$, '42501', null, 'saved_videos: banned user cannot save');
+select throws_ok($$insert into public.hidden_videos (user_id, video_id) values (auth.uid(), (select active_v from vids))$$, '42501', null, 'hidden_videos: banned user cannot hide');
+select tests.clear_authentication();
+
 -- ---------------------------------------------------------------- comments
 select tests.authenticate_as((select bob from ids));
 insert into public.comments (video_id, author_id, body) values ((select active_v from vids), (select bob from ids), 'Merci !');
