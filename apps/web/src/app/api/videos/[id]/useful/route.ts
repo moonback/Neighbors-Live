@@ -5,7 +5,12 @@ import { createClient } from '@/lib/supabase/server';
 type Ctx = { params: Promise<{ id: string }> };
 
 async function usefulCount(supabase: Awaited<ReturnType<typeof createClient>>, id: string) {
-  const { data } = await supabase.from('videos').select('useful_count').eq('id', id).maybeSingle();
+  const { data, error } = await supabase
+    .from('videos')
+    .select('useful_count')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) unwrap({ data, error });
   return data?.useful_count ?? 0;
 }
 
