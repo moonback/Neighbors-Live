@@ -79,13 +79,21 @@ export function MyVideos() {
   }
 
   if (loadError) return <Notice kind="error">{loadError}</Notice>;
-  if (!videos || videos.length === 0) return null;
+  if (!videos) return <p role="status" className="text-sm text-fog">{t('collectionLoading')}</p>;
   return (
     <section aria-labelledby="my-videos" className="flex flex-col gap-3">
-      <h2 id="my-videos" className="text-lg font-semibold">
-        {t('myVideos')}
-      </h2>
+      <div>
+        <h2 id="my-videos" className="text-lg font-semibold">
+          {t('myVideos')}
+        </h2>
+        <p className="mt-1 text-sm text-fog">{t('myVideosDescription')}</p>
+      </div>
       {message && <Notice kind={message.kind}>{message.text}</Notice>}
+      {videos.length === 0 && (
+        <div className="rounded-2xl border border-line bg-panel p-4 text-sm text-fog">
+          <p>{t('emptyMyVideos')}</p>
+        </div>
+      )}
       <ul className="flex flex-col gap-2" aria-live="polite">
         {videos.map((v) => (
           <li
@@ -105,6 +113,14 @@ export function MyVideos() {
               <p className="text-xs text-fog">
                 {t(`status.${v.status}`)} · {format.relativeTime(new Date(v.created_at), now)}
               </p>
+              {v.status === 'hidden' || v.status === 'removed' || v.status === 'rejected' ? (
+                <a
+                  href="/me/decisions"
+                  className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  {t('viewModerationDecision')}
+                </a>
+              ) : null}
             </div>
             {v.status !== 'removed' && (
               <Button variant="ghost" className="text-sm" onClick={() => withdraw(v.id)}>
