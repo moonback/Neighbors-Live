@@ -8,6 +8,8 @@ Validation du jalon actuel : 2026-10-28 — la portée des alertes est conforme 
 
 Mise à jour 2026-10-28 — le panneau de commentaires du feed s’ouvre désormais ancré en bas de l’écran et occupe toute la largeur, y compris sur desktop, avec une hauteur maximale et un contenu défilable. Les autres panneaux conservent leur positionnement existant. Typecheck, 100 tests workspace, build, ESLint et Prettier ciblés réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`. Rendu visuel navigateur et appareil réel non vérifiés.
 
+Mise à jour 2026-10-28 — les filtres de catégorie du feed desktop sont remontés sur la ligne supérieure, entre les alertes et le rayon ; la disposition mobile reste inchangée. Validation visuelle navigateur non effectuée.
+
 Mise à jour 2026-10-28 — feed desktop (≥1024 px) : carte pleine scène avec colonne vidéo 9:16 centrée sur fond flouté, logo/filtres en haut à gauche, rayon en haut à droite, auteur/légende en bas à gauche, actions à l’extrême droite, flèches précédent/suivant à côté de la vidéo, barre de contrôle (lecture, temps, son, ajustement) et progression en bas. Mobile inchangé. Typecheck, 100 tests, build, ESLint et Prettier ciblés réussis ; rendu vérifié dans le navigateur avec des données simulées (pas de Supabase local), lecture vidéo réelle non vérifiée.
 
 Jalon capture : 2026-10-28 — l’écran d’erreur caméra propose désormais un bouton explicite de réessai, afin de reprendre le flux sans quitter l’écran ni perdre le contexte. Typecheck et tests application validés.
