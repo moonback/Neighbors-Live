@@ -45,6 +45,7 @@ select ok(has_function_privilege('anon', 'public.nearby_videos(double precision,
 
 -- Private buckets and scheduled expiry.
 select is((select count(*)::integer from storage.buckets where id in ('raw-videos', 'videos') and not public), 2, 'video buckets are private');
+select is((select count(*)::integer from storage.buckets where id in ('raw-videos', 'videos') and file_size_limit = 524288000), 2, 'video buckets allow uploads up to 500 MiB');
 select is((select count(*)::integer from cron.job where jobname = 'expire-videos'), 1, 'expire_videos is scheduled with pg_cron');
 
 -- Signup trigger creates profile + settings.

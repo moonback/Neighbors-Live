@@ -9,6 +9,7 @@ import {
   haversineMeters,
   isPlausibleMove,
   isPlausiblePosition,
+  MAX_UPLOAD_BYTES,
   moderationDecisionSchema,
   passwordSchema,
   signUpSchema,
@@ -96,6 +97,16 @@ describe('lifetime', () => {
 describe('schemas', () => {
   it('accepts a valid video and sanitises the caption', () => {
     expect(createVideoSchema.parse(baseVideo).caption).toBe('Pain au chocolat à 1 €');
+  });
+
+  it('accepts video uploads up to 500 MiB and rejects larger files', () => {
+    expect(MAX_UPLOAD_BYTES).toBe(500 * 1024 * 1024);
+    expect(createVideoSchema.safeParse({ ...baseVideo, sizeBytes: MAX_UPLOAD_BYTES }).success).toBe(
+      true,
+    );
+    expect(
+      createVideoSchema.safeParse({ ...baseVideo, sizeBytes: MAX_UPLOAD_BYTES + 1 }).success,
+    ).toBe(false);
   });
 
   it('sanitises and validates structured offer terms', () => {

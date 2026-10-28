@@ -21,7 +21,7 @@ export const MAX_ACCURACY_M = 100;
 export const CAPTION_MAX = 140;
 export const COMMENT_MAX = 280;
 export const BIO_MAX = 160;
-export const MAX_UPLOAD_BYTES = 60 * 1024 * 1024;
+export const MAX_UPLOAD_BYTES = 500 * 1024 * 1024;
 
 /** H3 resolution of moderation zones ("quartiers"), ~0.74 km² per cell. */
 export const H3_ZONE_RES = 8;

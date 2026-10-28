@@ -31,8 +31,8 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
    cohérence position (bornes, précision, pas de saut physiquement impossible depuis la dernière
    publication de l'auteur), rate limit, calcul `h3_cell` (h3-js, rés. 8) → insère `videos`
    (`status='processing'`) et renvoie `video_id` + chemin d'upload `raw-videos/<uid>/<video_id>`.
-3. Client : upload TUS résumable (Supabase Storage) avec le JWT de l'utilisateur ; policy storage :
-   insertion uniquement dans son propre dossier, pas de lecture.
+3. Client : upload TUS résumable (Supabase Storage), jusqu’à 500 MiB, avec le JWT de l'utilisateur ;
+   policy storage : insertion uniquement dans son propre dossier, pas de lecture.
 4. Trigger sur `storage.objects` (bucket `raw-videos`) → insère `media_jobs(kind='process')` et
    `pg_notify`.
 5. Hors ligne : la vidéo + métadonnées vont dans IndexedDB ; au retour réseau, la position est
