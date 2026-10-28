@@ -82,11 +82,11 @@ export function AppShell({
   const showNavigation = !workspace && !immersive;
 
   return (
-    <div className="app-shell min-h-dvh lg:flex">
+    <div className="app-shell min-h-dvh lg:flex lg:gap-4 lg:px-4 lg:py-4">
       {showNavigation && (
-        <aside className="app-sidebar sticky top-0 hidden h-dvh w-52 shrink-0 flex-col px-2.5 py-4 lg:flex">
-          <Link href="/" aria-label={t('appName')} className="mb-5 px-2">
-            <Logo name={t('appName')} tagline={t('slogan')} size={30} />
+        <aside className="app-sidebar sticky top-0 hidden h-dvh w-[17.5rem] shrink-0 flex-col px-3 py-4 lg:flex">
+          <Link href="/" aria-label={t('appName')} className="mb-5 px-2 pt-1">
+            <Logo name={t('appName')} tagline={t('slogan')} size={28} />
           </Link>
           <nav aria-label={t('nav.label')} className="flex flex-col gap-3">
             <section>
@@ -167,7 +167,7 @@ export function AppShell({
       )}
       <main
         id="main"
-        className={`app-main min-h-dvh min-w-0 flex-1 ${showNavigation ? 'pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0' : ''}`}
+        className={`app-main min-h-dvh min-w-0 flex-1 ${showNavigation ? 'pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] lg:flex lg:items-start lg:justify-center lg:pb-0' : ''}`}
       >
         {children}
       </main>
