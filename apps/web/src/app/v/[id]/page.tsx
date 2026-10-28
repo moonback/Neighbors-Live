@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
-import { getFormatter } from 'next-intl/server';
+import { getFormatter, getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { hydrate, type PublicVideoRow } from '@/lib/feed';
 import { getOfferStatus } from '@/lib/offer-status';
