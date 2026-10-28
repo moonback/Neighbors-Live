@@ -58,5 +58,11 @@
   "withdraw": "Delete my video",
   "withdrawConfirm": "Permanently delete this video? Its files will be deleted and this action cannot be undone.",
   "withdrawn": "Video removed.",
-  "notFound": "This profile does not exist."
+  "notFound": "This profile does not exist.",
+  "tabs": {
+    "videos": "Videos",
+    "status": "Posts",
+    "saved": "Favorites",
+    "hidden": "Hidden"
+  }
 }

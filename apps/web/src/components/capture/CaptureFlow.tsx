@@ -346,7 +346,10 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
           <Notice kind="success">
             {step === 'done' ? t('form.processing') : t('offline.queued')}
           </Notice>
-          <Link href="/me" className="rounded-xl bg-accent px-4 py-3 font-semibold text-ink">
+          <Link
+            href="/me?tab=status"
+            className="rounded-xl bg-accent px-4 py-3 font-semibold text-ink"
+          >
             {t('form.seeStatus')}
           </Link>
           <Button

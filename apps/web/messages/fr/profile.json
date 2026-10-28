@@ -58,5 +58,11 @@
   "withdraw": "Supprimer ma vidéo",
   "withdrawConfirm": "Supprimer définitivement cette vidéo ? Ses fichiers seront supprimés et cette action ne pourra pas être annulée.",
   "withdrawn": "Vidéo retirée.",
-  "notFound": "Ce profil n’existe pas."
+  "notFound": "Ce profil n’existe pas.",
+  "tabs": {
+    "videos": "Vidéos",
+    "status": "Publications",
+    "saved": "Favoris",
+    "hidden": "Masquées"
+  }
 }

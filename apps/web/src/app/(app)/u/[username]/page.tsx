@@ -11,15 +11,21 @@ import { getViewer } from '@/lib/session';
 import { profileImageUrl } from '@/lib/profile-image';
 import { adminClient } from '@/lib/supabase/admin';
 
-type Params = { params: Promise<{ username: string }> };
+type Params = {
+  params: Promise<{ username: string }>;
+  searchParams: Promise<{ tab?: string }>;
+};
+
+const OWNER_TABS = ['videos', 'status', 'saved', 'hidden'] as const;
+type Tab = (typeof OWNER_TABS)[number];
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { username } = await params;
   return { title: (await getTranslations('profile'))('title', { username }) };
 }
 
-export default async function ProfilePage({ params }: Params) {
-  const { username } = await params;
+export default async function ProfilePage({ params, searchParams }: Params) {
+  const [{ username }, { tab: rawTab }] = await Promise.all([params, searchParams]);
   const admin = adminClient();
   const { data: profile } = await admin
     .from('profiles')
@@ -58,92 +64,91 @@ export default async function ProfilePage({ params }: Params) {
     getFormatter(),
   ]);
   const isOwner = viewer?.id === profile.id;
+  const tabs: readonly Tab[] = isOwner ? OWNER_TABS : ['videos'];
+  const tab: Tab = tabs.find((x) => x === rawTab) ?? 'videos';
   const list = videos.data ?? [];
   const merchantData = merchant && !merchant.error ? merchant.data : null;
   const posters = await signMedia(list.map((v) => v.poster_path));
   const isModerator = (zones.count ?? 0) > 0;
   const since = format.dateTime(new Date(profile.created_at), { month: 'long', year: 'numeric' });
+  const avatarSrc = profileImageUrl(profile.avatar_path);
+  const base = `/u/${username}`;
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-5 p-3 pb-8 sm:p-5">
-      <header className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-panel/80">
-        {profile.cover_path ? (
-          // eslint-disable-next-line @next/next/no-img-element -- public profile image URL
-          <img
-            src={profileImageUrl(profile.cover_path) ?? undefined}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-x-0 top-0 h-16 w-full object-cover sm:h-20"
-          />
-        ) : null}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/30 to-panel sm:h-20"
-        />
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-12 bg-accent/20 blur-2xl" />
-        <div className="relative flex flex-col gap-3 px-3 pb-3 pt-9 sm:gap-4 sm:px-5 sm:pb-4">
-          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-            <span className="glow shrink-0 rounded-full bg-accent p-0.5">
-              <span className="block rounded-full bg-ink p-0.5">
-                <Avatar
-                  username={profile.username}
-                  color={profile.avatar_color}
-                  size={64}
-                  src={profileImageUrl(profile.avatar_path)}
-                />
-              </span>
-            </span>
-            <div className="min-w-0 flex-1">
-              <h1 className="truncate text-xl font-bold sm:text-2xl">@{profile.username}</h1>
-              <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]">
-                {isModerator && (
-                  <span className="rounded-full bg-accent px-2 py-0.5 font-semibold text-white">
-                    {tc('badges.moderator')}
-                  </span>
-                )}
-                {profile.role === 'merchant' && (
-                  <span className="rounded-full bg-amber-400 px-2 py-0.5 font-semibold text-ink">
-                    {tc('badges.merchant')}
-                  </span>
-                )}
-                {profile.role === 'admin' && (
-                  <span className="rounded-full bg-fog px-2 py-0.5 font-semibold text-ink">
-                    {tc('badges.admin')}
-                  </span>
-                )}
-              </div>
-              <p className="mt-1 truncate text-xs text-fog">{t('memberSince', { date: since })}</p>
-            </div>
-            <dl className="hidden shrink-0 divide-x divide-white/10 rounded-xl border border-white/[0.07] bg-black/10 sm:flex">
-              <div className="px-3 py-2 text-center">
-                <dd className="text-lg font-bold tabular-nums">{list.length}</dd>
-                <dt className="text-[11px] text-fog">{t('activeVideos')}</dt>
-              </div>
-              <div className="px-3 py-2 text-center">
-                <dd className="text-lg font-bold tabular-nums">{profile.reputation}</dd>
-                <dt className="text-[11px] text-fog">{t('reputation')}</dt>
-              </div>
-            </dl>
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 pb-8 sm:px-6 sm:py-8">
+      <header className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:gap-8 sm:text-left">
+        <span className="shrink-0">
+          <span className="sm:hidden">
+            <Avatar
+              username={profile.username}
+              color={profile.avatar_color}
+              size={96}
+              src={avatarSrc}
+            />
+          </span>
+          <span className="hidden sm:inline">
+            <Avatar
+              username={profile.username}
+              color={profile.avatar_color}
+              size={180}
+              src={avatarSrc}
+            />
+          </span>
+        </span>
+
+        <div className="flex min-w-0 flex-col items-center gap-3 sm:items-start sm:pt-2">
+          <div className="flex min-w-0 flex-wrap items-baseline justify-center gap-x-3 gap-y-1 sm:justify-start">
+            <h1 className="truncate text-xl font-bold sm:text-2xl">@{profile.username}</h1>
+            <span className="text-sm text-fog">{t('memberSince', { date: since })}</span>
           </div>
 
-          <dl className="grid grid-cols-2 divide-x divide-white/10 rounded-xl border border-white/[0.07] bg-black/10 sm:hidden">
-            <div className="flex items-center justify-center gap-2 px-2 py-1.5">
-              <dd className="text-sm font-bold tabular-nums">{list.length}</dd>
-              <dt className="text-xs text-fog">{t('activeVideos')}</dt>
+          {(isModerator || profile.role === 'merchant' || profile.role === 'admin') && (
+            <div className="flex flex-wrap justify-center gap-1.5 text-[11px] sm:justify-start">
+              {isModerator && (
+                <span className="rounded-full bg-accent px-2 py-0.5 font-semibold text-white">
+                  {tc('badges.moderator')}
+                </span>
+              )}
+              {profile.role === 'merchant' && (
+                <span className="rounded-full bg-amber-400 px-2 py-0.5 font-semibold text-ink">
+                  {tc('badges.merchant')}
+                </span>
+              )}
+              {profile.role === 'admin' && (
+                <span className="rounded-full bg-fog px-2 py-0.5 font-semibold text-ink">
+                  {tc('badges.admin')}
+                </span>
+              )}
             </div>
-            <div className="flex items-center justify-center gap-2 px-2 py-1.5">
-              <dd className="text-sm font-bold tabular-nums">{profile.reputation}</dd>
-              <dt className="text-xs text-fog">{t('reputation')}</dt>
+          )}
+
+          <dl className="flex gap-5 text-sm sm:text-base">
+            <div className="flex items-baseline gap-1.5">
+              <dd className="font-bold tabular-nums">{list.length}</dd>
+              <dt className="text-fog">{t('activeVideos')}</dt>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <dd className="font-bold tabular-nums">{profile.reputation}</dd>
+              <dt className="text-fog">{t('reputation')}</dt>
             </div>
           </dl>
 
+          {isOwner && (
+            <nav aria-label={t('profileActions')} className="flex flex-wrap justify-center gap-2">
+              <ProfileAction href="/parametres" primary>
+                {t('edit')}
+              </ProfileAction>
+              <ProfileAction href="/me/decisions">{t('decisions')}</ProfileAction>
+            </nav>
+          )}
+
           {profile.bio && (
-            <p className="line-clamp-2 whitespace-pre-line text-sm leading-snug text-white/85 sm:max-w-2xl">
+            <p className="max-w-xl whitespace-pre-line text-sm leading-snug text-white/85">
               {profile.bio}
             </p>
           )}
           {merchantData && (
-            <div className="flex flex-wrap gap-1.5 text-xs text-fog">
+            <div className="flex flex-wrap justify-center gap-1.5 text-xs text-fog sm:justify-start">
               {merchantData.website && (
                 <a
                   href={merchantData.website}
@@ -169,69 +174,76 @@ export default async function ProfilePage({ params }: Params) {
               )}
             </div>
           )}
-          {isOwner && (
-            <nav
-              aria-label={t('profileActions')}
-              className="grid grid-cols-2 gap-1.5 text-xs sm:flex sm:flex-wrap"
-            >
-              <ProfileAction href="/parametres" primary>
-                {t('edit')}
-              </ProfileAction>
-              <ProfileAction href="/me/sauvegardes">{t('savedVideos')}</ProfileAction>
-              <ProfileAction href="/me/masquees">{t('hiddenVideos')}</ProfileAction>
-              <ProfileAction href="/me/decisions">{t('decisions')}</ProfileAction>
-            </nav>
-          )}
         </div>
       </header>
 
-      <section aria-labelledby="active-videos" className="flex flex-col gap-3">
-        <h2
-          id="active-videos"
-          className="w-fit border-b-2 border-accent pb-2 text-base font-semibold"
-        >
-          {t('activeVideos')}
-        </h2>
-        {list.length === 0 ? (
-          <p className="text-fog">{t('noVideos')}</p>
+      <nav className="flex overflow-x-auto border-b border-white/10">
+        {tabs.map((key) => (
+          <Link
+            key={key}
+            href={key === 'videos' ? base : `${base}?tab=${key}`}
+            aria-current={key === tab ? 'page' : undefined}
+            scroll={false}
+            className={`-mb-px flex min-h-11 flex-1 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent sm:flex-none sm:px-8 sm:text-base ${
+              key === tab
+                ? 'border-white text-white'
+                : 'border-transparent text-fog hover:text-white'
+            }`}
+          >
+            {t(`tabs.${key}`)}
+          </Link>
+        ))}
+      </nav>
+
+      {tab === 'videos' &&
+        (list.length === 0 ? (
+          <p className="py-10 text-center text-fog">{t('noVideos')}</p>
         ) : (
-          <ul className="grid grid-cols-3 gap-2 sm:gap-3">
+          <ul
+            aria-label={t('activeVideos')}
+            className="-mx-4 grid grid-cols-3 gap-0.5 sm:mx-0 sm:grid-cols-4 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6"
+          >
             {list.map((v) => {
               const poster = v.poster_path ? posters.get(v.poster_path) : undefined;
               return (
                 <li key={v.id}>
                   <Link
                     href={`/v/${v.id}`}
-                    className="relative block aspect-[9/16] overflow-hidden rounded-2xl bg-panel ring-1 ring-white/5 transition hover:ring-accent/60"
+                    className="group relative block aspect-[3/4] overflow-hidden bg-panel sm:rounded-lg"
                   >
                     {poster && (
                       // eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL
                       <img
                         src={poster}
                         alt=""
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
                       />
                     )}
-                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-1.5 text-[11px] leading-tight">
-                      <span className="font-semibold">{tc(`categories.${v.category}`)}</span>
-                      <span className="line-clamp-2 block text-fog">{v.caption}</span>
+                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-6 text-xs leading-tight">
+                      <span className="flex items-center gap-1 font-semibold">
+                        <svg
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="h-3.5 w-3.5 fill-current"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                        {tc(`categories.${v.category}`)}
+                      </span>
+                      <span className="mt-0.5 hidden truncate text-white/80 sm:block">
+                        {v.caption}
+                      </span>
                     </span>
                   </Link>
                 </li>
               );
             })}
           </ul>
-        )}
-      </section>
-
-      {isOwner && (
-        <>
-          <SavedVideos />
-          <HiddenVideos />
-          <MyVideos />
-        </>
-      )}
+        ))}
+      {tab === 'status' && <MyVideos />}
+      {tab === 'saved' && <SavedVideos />}
+      {tab === 'hidden' && <HiddenVideos />}
     </div>
   );
 }
@@ -248,10 +260,10 @@ function ProfileAction({
   return (
     <Link
       href={href}
-      className={`inline-flex min-h-10 items-center justify-center rounded-xl px-3 text-center font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:min-h-9 ${
+      className={`inline-flex min-h-10 items-center justify-center rounded-lg px-5 text-center text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
         primary
           ? 'bg-accent text-white hover:brightness-110'
-          : 'border border-white/10 bg-white/[0.04] text-white/90 hover:border-accent/60 hover:text-white'
+          : 'bg-white/10 text-white hover:bg-white/15'
       }`}
     >
       {children}
