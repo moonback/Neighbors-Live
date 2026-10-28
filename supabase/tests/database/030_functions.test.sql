@@ -93,6 +93,26 @@ select cmp_ok(
    where n.id = (select near_v from nv)),
   '>', 0::double precision, 'nearby_videos: returned point is not the exact position');
 
+create temp table original_near_category as
+select category from public.videos where id = (select near_v from nv);
+create temp table category_scores (kind text, score double precision);
+update public.videos set category = 'lost' where id = (select near_v from nv);
+insert into category_scores
+select 'baseline', score from public.nearby_videos(48.8722, 2.3767, 3000)
+where id = (select near_v from nv);
+update public.videos set category = 'alert' where id = (select near_v from nv);
+insert into category_scores
+select 'priority', score from public.nearby_videos(48.8722, 2.3767, 3000)
+where id = (select near_v from nv);
+select cmp_ok(
+  (select score from category_scores where kind = 'priority'),
+  '>',
+  (select score from category_scores where kind = 'baseline'),
+  'nearby_videos: priority topics rank above other categories when other signals match');
+update public.videos
+set category = (select category from original_near_category)
+where id = (select near_v from nv);
+
 -- Cursor pagination over 25 videos: no duplicate, no gap.
 create temp table extra as select tests.make_video((select dan from u), 48.8722 + i * 0.00005, 2.3767) as v from generate_series(1, 25) i;
 create temp table pages (page integer, id uuid, score double precision);
