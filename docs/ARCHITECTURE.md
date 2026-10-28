@@ -63,7 +63,9 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   (`score,id`). La route signe en lot les URL vidéo/poster (TTL court) avec la clé service.
 - La position de la requête n'est ni stockée ni journalisée.
 - Carte : `GET /api/map` (même RPC, format GeoJSON) ; MapLibre GL, clustering côté source GeoJSON,
-  style de tuiles via `NEXT_PUBLIC_MAP_STYLE_URL`.
+  style de tuiles via `NEXT_PUBLIC_MAP_STYLE_URL`. Le viewport cartographique courant est conservé
+  uniquement en mémoire pendant la navigation client vers le feed et retour ; il n'est pas ajouté à
+  l'URL ni persisté dans le navigateur ou en base.
 - Temps réel : trigger à l'activation d'une alerte → `realtime.send` sur le topic
   `alerts:<cellule H3 rés. 7>` avec un payload public uniquement (id, catégorie, position floutée).
   Le client s'abonne aux cellules couvrant son rayon. Pas de `postgres_changes` sur `videos`.

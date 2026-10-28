@@ -14,6 +14,7 @@ import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
 import { useLocation } from '@/lib/useLocation';
 import { circlePolygon, zoomForRadius } from './geometry';
 import { MapFiltersDialog } from './MapFiltersDialog';
+import { getMapViewport, setMapViewport } from './viewport';
 
 interface Selected {
   id: string;
@@ -38,6 +39,8 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const markerRef = useRef<Marker | null>(null);
+  const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
+  const skipFirstViewportAdjustmentRef = useRef(false);
   const [loaded, setLoaded] = useState(false);
   const {
     radius,
@@ -62,14 +65,20 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
     void import('maplibre-gl').then((maplibregl) => {
       if (cancelled || !container.current) return;
       maplibregl.setWorkerUrl('/maplibre-gl-worker.mjs');
+      const savedViewport = getMapViewport();
+      skipFirstViewportAdjustmentRef.current = savedViewport !== null;
       const map = new maplibregl.Map({
         container: container.current,
         style: clientEnv.NEXT_PUBLIC_MAP_STYLE_URL,
-        center: [lng, lat],
-        zoom: zoomForRadius(radius),
+        center: savedViewport ? [savedViewport.longitude, savedViewport.latitude] : [lng, lat],
+        zoom: savedViewport?.zoom ?? zoomForRadius(radius),
         attributionControl: { compact: true },
       });
       mapRef.current = map;
+      map.on('moveend', () => {
+        const center = map.getCenter();
+        setMapViewport({ latitude: center.lat, longitude: center.lng, zoom: map.getZoom() });
+      });
       map.on('load', () => {
         map.addSource('radius', { type: 'geojson', data: circlePolygon(lat, lng, radius) });
         map.addLayer({
@@ -193,9 +202,20 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
 
   useEffect(() => {
     const map = mapRef.current;
-    if (loaded && map && lat !== null && lng !== null) {
-      map.flyTo({ center: [lng, lat], zoom: zoomForRadius(radius) });
+    if (!loaded || !map || lat === null || lng === null) return;
+    const previous = lastLocationRef.current;
+    const locationChanged = previous !== null && (previous.lat !== lat || previous.lng !== lng);
+    lastLocationRef.current = { lat, lng };
+
+    if (skipFirstViewportAdjustmentRef.current) {
+      skipFirstViewportAdjustmentRef.current = false;
+      return;
     }
+
+    map.flyTo({
+      center: locationChanged ? [lng, lat] : map.getCenter(),
+      zoom: zoomForRadius(radius),
+    });
   }, [loaded, lat, lng, radius]);
 
   return (
@@ -325,7 +345,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             <p className="text-sm font-semibold">{tc(`categories.${selected.category}`)}</p>
             <p className="line-clamp-2 text-sm text-fog">{selected.caption}</p>
             <Link
-              href={`/?video=${encodeURIComponent(selected.id)}&category=${selected.category}&radius=${radius}`}
+              href={`/?video=${encodeURIComponent(selected.id)}&category=${selected.category}&radius=${radius}&fromMap=1`}
               className="mt-2 inline-flex min-h-11 items-center rounded-xl bg-accent px-3 font-semibold text-ink"
             >
               {t('open')}

@@ -1,5 +1,6 @@
 {
   "title": "Autour de moi",
+  "returnToMap": "Retour à la carte",
   "filters": {
     "label": "Filtrer par catégorie",
     "all": "Tout",

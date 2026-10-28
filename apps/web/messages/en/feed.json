@@ -1,5 +1,6 @@
 {
   "title": "Around me",
+  "returnToMap": "Back to map",
   "filters": {
     "label": "Filter by category",
     "all": "All",
