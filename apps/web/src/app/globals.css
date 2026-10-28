@@ -63,9 +63,9 @@ body {
     inset 0 1px 0 rgb(255 255 255 / 0.12);
 }
 
-.feed-header {
+/* .feed-header {
   background: linear-gradient(180deg, rgb(7 10 28 / 0.58), rgb(7 10 28 / 0.2) 72%, transparent);
-}
+} */
 
 .bottom-nav {
   border: 1px solid rgb(255 255 255 / 0.16);

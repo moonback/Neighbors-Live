@@ -86,7 +86,7 @@ export function AppShell({
       {showNavigation && (
         <aside className="app-sidebar sticky top-0 hidden h-dvh w-52 shrink-0 flex-col px-2.5 py-4 lg:flex">
           <Link href="/" aria-label={t('appName')} className="mb-5 px-2">
-            <Logo name={t('appName')} tagline={t('slogan')} size={30} />
+            <Logo name={t('appName')} size={30} />
           </Link>
           <nav aria-label={t('nav.label')} className="flex flex-col gap-3">
             <section>
