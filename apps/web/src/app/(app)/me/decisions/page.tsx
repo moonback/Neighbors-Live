@@ -37,7 +37,16 @@ export default async function DecisionsPage() {
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-4 p-4">
       <h1 className="pt-4 text-2xl font-bold">{t('title')}</h1>
-      <Decisions items={items} />
+      {actions.error || appeals.error ? (
+        <div className="rounded-2xl border border-red-400/30 bg-red-950/20 p-4 text-sm text-white">
+          <p role="alert">{t('loadError')}</p>
+          <a href="/me/decisions" className="mt-3 inline-flex min-h-11 items-center font-semibold underline underline-offset-4">
+            {t('retry')}
+          </a>
+        </div>
+      ) : (
+        <Decisions items={items} />
+      )}
     </div>
   );
 }
