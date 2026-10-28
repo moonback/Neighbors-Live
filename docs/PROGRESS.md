@@ -6,6 +6,8 @@ Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans
 
 Validation du jalon actuel : 2026-10-28 — la portée des alertes est conforme aux exigences du feed : le message de limitation 5 km s’affiche même sans alerte active, le bouton d’ouverture n’apparaît que lorsqu’il existe au moins une alerte, et les événements live sont filtrés à la portée effective. Vérification typecheck + tests + build exécutions réussies. Le lint global reste bloqué par `EPERM` sur `.swc-safe-cache` sous Windows, ce qui est un blocage d’environnement et non un problème de logique applicative.
 
+Mise à jour 2026-10-28 — feed desktop (≥1024 px) : carte pleine scène avec colonne vidéo 9:16 centrée sur fond flouté, logo/filtres en haut à gauche, rayon en haut à droite, auteur/légende en bas à gauche, actions à l’extrême droite, flèches précédent/suivant à côté de la vidéo, barre de contrôle (lecture, temps, son, ajustement) et progression en bas. Mobile inchangé. Typecheck, 100 tests, build, ESLint et Prettier ciblés réussis ; rendu vérifié dans le navigateur avec des données simulées (pas de Supabase local), lecture vidéo réelle non vérifiée.
+
 Jalon capture : 2026-10-28 — l’écran d’erreur caméra propose désormais un bouton explicite de réessai, afin de reprendre le flux sans quitter l’écran ni perdre le contexte. Typecheck et tests application validés.
 
 Jalon confiance / modération : 2026-10-28 — un rappel de sécurité avant publication est désormais affiché dans le formulaire de capture, avec avertissement sur les personnes, les plaques et le recours aux services d’urgence. Typecheck et tests application validés.
