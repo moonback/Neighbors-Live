@@ -8,6 +8,12 @@
   },
   "locate": "Me localiser",
   "open": "Ouvrir dans le feed",
+  "preview": {
+    "loading": "Chargement de l’aperçu…",
+    "unavailable": "L’aperçu n’est plus disponible.",
+    "useful": "{count} utile(s)",
+    "details": "Voir la vidéo"
+  },
   "count": "{count, plural, =0 {Aucune vidéo} one {# vidéo} other {# vidéos}} dans un rayon de {radius}",
   "loading": "Recherche des vidéos dans un rayon de {radius}…",
   "loadError": "Les résultats de la carte n’ont pas pu être chargés.",

@@ -8,6 +8,12 @@
   },
   "locate": "Find my location",
   "open": "Open in feed",
+  "preview": {
+    "loading": "Loading preview…",
+    "unavailable": "This preview is no longer available.",
+    "useful": "{count} useful",
+    "details": "View video"
+  },
   "count": "{count, plural, =0 {No videos} one {# video} other {# videos}} within {radius}",
   "loading": "Finding videos within {radius}…",
   "loadError": "Map results could not be loaded.",

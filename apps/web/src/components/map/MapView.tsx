@@ -10,6 +10,7 @@ import { PermissionPrimer } from '@/components/PermissionPrimer';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import { clientEnv } from '@/lib/env';
+import type { FeedItem } from '@/lib/feed';
 import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
 import { useLocation } from '@/lib/useLocation';
 import { circlePolygon, zoomForRadius } from './geometry';
@@ -20,6 +21,11 @@ interface Selected {
   id: string;
   category: Category;
   caption: string;
+  posterUrl: string | null;
+  username: string | null;
+  usefulCount: number | null;
+  previewLoading: boolean;
+  previewUnavailable: boolean;
 }
 
 type VideosGeoJSON = { type: 'FeatureCollection'; features: unknown[] };
@@ -43,6 +49,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   const mapRef = useRef<MlMap | null>(null);
   const markerRef = useRef<Marker | null>(null);
   const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
+  const previewRequestRef = useRef(0);
 
   const [loaded, setLoaded] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -154,7 +161,42 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
 
         map.on('click', 'points', (e) => {
           const p = e.features?.[0]?.properties as Selected | undefined;
-          if (p?.id) setSelected({ id: p.id, category: p.category, caption: p.caption });
+          if (!p?.id) return;
+          const request = ++previewRequestRef.current;
+          setSelected({
+            id: p.id,
+            category: p.category,
+            caption: p.caption,
+            posterUrl: null,
+            username: null,
+            usefulCount: null,
+            previewLoading: true,
+            previewUnavailable: false,
+          });
+          void api<FeedItem>(`/api/videos/${encodeURIComponent(p.id)}/media`).then((res) => {
+            if (request !== previewRequestRef.current) return;
+            if (res.ok) {
+              setSelected((current) =>
+                current?.id === p.id
+                  ? {
+                      ...current,
+                      category: res.data.category,
+                      caption: res.data.caption,
+                      posterUrl: res.data.posterUrl,
+                      username: res.data.author.username,
+                      usefulCount: res.data.usefulCount,
+                      previewLoading: false,
+                    }
+                  : current,
+              );
+            } else {
+              setSelected((current) =>
+                current?.id === p.id
+                  ? { ...current, previewLoading: false, previewUnavailable: true }
+                  : current,
+              );
+            }
+          });
         });
 
         map.on('click', 'clusters', (e) => {
@@ -175,7 +217,10 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
         // Ferme la fiche si on clique sur une zone vide de la carte.
         map.on('click', (e) => {
           const hit = map.queryRenderedFeatures(e.point, { layers: [...VIDEO_LAYERS] });
-          if (hit.length === 0) setSelected(null);
+          if (hit.length === 0) {
+            previewRequestRef.current += 1;
+            setSelected(null);
+          }
         });
 
         for (const layer of VIDEO_LAYERS) {
@@ -277,7 +322,10 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   }, [selected]);
 
   const relocate = useCallback(() => void locate(), [locate]);
-  const closeSelected = useCallback(() => setSelected(null), []);
+  const closeSelected = useCallback(() => {
+    previewRequestRef.current += 1;
+    setSelected(null);
+  }, []);
   const retryLoad = useCallback(() => {
     setResultsState('loading');
     setRetry((value) => value + 1);
@@ -403,28 +451,77 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
 
       {selected && (
         <div
-          className="glass absolute inset-x-3 bottom-20 flex items-start gap-3 rounded-3xl p-3 shadow-2xl shadow-black/40"
+          className="glass absolute inset-x-3 bottom-20 flex max-h-[45dvh] items-start gap-3 overflow-hidden rounded-3xl p-3 shadow-2xl shadow-black/40 sm:inset-x-auto sm:bottom-6 sm:left-4 sm:w-[min(26rem,calc(100%-2rem))]"
           role="dialog"
           aria-label={tc(`categories.${selected.category}`)}
         >
-          <span
-            className="mt-1 h-3 w-3 shrink-0 rounded-full"
-            style={{ backgroundColor: CATEGORY_COLORS[selected.category] }}
-            aria-hidden="true"
-          />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold">{tc(`categories.${selected.category}`)}</p>
-            <p className="line-clamp-2 text-sm text-fog">{selected.caption}</p>
-            <Link
-              href={`/?video=${encodeURIComponent(selected.id)}&category=${selected.category}&radius=${radius}&fromMap=1`}
-              className="mt-2 inline-flex min-h-11 items-center rounded-xl bg-accent px-3 font-semibold text-ink"
-            >
-              {t('open')}
-            </Link>
+          <div className="min-w-0 flex-1 overflow-y-auto">
+            {selected.posterUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- short-lived signed poster URL
+              <img
+                src={selected.posterUrl}
+                alt=""
+                className="mb-3 aspect-video w-full rounded-2xl bg-black object-cover"
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                className="mb-3 flex aspect-video items-center justify-center rounded-2xl bg-black/30"
+              >
+                {selected.previewLoading ? (
+                  <span role="status" className="text-sm text-fog">
+                    {t('preview.loading')}
+                  </span>
+                ) : (
+                  <span
+                    className="h-3 w-3 rounded-full"
+                    style={{ backgroundColor: CATEGORY_COLORS[selected.category] }}
+                  />
+                )}
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: CATEGORY_COLORS[selected.category] }}
+                aria-hidden="true"
+              />
+              <p className="text-sm font-semibold">{tc(`categories.${selected.category}`)}</p>
+              {selected.usefulCount !== null && (
+                <span className="ml-auto text-xs text-fog">
+                  {t('preview.useful', { count: selected.usefulCount })}
+                </span>
+              )}
+            </div>
+            {selected.username && <p className="mt-1 text-xs text-fog">@{selected.username}</p>}
+            {selected.caption && (
+              <p className="mt-2 line-clamp-3 whitespace-pre-wrap break-words text-sm text-white/90">
+                {selected.caption}
+              </p>
+            )}
+            {selected.previewUnavailable && (
+              <p role="status" className="mt-2 text-xs text-fog">
+                {t('preview.unavailable')}
+              </p>
+            )}
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Link
+                href={`/v/${encodeURIComponent(selected.id)}`}
+                className="inline-flex min-h-11 items-center rounded-xl border border-white/15 px-3 text-sm font-semibold"
+              >
+                {t('preview.details')}
+              </Link>
+              <Link
+                href={`/?video=${encodeURIComponent(selected.id)}&category=${selected.category}&radius=${radius}&fromMap=1`}
+                className="inline-flex min-h-11 items-center rounded-xl bg-accent px-3 text-sm font-semibold text-ink"
+              >
+                {t('open')}
+              </Link>
+            </div>
           </div>
           <button
             type="button"
-            className="h-11 w-11 text-xl"
+            className="h-11 w-11 shrink-0 text-xl"
             aria-label={tc('actions.close')}
             onClick={closeSelected}
           >
