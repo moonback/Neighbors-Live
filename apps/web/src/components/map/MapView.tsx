@@ -5,7 +5,7 @@ import { CATEGORIES, CATEGORY_COLORS, type Category } from '@nl/shared';
 import type { ExpressionSpecification, GeoJSONSource, Map as MlMap, Marker } from 'maplibre-gl';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionPrimer } from '@/components/PermissionPrimer';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
@@ -22,7 +22,9 @@ interface Selected {
   caption: string;
 }
 
-type FC = { type: 'FeatureCollection'; features: unknown[] };
+type VideosGeoJSON = { type: 'FeatureCollection'; features: unknown[] };
+
+const VIDEO_LAYERS = ['points', 'clusters'] as const;
 
 const colorExpression = [
   'match',
@@ -36,12 +38,19 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
   const tf = useTranslations('feed');
   const tc = useTranslations('common');
   const { state: location, locate, dismiss } = useLocation();
-  const container = useRef<HTMLDivElement>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const markerRef = useRef<Marker | null>(null);
   const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
-  const skipFirstViewportAdjustmentRef = useRef(false);
+
   const [loaded, setLoaded] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [count, setCount] = useState<number | null>(null);
+  const [selected, setSelected] = useState<Selected | null>(null);
+  const [resultsState, setResultsState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [retry, setRetry] = useState(0);
+
   const {
     radius,
     setRadius,
@@ -51,38 +60,46 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
     customized: filtersCustomized,
     ready: filtersReady,
   } = useNeighborhoodFilters(initialRadius, null);
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const [count, setCount] = useState<number | null>(null);
-  const [selected, setSelected] = useState<Selected | null>(null);
-  const [resultsState, setResultsState] = useState<'loading' | 'ready' | 'error'>('loading');
-  const [retry, setRetry] = useState(0);
 
   const lat = location.status === 'ok' ? location.lat : null;
   const lng = location.status === 'ok' ? location.lng : null;
+  const isFilterActive = Boolean(category) || radius !== initialRadius;
 
-  // Create the map once a position is known.
+  // ── Création de la carte (une seule fois, une fois la position + filtres prêts) ──
   useEffect(() => {
-    if (lat === null || lng === null || !container.current || mapRef.current) return;
+    if (!filtersReady || lat === null || lng === null || mapRef.current) return;
+    const node = containerRef.current;
+    if (!node) return;
+
     let cancelled = false;
     void import('maplibre-gl').then((maplibregl) => {
-      if (cancelled || !container.current) return;
+      if (cancelled) return;
       maplibregl.setWorkerUrl('/maplibre-gl-worker.mjs');
+
       const savedViewport = getMapViewport();
-      skipFirstViewportAdjustmentRef.current = savedViewport !== null;
       const map = new maplibregl.Map({
-        container: container.current,
+        container: node,
         style: clientEnv.NEXT_PUBLIC_MAP_STYLE_URL,
         center: savedViewport ? [savedViewport.longitude, savedViewport.latitude] : [lng, lat],
         zoom: savedViewport?.zoom ?? zoomForRadius(radius),
         attributionControl: { compact: true },
       });
       mapRef.current = map;
+
       map.on('moveend', () => {
         const center = map.getCenter();
-        setMapViewport({ latitude: center.lat, longitude: center.lng, zoom: map.getZoom() });
+        setMapViewport({
+          latitude: center.lat,
+          longitude: center.lng,
+          zoom: map.getZoom(),
+        });
       });
+
       map.on('load', () => {
-        map.addSource('radius', { type: 'geojson', data: circlePolygon(lat, lng, radius) });
+        map.addSource('radius', {
+          type: 'geojson',
+          data: circlePolygon(lat, lng, radius),
+        });
         map.addLayer({
           id: 'radius-fill',
           type: 'fill',
@@ -134,50 +151,83 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             'circle-stroke-width': 2,
           },
         });
+
         map.on('click', 'points', (e) => {
           const p = e.features?.[0]?.properties as Selected | undefined;
-          if (p) setSelected({ id: p.id, category: p.category, caption: p.caption });
+          if (p?.id) setSelected({ id: p.id, category: p.category, caption: p.caption });
         });
-        map.on('click', 'clusters', async (e) => {
+
+        map.on('click', 'clusters', (e) => {
           const feature = e.features?.[0];
-          const source = map.getSource('videos') as GeoJSONSource;
           if (!feature) return;
-          const zoom = await source.getClusterExpansionZoom(
-            feature.properties.cluster_id as number,
-          );
-          map.easeTo({
-            center: (feature.geometry as unknown as { coordinates: [number, number] }).coordinates,
-            zoom,
-          });
+          const clusterId = feature.properties?.cluster_id as number | undefined;
+          if (clusterId == null) return;
+          const source = map.getSource('videos') as GeoJSONSource;
+          void source
+            .getClusterExpansionZoom(clusterId)
+            .then((zoom) => {
+              const coords = (feature.geometry as { coordinates: [number, number] }).coordinates;
+              map.easeTo({ center: coords, zoom });
+            })
+            .catch(() => {});
         });
-        for (const layer of ['points', 'clusters']) {
-          map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
-          map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
+
+        // Ferme la fiche si on clique sur une zone vide de la carte.
+        map.on('click', (e) => {
+          const hit = map.queryRenderedFeatures(e.point, { layers: [...VIDEO_LAYERS] });
+          if (hit.length === 0) setSelected(null);
+        });
+
+        for (const layer of VIDEO_LAYERS) {
+          map.on('mouseenter', layer, () => {
+            map.getCanvas().style.cursor = 'pointer';
+          });
+          map.on('mouseleave', layer, () => {
+            map.getCanvas().style.cursor = '';
+          });
         }
+
         markerRef.current = new maplibregl.Marker({ color: '#2563eb' })
           .setLngLat([lng, lat])
           .addTo(map);
         setLoaded(true);
       });
     });
+
     return () => {
       cancelled = true;
     };
-  }, [lat, lng, radius]);
+  }, [filtersReady, lat, lng, radius]);
 
-  useEffect(() => () => mapRef.current?.remove(), []);
+  // ── Démontage : on retire proprement la carte ──
+  useEffect(() => {
+    return () => {
+      markerRef.current = null;
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
-  // Data + radius overlay follow the position, radius and category filter.
+  // ── Données + overlay rayon + marker, en fonction de la position et des filtres ──
   useEffect(() => {
     const map = mapRef.current;
     if (!loaded || !filtersReady || !map || lat === null || lng === null) return;
+
     setResultsState('loading');
-    (map.getSource('radius') as GeoJSONSource).setData(circlePolygon(lat, lng, radius));
+    (map.getSource('radius') as GeoJSONSource | undefined)?.setData(
+      circlePolygon(lat, lng, radius),
+    );
     markerRef.current?.setLngLat([lng, lat]);
-    const qs = new URLSearchParams({ lat: String(lat), lng: String(lng), radius: String(radius) });
+
+    const qs = new URLSearchParams({
+      lat: String(lat),
+      lng: String(lng),
+      radius: String(radius),
+    });
     if (category) qs.set('category', category);
+
     let alive = true;
-    void api<FC>(`/api/map?${qs}`)
+    void api<VideosGeoJSON>(`/api/map?${qs}`)
       .then((res) => {
         if (!alive) return;
         if (!res.ok) {
@@ -193,36 +243,57 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
       .catch(() => {
         if (alive) setResultsState('error');
       });
+
     return () => {
       alive = false;
     };
   }, [loaded, filtersReady, lat, lng, radius, category, retry]);
 
-  function relocate() {
-    void locate();
-  }
-
+  // ── Recadrage : on saute le premier run (la carte est déjà créée au bon endroit) ──
   useEffect(() => {
     const map = mapRef.current;
     if (!loaded || !map || lat === null || lng === null) return;
+
     const previous = lastLocationRef.current;
-    const locationChanged = previous !== null && (previous.lat !== lat || previous.lng !== lng);
     lastLocationRef.current = { lat, lng };
 
-    if (skipFirstViewportAdjustmentRef.current) {
-      skipFirstViewportAdjustmentRef.current = false;
-      return;
-    }
+    if (previous === null) return; // premier run : rien à recadrer
 
+    const locationChanged = previous.lat !== lat || previous.lng !== lng;
     map.flyTo({
       center: locationChanged ? [lng, lat] : map.getCenter(),
       zoom: zoomForRadius(radius),
     });
   }, [loaded, lat, lng, radius]);
 
+  // ── Fermeture de la fiche via Échap ──
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelected(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected]);
+
+  const relocate = useCallback(() => void locate(), [locate]);
+  const closeSelected = useCallback(() => setSelected(null), []);
+  const retryLoad = useCallback(() => {
+    setResultsState('loading');
+    setRetry((value) => value + 1);
+  }, []);
+
+  const statusMessage =
+    resultsState === 'ready' && count !== null
+      ? t('count', { count, radius: tc(`radius.${radius}`) })
+      : resultsState === 'loading'
+        ? t('loading', { radius: tc(`radius.${radius}`) })
+        : '';
+
   return (
     <div className="relative h-[calc(100dvh-4.5rem)] w-full">
       <h1 className="sr-only">{t('title')}</h1>
+
       <PermissionPrimer
         open={location.status === 'primer'}
         title={tf('location.primerTitle')}
@@ -234,14 +305,14 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
         <p>{tf('location.primerBody')}</p>
       </PermissionPrimer>
 
-      <div ref={container} className="h-full w-full" role="region" aria-label={t('title')} />
+      <div ref={containerRef} className="h-full w-full" role="region" aria-label={t('title')} />
 
       {(location.status === 'denied' || location.status === 'error') && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
           <Notice kind="error">
             {location.status === 'denied' ? tf('location.denied') : tf('location.needed')}
           </Notice>
-          <Button onClick={() => void locate()}>{tf('location.allow')}</Button>
+          <Button onClick={relocate}>{tf('location.allow')}</Button>
         </div>
       )}
 
@@ -252,7 +323,9 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           onClick={() => setFiltersOpen(true)}
           aria-haspopup="dialog"
           aria-expanded={filtersOpen}
-          aria-label={`${t('filters.button')}${category || radius !== initialRadius ? `, ${t('filters.active')}` : ''}`}
+          aria-label={
+            isFilterActive ? `${t('filters.button')}, ${t('filters.active')}` : t('filters.button')
+          }
         >
           <svg
             aria-hidden="true"
@@ -269,20 +342,17 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             <circle cx="11" cy="18" r="1.5" fill="currentColor" />
           </svg>
           {t('filters.button')}
-          {(category || radius !== initialRadius) && (
+          {isFilterActive && (
             <span className="ml-1 h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
           )}
         </Button>
+
         <p
           className="glass max-w-[55%] rounded-full px-3 py-2 text-right text-xs empty:hidden"
           role="status"
           aria-live="polite"
         >
-          {resultsState === 'ready' && count !== null
-            ? t('count', { count, radius: tc(`radius.${radius}`) })
-            : resultsState === 'loading'
-              ? t('loading', { radius: tc(`radius.${radius}`) })
-              : null}
+          {statusMessage}
         </p>
       </div>
 
@@ -303,11 +373,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
           className="absolute inset-x-3 top-16 z-10 flex items-center justify-between gap-3 rounded-2xl border border-alert/50 bg-ink/95 p-3 shadow-xl"
         >
           <p className="text-sm">{t('loadError')}</p>
-          <Button
-            variant="secondary"
-            className="shrink-0"
-            onClick={() => setRetry((value) => value + 1)}
-          >
+          <Button variant="secondary" className="shrink-0" onClick={retryLoad}>
             {tc('actions.retry')}
           </Button>
         </div>
@@ -332,6 +398,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
         </svg>
         {t('locate')}
       </Button>
+
       <p className="absolute bottom-1 left-3 text-[10px] text-fog">{t('attribution')}</p>
 
       {selected && (
@@ -359,7 +426,7 @@ export function MapView({ initialRadius }: { initialRadius: number }) {
             type="button"
             className="h-11 w-11 text-xl"
             aria-label={tc('actions.close')}
-            onClick={() => setSelected(null)}
+            onClick={closeSelected}
           >
             ×
           </button>

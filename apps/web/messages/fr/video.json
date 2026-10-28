@@ -103,5 +103,17 @@
   "mediaLoading": "Chargement de la vidéo…",
   "mediaUnavailable": "La vidéo ne peut pas être chargée pour le moment.",
   "retryMedia": "Réessayer",
-  "openFeed": "Voir autour de ce lieu"
+  "openFeed": "Voir autour de ce lieu",
+  "publicPage": {
+    "neighbor": "voisin",
+    "nearby": "Vidéo du quartier",
+    "originalSound": "Son de la vidéo",
+    "copyLink": "Copier le lien",
+    "shareLink": "Lien de partage",
+    "contentTabs": "Contenu de la vidéo",
+    "commentsSection": "Commentaires de la vidéo",
+    "comments": "Commentaires ({count})",
+    "creatorVideos": "Vidéos du créateur",
+    "signInToReact": "Connectez-vous pour réagir."
+  }
 }

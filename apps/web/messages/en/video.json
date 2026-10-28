@@ -103,5 +103,17 @@
   "mediaLoading": "Loading video…",
   "mediaUnavailable": "This video can’t be loaded right now.",
   "retryMedia": "Try again",
-  "openFeed": "See what’s happening near here"
+  "openFeed": "See what’s happening near here",
+  "publicPage": {
+    "neighbor": "neighbor",
+    "nearby": "Neighborhood video",
+    "originalSound": "Video sound",
+    "copyLink": "Copy link",
+    "shareLink": "Share link",
+    "contentTabs": "Video content",
+    "commentsSection": "Video comments",
+    "comments": "Comments ({count})",
+    "creatorVideos": "Creator videos",
+    "signInToReact": "Sign in to react."
+  }
 }
