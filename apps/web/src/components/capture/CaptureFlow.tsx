@@ -60,7 +60,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
       const fix = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
-        accuracy: Math.round(pos.coords.accuracy),
+        accuracy: Math.ceil(pos.coords.accuracy),
       };
       if (fix.accuracy > MAX_ACCURACY_M) {
         setError(t('location.imprecise', { accuracy: fix.accuracy }));

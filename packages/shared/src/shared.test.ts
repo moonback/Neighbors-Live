@@ -137,7 +137,7 @@ describe('schemas', () => {
   it('accepts accuracy up to 500 m and rejects poorer accuracy', () => {
     const bad = (patch: object) => createVideoSchema.safeParse({ ...baseVideo, ...patch }).success;
     expect(bad({ accuracy: 500 })).toBe(true);
-    expect(bad({ accuracy: 501 })).toBe(false);
+    expect(bad({ accuracy: 500.01 })).toBe(false);
   });
 
   it('rejects long captions, missing event end, and long recordings', () => {

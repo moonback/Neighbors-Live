@@ -33,7 +33,7 @@ export function OfflineQueueRunner() {
         fix = {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
-          accuracy: Math.round(pos.coords.accuracy),
+          accuracy: Math.ceil(pos.coords.accuracy),
         };
       } catch {
         setMessage(t('locationUnavailable'));
