@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
+import { isVideoSaved, toggleSavedVideo } from '@/lib/saved-videos';
 import { formatDistance } from './format';
 
 interface Props {
@@ -50,6 +51,7 @@ export function VideoCard({
   const [paused, setPaused] = useState(true);
   const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [usefulPending, setUsefulPending] = useState(false);
+  const [saved, setSaved] = useState(() => isVideoSaved(item.id));
   const [progress, setProgress] = useState(0);
   const mediaRetries = useRef(0);
   const mediaRequest = useRef<{
@@ -165,6 +167,19 @@ export function VideoCard({
       setTimeout(() => setToast(null), 3000);
     }
     setUsefulPending(false);
+  }
+
+  async function toggleSave() {
+    const next = toggleSavedVideo(item.id, {
+      category: item.category,
+      caption: item.caption || undefined,
+      posterUrl: item.posterUrl || undefined,
+      authorName: item.author.username || undefined,
+    });
+    setSaved(next.saved);
+    window.dispatchEvent(new Event('nl-saved-videos-change'));
+    setToast(next.saved ? t('saveToast') : t('unsaveToast'));
+    setTimeout(() => setToast(null), 2000);
   }
 
   async function share() {
@@ -383,6 +398,12 @@ export function VideoCard({
           label={t('comments', { count: item.commentCount })}
           onClick={() => onComments(item)}
           icon="M4 5h16v11H8l-4 4z"
+        />
+        <ActionButton
+          label={saved ? t('saved') : t('save')}
+          pressed={saved}
+          onClick={toggleSave}
+          icon="M7 4.5h10a1.5 1.5 0 011.5 1.5v14l-6.5-4.2-6.5 4.2V6A1.5 1.5 0 017 4.5z"
         />
         <ActionButton
           label={t('share')}

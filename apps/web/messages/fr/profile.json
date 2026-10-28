@@ -4,6 +4,9 @@
   "memberSince": "Membre depuis {date}",
   "activeVideos": "Vidéos en ligne",
   "noVideos": "Aucune vidéo en ligne pour le moment.",
+  "savedVideos": "Vidéos enregistrées",
+  "emptySavedVideos": "Aucune vidéo enregistrée pour le moment.",
+  "removeSaved": "Retirer",
   "myVideos": "Mes vidéos",
   "status": {
     "processing": "En traitement",

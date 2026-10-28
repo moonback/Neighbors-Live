@@ -4,7 +4,9 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
-Dernière mise à jour : 2026-10-28 — navigation latérale desktop modernisée et animée : entrée douce avec liens décalés, retour visuel au survol des liens et rotation de l’icône « Filmer » ; animations désactivées avec la préférence de mouvement réduit existante. Navigation mobile inchangée. Typecheck, ESLint ciblé, Prettier, 47 tests et build réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`. Rendu visuel non vérifié.
+Dernière mise à jour : 2026-10-28 — ajout du bouton d’enregistrement local dans le feed et d’une liste de vidéos enregistrées côté profil, avec persistance locale enrichie (métadonnées de vidéeo, libellés FR/EN, retrait rapide et rafraîchissement automatique). La logique reste exclusivement locale (`localStorage`) et sans impact sur les données serveur/privées. Validation : `pnpm --filter @nl/web typecheck` et `pnpm --filter @nl/web test` passent (16 tests). Le lint global reste bloqué par `EPERM` sur `.swc-safe-cache` dans cet environnement Windows, et le rendu visuel navigateur n’a pas été vérifié.
+
+Mise à jour précédente 2026-10-28 — navigation latérale desktop modernisée et animée : entrée douce avec liens décalés, retour visuel au survol des liens et rotation de l’icône « Filmer » ; animations désactivées avec la préférence de mouvement réduit existante. Navigation mobile inchangée. Typecheck, ESLint ciblé, Prettier, 47 tests et build réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`. Rendu visuel non vérifié.
 
 Mise à jour précédente 2026-10-27 — sidebar desktop resserrée (224 px), liens regroupés sous « Explorer » et « Mon espace », action « Filmer » mise en avant et accès direct aux paramètres ; libellés FR/EN. Typecheck, ESLint ciblé, Prettier, 47 tests et build réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache`. Revue navigateur desktop (1440 × 1000) effectuée ; la page des commerces indique une erreur de chargement faute de Supabase local. Mobile et appareil physique non vérifiés.
 

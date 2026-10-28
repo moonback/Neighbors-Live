@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { Avatar } from '@/components/Avatar';
 import { MyVideos } from '@/components/profile/MyVideos';
+import { SavedVideos } from '@/components/profile/SavedVideos';
 import { signMedia } from '@/lib/media';
 import { getViewer } from '@/lib/session';
 import { profileImageUrl } from '@/lib/profile-image';
@@ -195,7 +196,12 @@ export default async function ProfilePage({ params }: Params) {
         )}
       </section>
 
-      {isOwner && <MyVideos />}
+      {isOwner && (
+        <>
+          <SavedVideos />
+          <MyVideos />
+        </>
+      )}
     </div>
   );
 }
