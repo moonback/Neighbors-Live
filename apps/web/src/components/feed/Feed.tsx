@@ -14,6 +14,7 @@ import type { FeedItem } from '@/lib/feed';
 import { fetchHiddenVideoIds, isVideoHidden, readHiddenVideoIds } from '@/lib/hidden-videos';
 import { useLocation } from '@/lib/useLocation';
 import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
+import { getVideoMuted, setVideoMuted, subscribeToVideoMuted } from '@/lib/video-preferences';
 import { AlertsBanner } from './AlertsBanner';
 import { VideoCard } from './VideoCard';
 import { WelcomeHero } from './WelcomeHero';
@@ -121,7 +122,7 @@ export function Feed({
   const [cursor, setCursor] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>('idle');
   const [active, setActive] = useState(0);
-  const [muted, setMuted] = useState(true);
+  const muted = useSyncExternalStore(subscribeToVideoMuted, getVideoMuted, () => true);
   const videoFit = useSyncExternalStore(
     subscribeToVideoFit,
     getVideoFitSnapshot,
@@ -502,7 +503,7 @@ export function Feed({
                 fit={videoFit}
                 onToggleFit={() => saveVideoFit(videoFit === 'cover' ? 'contain' : 'cover')}
                 autoplay={autoplay}
-                onToggleMute={() => setMuted((m) => !m)}
+                onToggleMute={() => setVideoMuted(!muted)}
                 onComments={(i) => setCommentsFor(i.id)}
                 onReport={(i) => setReportFor(i.id)}
                 onAuthRequired={goLogin}
