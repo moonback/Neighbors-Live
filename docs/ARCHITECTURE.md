@@ -74,7 +74,7 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   publications sans conditions restent lisibles avec un état « non précisées ».
 - Les panneaux de commentaires, de signalement et de partage suspendent la lecture du feed ; le
   conteneur de défilement reste monté pour conserver la vidéo et sa position au retour. Le panneau
-  de commentaires reste ancré en bas de l’écran, avec un contenu défilable.
+  de commentaires reste ancré en bas de l’écran, sur toute sa largeur, avec un contenu défilable.
 - Carte : `GET /api/map` (même RPC, format GeoJSON) ; MapLibre GL, clustering côté source GeoJSON,
   style de tuiles via `NEXT_PUBLIC_MAP_STYLE_URL`. Le viewport cartographique courant est conservé
   uniquement en mémoire pendant la navigation client vers le feed et retour ; il n'est pas ajouté à

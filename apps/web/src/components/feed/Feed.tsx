@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { CategoryIcon } from '@/components/CategoryIcon';
-import { Logo } from '@/components/Logo';
+// import { Logo } from '@/components/Logo';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
@@ -298,7 +298,7 @@ export function Feed({
         <header className="feed-header absolute inset-x-0 top-0 z-20 flex flex-col gap-1.5 px-3 pt-2 pb-2 text-white sm:px-4">
           <h1 className="sr-only">{t('title')}</h1>
           <div className="flex min-w-0 items-center gap-1.5">
-            <Logo name={tc('appName')} size={22} className="shrink-0" />
+            {/* <Logo name={tc('appName')} size={22} className="shrink-0" /> */}
             <AlertsBanner
               lat={coords.lat}
               lng={coords.lng}
