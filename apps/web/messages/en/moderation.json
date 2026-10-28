@@ -31,6 +31,8 @@
   "decisions": {
     "title": "Decisions about me",
     "empty": "There are no moderation decisions about you.",
+    "loadError": "Could not load your moderation decisions. Your history may not be empty.",
+    "retry": "Try again",
     "kinds": {
       "validate": "Video approved",
       "hide": "Video hidden",

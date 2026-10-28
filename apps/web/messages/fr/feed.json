@@ -1,5 +1,6 @@
 {
   "title": "Autour de moi",
+  "returnToMap": "Retour à la carte",
   "filters": {
     "label": "Filtrer par catégorie",
     "all": "Tout",
@@ -35,9 +36,12 @@
     "login": "Se connecter"
   },
   "empty": {
-    "title": "Rien autour de vous pour l’instant",
-    "body": "Soyez la première ou le premier à montrer ce qui se passe dans le quartier.",
+    "title": "Aucun résultat dans cette zone",
+    "radius": "Aucune vidéo n’est disponible dans le rayon de {radius}. Essayez d’élargir la zone ou revenez plus tard.",
+    "filtered": "Aucune vidéo de catégorie « {category} » n’est disponible dans le rayon de {radius}. Vous pouvez retirer ce filtre ou élargir la zone.",
+    "searchArea": "Zone recherchée : {radius} autour de vous",
     "cta": "Filmer",
+    "clearCategory": "Voir toutes les catégories",
     "wider": "Élargir à {radius}"
   },
   "error": "Impossible de charger les vidéos.",

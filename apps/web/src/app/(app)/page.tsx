@@ -14,6 +14,7 @@ const params = z.object({
     )
     .optional()
     .catch(undefined),
+  fromMap: z.enum(['1']).optional(),
   deleted: z.string().optional(),
 });
 
@@ -30,6 +31,7 @@ export default async function FeedPage({
       signedIn={Boolean(viewer?.username)}
       focusId={query.video ?? null}
       initialCategory={(query.category as Category | undefined) ?? null}
+      returnToMap={Boolean(query.fromMap)}
       notice={query.deleted ? t('deleted') : null}
     />
   );

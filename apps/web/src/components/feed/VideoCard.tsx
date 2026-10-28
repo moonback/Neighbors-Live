@@ -216,6 +216,7 @@ export function VideoCard({
     if (!signedIn) return onAuthRequired();
 
     if (collectionPending) return;
+    if (!hidden && !window.confirm(t('hideConfirm'))) return;
     setCollectionPending('hidden');
     try {
       const next = await toggleHiddenVideoServer(item.id);

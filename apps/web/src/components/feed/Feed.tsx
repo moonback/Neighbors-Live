@@ -28,6 +28,7 @@ interface Props {
   initialRadius: number;
   signedIn: boolean;
   focusId: string | null;
+  returnToMap: boolean;
   initialCategory: Category | null;
   notice: string | null;
 }
@@ -78,7 +79,14 @@ function subscribeToReducedMotion(onChange: () => void) {
   return () => mediaQuery.removeEventListener('change', onChange);
 }
 
-export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice }: Props) {
+export function Feed({
+  initialRadius,
+  signedIn,
+  focusId,
+  returnToMap,
+  initialCategory,
+  notice,
+}: Props) {
   const t = useTranslations('feed');
   const tc = useTranslations('common');
   const router = useRouter();
@@ -378,6 +386,26 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
               {t('alerts.notice')}
             </p>
           )}
+          {returnToMap && (
+            <Link
+              href="/carte"
+              className="glass inline-flex min-h-11 w-fit items-center gap-2 rounded-full px-3 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              {t('returnToMap')}
+            </Link>
+          )}
           {notice && <Notice kind="success">{notice}</Notice>}
         </header>
       )}
@@ -396,18 +424,35 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
         <div className="flex h-full flex-col items-center justify-center gap-4 p-6 pt-36 text-center">
           <Illustration />
           <h2 className="text-2xl font-bold">{t('empty.title')}</h2>
-          <p className="max-w-xs text-fog">{t('empty.body')}</p>
+          <p className="max-w-sm text-fog">
+            {category
+              ? t('empty.filtered', {
+                  category: tc(`categories.${category}`),
+                  radius: tc(`radius.${radius}`),
+                })
+              : t('empty.radius', { radius: tc(`radius.${radius}`) })}
+          </p>
+          <p className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/80">
+            {t('empty.searchArea', { radius: tc(`radius.${radius}`) })}
+          </p>
           <Link
             href="/filmer"
             className="glow rounded-2xl bg-accent px-6 py-3 font-semibold text-ink"
           >
             {t('empty.cta')}
           </Link>
-          {wider && (
-            <Button variant="secondary" onClick={() => setRadius(wider)}>
-              {t('empty.wider', { radius: tc(`radius.${wider}`) })}
-            </Button>
-          )}
+          <div className="flex flex-wrap justify-center gap-2">
+            {category && (
+              <Button variant="secondary" onClick={() => setCategory(null)}>
+                {t('empty.clearCategory')}
+              </Button>
+            )}
+            {wider && (
+              <Button variant="secondary" onClick={() => setRadius(wider)}>
+                {t('empty.wider', { radius: tc(`radius.${wider}`) })}
+              </Button>
+            )}
+          </div>
         </div>
       )}
 
