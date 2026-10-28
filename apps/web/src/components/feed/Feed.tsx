@@ -117,6 +117,7 @@ export function Feed({
     clearCategoryQuery();
   };
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [isRadiusMenuOpen, setIsRadiusMenuOpen] = useState(false);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>('idle');
@@ -142,17 +143,21 @@ export function Feed({
   const autoplay = !prefersReducedMotion && commentsFor === null && reportFor === null;
   const listRef = useRef<HTMLDivElement>(null);
   const categoryMenuRef = useRef<HTMLDivElement>(null);
+  const radiusMenuRef = useRef<HTMLDivElement>(null);
   const loadingMore = useRef(false);
 
   useEffect(() => {
-    if (!isCategoryMenuOpen) return;
+    if (!isCategoryMenuOpen && !isRadiusMenuOpen) return;
     const closeOnOutsideClick = (event: PointerEvent) => {
-      if (!categoryMenuRef.current?.contains(event.target as Node)) {
-        setIsCategoryMenuOpen(false);
-      }
+      const target = event.target as Node;
+      if (!categoryMenuRef.current?.contains(target)) setIsCategoryMenuOpen(false);
+      if (!radiusMenuRef.current?.contains(target)) setIsRadiusMenuOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsCategoryMenuOpen(false);
+      if (event.key === 'Escape') {
+        setIsCategoryMenuOpen(false);
+        setIsRadiusMenuOpen(false);
+      }
     };
     document.addEventListener('pointerdown', closeOnOutsideClick);
     document.addEventListener('keydown', closeOnEscape);
@@ -160,7 +165,7 @@ export function Feed({
       document.removeEventListener('pointerdown', closeOnOutsideClick);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [isCategoryMenuOpen]);
+  }, [isCategoryMenuOpen, isRadiusMenuOpen]);
 
   useEffect(() => {
     const handle = () => {
@@ -304,33 +309,79 @@ export function Feed({
               radius={radius}
               onShow={() => changeCategory('alert')}
             />
-            <label className="sr-only" htmlFor="feed-radius">
-              {t('filters.radius')}
-            </label>
-            <div className="feed-radius glass ml-auto flex shrink-0 items-center gap-1 rounded-full pl-2.5">
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                className="h-3.5 w-3.5 text-accent"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+            <div ref={radiusMenuRef} className="feed-radius relative ml-auto shrink-0">
+              <button
+                type="button"
+                aria-label={`${t('filters.radius')}: ${tc(`radius.${radius}`)}`}
+                aria-expanded={isRadiusMenuOpen}
+                aria-controls="feed-radius-options"
+                onClick={() => setIsRadiusMenuOpen((open) => !open)}
+                className="glass inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-white transition-colors hover:bg-white/10"
               >
-                <path d="M12 21s-7-6.1-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.9 12 21 12 21z" />
-                <circle cx="12" cy="9.5" r="2.5" />
-              </svg>
-              <select
-                id="feed-radius"
-                value={radius}
-                onChange={(e) => setRadius(Number(e.target.value))}
-                className="min-h-9 appearance-none rounded-full bg-transparent pr-3 text-xs font-semibold focus:outline-none"
-              >
-                {RADII_M.map((r) => (
-                  <option key={r} value={r} className="bg-panel">
-                    {tc(`radius.${r}`)}
-                  </option>
-                ))}
-              </select>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  className="h-3.5 w-3.5 text-accent"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M12 21s-7-6.1-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.9 12 21 12 21z" />
+                  <circle cx="12" cy="9.5" r="2.5" />
+                </svg>
+                <span>{tc(`radius.${radius}`)}</span>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  className={`h-3.5 w-3.5 transition-transform ${isRadiusMenuOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="m5 7 5 5 5-5" />
+                </svg>
+              </button>
+              {isRadiusMenuOpen && (
+                <div
+                  id="feed-radius-options"
+                  role="group"
+                  aria-label={t('filters.radius')}
+                  className="glass absolute right-0 top-full z-30 mt-2 grid w-36 gap-1 rounded-2xl p-1.5 shadow-xl"
+                >
+                  {RADII_M.map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={radius === value}
+                      onClick={() => {
+                        setRadius(value);
+                        setIsRadiusMenuOpen(false);
+                      }}
+                      className={`flex min-h-10 items-center justify-between rounded-xl px-3 text-left text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                        radius === value
+                          ? 'bg-accent text-white shadow-lg shadow-blue-950/30'
+                          : 'text-white/85 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {tc(`radius.${value}`)}
+                      {radius === value && (
+                        <svg
+                          aria-hidden="true"
+                          viewBox="0 0 20 20"
+                          className="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="m4 10 4 4 8-8" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div
