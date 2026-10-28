@@ -32,6 +32,9 @@ describe('offline queue republication rules', () => {
   it('republishes when still at the same place with a precise fix', () => {
     expect(judge(item, t0 + 60_000, { lat: 48.8725, lng: 2.3768, accuracy: 20 })).toBe('publish');
   });
+  it('accepts a fix at the 500 m accuracy limit', () => {
+    expect(judge(item, t0 + 60_000, { ...filmed, accuracy: 500 })).toBe('publish');
+  });
   it('drops the recording when the user moved away', () => {
     expect(judge(item, t0 + 60_000, { lat: 48.8822, lng: 2.3767, accuracy: 10 })).toBe(
       'drop-moved',
