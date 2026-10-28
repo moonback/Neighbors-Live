@@ -82,7 +82,6 @@ export function ExploreSpotlightGrid() {
     <section aria-labelledby="spotlight-title" className="flex flex-col gap-4 sm:gap-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          {/* <p className="text-xs font-bold tracking-[0.16em] text-blue uppercase">{tc('appName')}</p> */}
           <h2 id="spotlight-title" className="mt-1 text-2xl font-bold tracking-tight">
             {t('title')}
           </h2>
@@ -96,7 +95,7 @@ export function ExploreSpotlightGrid() {
       </header>
 
       <nav aria-label={t('filtersLabel')} className="-mx-1 overflow-x-auto px-1 pb-1">
-        <div className="flex w-max min-w-full gap-2">
+        <div className="flex w-max min-w-full gap-1">
           {[null, ...CATEGORIES].map((filter) => {
             const active = category === filter;
             return (
@@ -106,14 +105,18 @@ export function ExploreSpotlightGrid() {
                 aria-pressed={active}
                 disabled={busy}
                 onClick={() => selectCategory(filter)}
-                className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60 ${
-                  active
-                    ? 'border-accent bg-accent text-white'
-                    : 'border-line bg-panel/80 text-fog backdrop-blur hover:border-accent/60 hover:text-white'
+                className={`group relative inline-flex min-h-9 shrink-0 items-center gap-1.5 px-2.5 text-xs font-semibold transition-colors focus-visible:rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60 ${
+                  active ? 'text-white' : 'text-fog hover:text-white'
                 }`}
               >
                 {filter && <CategoryIcon category={filter} className="h-4 w-4" />}
                 {filter ? tc(`categories.${filter}`) : t('all')}
+                <span
+                  aria-hidden="true"
+                  className={`absolute inset-x-2 bottom-0 h-0.5 origin-center rounded-full bg-blue transition-transform duration-300 ease-out motion-reduce:transition-none ${
+                    active ? 'scale-x-100' : 'scale-x-0'
+                  }`}
+                />
               </button>
             );
           })}
