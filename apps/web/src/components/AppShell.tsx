@@ -79,7 +79,9 @@ export function AppShell({
   const t = useTranslations('common');
   const workspace = pathname === '/admin' || pathname.startsWith('/moderation');
   const immersive = pathname === '/filmer';
-  const showNavigation = !workspace && !immersive;
+  const feedOnlyDesktop = pathname === '/';
+  const showNavigation = !workspace && !immersive && !feedOnlyDesktop;
+  const showBottomNav = !workspace && !immersive && !feedOnlyDesktop;
 
   return (
     <div className="app-shell min-h-dvh lg:flex lg:gap-4 lg:px-4 lg:py-4">
@@ -171,7 +173,7 @@ export function AppShell({
       >
         {children}
       </main>
-      <BottomNav isModerator={isModerator} profileAvatar={profileAvatar} />
+      {showBottomNav && <BottomNav isModerator={isModerator} profileAvatar={profileAvatar} />}
     </div>
   );
 }

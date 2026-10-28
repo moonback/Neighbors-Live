@@ -495,6 +495,7 @@ body {
 @media (min-width: 1024px) {
   .app-main {
     width: 100%;
+    min-height: calc(100vh - 2rem);
   }
 
   .app-sidebar {
@@ -524,59 +525,56 @@ body {
   }
 
   .feed-stage {
-    width: min(100%, 30rem);
-    height: calc(100svh - 2rem);
+    width: min(100%, 39rem);
+    height: calc(100vh - 2rem);
+    min-height: 38rem;
+    max-height: 58rem;
     margin: 0 auto;
     overflow: hidden;
-    border: 1px solid rgb(255 255 255 / 0.08);
-    border-radius: 2rem;
-    background:
-      radial-gradient(34rem 28rem at 50% 45%, rgb(37 99 235 / 0.12), transparent 72%),
-      rgb(255 255 255 / 0.018);
-    box-shadow: 0 24px 70px rgb(0 0 0 / 0.24);
+    border: 1px solid rgb(255 255 255 / 0.06);
+    border-radius: 0.25rem;
+    background: #03060d;
+    box-shadow: none;
   }
 
   .feed-header {
-    left: 50%;
-    width: min(100% - 0.75rem, 29rem);
-    padding-top: 0.75rem;
-    transform: translateX(-50%);
+    display: none;
   }
 
   .feed-list {
-    width: min(100% - 0.75rem, 29rem);
-    height: calc(100% - 1.5rem);
-    margin: 0.75rem auto 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
     overflow: hidden;
-    border-radius: 1.5rem;
-    box-shadow: 0 24px 70px rgb(0 0 0 / 0.2);
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .feed-list > [data-index] {
-    padding: 0.25rem;
+    padding: 0;
   }
 
   .feed-list .video-card {
-    border-radius: 1.35rem;
+    border-radius: 0;
   }
 
   .feed-action-rail {
-    right: 0.9rem;
-    bottom: 1.5rem;
-    gap: 0.4rem;
+    right: 1.15rem;
+    bottom: 1.35rem;
+    gap: 0.45rem;
   }
 
   .feed-action-button {
-    width: 3.8rem;
+    width: 3.15rem;
   }
 
   .feed-action-icon {
-    width: 2.7rem;
-    height: 2.7rem;
+    width: 2.55rem;
+    height: 2.55rem;
   }
 
   .feed-action-label {
-    font-size: 0.58rem;
+    font-size: 0.52rem;
   }
 }
 
