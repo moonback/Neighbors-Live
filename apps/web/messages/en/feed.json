@@ -1,12 +1,12 @@
 {
-  "title": "Around me",
+  "title": "Videos near you",
   "returnToMap": "Back to map",
   "previousVideo": "Previous video",
   "nextVideo": "Next video",
   "filters": {
     "label": "Filter by category",
-    "all": "All",
-    "radius": "Radius",
+    "all": "All categories",
+    "radius": "Distance",
     "reset": "Reset filters",
     "reduceCategory": "Show fewer “{category}” videos",
     "restoreCategory": "Stop reducing “{category}” videos"
@@ -27,43 +27,55 @@
   "alerts": {
     "banner": "{count, plural, one {# nearby alert} other {# nearby alerts}}",
     "new": "New alert: {caption}",
-    "show": "Show alerts",
-    "liveLimit": "Search covers your selected radius, but new live alerts are delivered only within 5 km.",
-    "notice": "Alerts are community posts, not official alerts. In an emergency, call 112."
+    "show": "View alerts",
+    "liveLimit": "Search covers your selected distance. New live alerts are delivered only within a 5 km radius.",
+    "notice": "Alerts are community posts, not official alerts. In an immediate emergency, call 112."
   },
   "location": {
-    "primerTitle": "See what’s happening near you",
-    "primerBody": "Voisino needs your location to show neighborhood videos. It is only used for this search; it is not stored or shared.",
+    "primerTitle": "Discover videos from your neighborhood",
+    "primerBody": "Your location helps find nearby videos. The location shown on posts is approximate.",
     "allow": "Use my location",
     "later": "Not now",
-    "needed": "Turn on location to see videos near you.",
-    "denied": "Location access was denied. Allow it in this site’s browser settings, then try again.",
+    "needed": "Allow location access to show videos near you.",
+    "denied": "Location access was denied. Allow it in this site's browser settings, then try again.",
     "error": "Your location is unavailable right now.",
     "locating": "Finding your location…"
   },
   "hero": {
-    "title": "What’s happening right around the corner",
-    "body": "Videos, shops, events and deals from your neighborhood, filmed by your neighbors.",
+    "title": "Useful updates, just around the corner.",
+    "body": "Discover short videos posted by your neighbors: alerts, helping out, events, and local offers.",
     "features": [
-      { "title": "Local videos", "body": "Neighborhood life, live" },
-      { "title": "Interactive map", "body": "Everything happening around you" },
-      { "title": "Local shops", "body": "Support the businesses nearby" },
-      { "title": "Events & deals", "body": "Never miss what’s on near you" }
+      {
+        "title": "Neighborhood videos",
+        "body": "Short videos posted by your neighbors"
+      },
+      {
+        "title": "Interactive map",
+        "body": "Find posts around you"
+      },
+      {
+        "title": "Nearby businesses",
+        "body": "Discover local businesses and their offers"
+      },
+      {
+        "title": "Events and local finds",
+        "body": "Find useful ideas close to home"
+      }
     ],
-    "shops": "Browse shops",
+    "shops": "Explore businesses",
     "login": "Sign in"
   },
   "empty": {
-    "title": "No results in this area",
-    "radius": "No videos are available within {radius}. Try expanding the area or check back later.",
-    "filtered": "No videos in the “{category}” category are available within {radius}. You can clear this filter or expand the area.",
+    "title": "No videos in this area",
+    "radius": "No videos are available within {radius}. Expand the area or check back a little later.",
+    "filtered": "No videos in the “{category}” category are available within {radius}. Clear the filter or expand the area.",
     "searchArea": "Search area: {radius} around you",
     "cta": "Record a video",
     "clearCategory": "Show all categories",
     "wider": "Expand to {radius}"
   },
-  "error": "Could not load videos.",
+  "error": "Could not load videos. Check your connection and try again.",
   "loadingMore": "Loading more videos…",
-  "end": "You’ve seen everything in this radius.",
-  "deleted": "Your account has been deleted. Thank you for taking part."
+  "end": "You’ve seen all available videos in this area.",
+  "deleted": "Your account has been deleted."
 }

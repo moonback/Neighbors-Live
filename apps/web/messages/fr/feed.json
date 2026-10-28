@@ -1,12 +1,12 @@
 {
-  "title": "Autour de moi",
+  "title": "Vidéos près de vous",
   "returnToMap": "Retour à la carte",
   "previousVideo": "Vidéo précédente",
   "nextVideo": "Vidéo suivante",
   "filters": {
     "label": "Filtrer par catégorie",
-    "all": "Tout",
-    "radius": "Rayon",
+    "all": "Toutes les catégories",
+    "radius": "Distance",
     "reset": "Réinitialiser les filtres",
     "reduceCategory": "Voir moins de vidéos « {category} »",
     "restoreCategory": "Ne plus réduire « {category} »"
@@ -25,45 +25,57 @@
     "chronological": "Plus récentes"
   },
   "alerts": {
-    "banner": "{count, plural, one {# alerte proche} other {# alertes proches}}",
+    "banner": "{count, plural, one {# alerte à proximité} other {# alertes à proximité}}",
     "new": "Nouvelle alerte : {caption}",
     "show": "Voir les alertes",
-    "liveLimit": "La recherche couvre le rayon choisi, mais les nouvelles alertes en direct ne sont diffusées que jusqu’à 5 km.",
-    "notice": "Les alertes sont des publications de la communauté, pas des alertes officielles. En cas de danger immédiat, appelez le 112."
+    "liveLimit": "La recherche couvre la distance choisie. Les nouvelles alertes en direct sont diffusées uniquement dans un rayon de 5 km.",
+    "notice": "Les alertes sont publiées par la communauté et ne sont pas officielles. En cas de danger immédiat, appelez le 112."
   },
   "location": {
-    "primerTitle": "Voir ce qui se passe près de vous",
-    "primerBody": "Pour afficher les vidéos de votre quartier, Voisino a besoin de votre position. Elle sert uniquement à cette recherche : elle n’est ni enregistrée ni partagée.",
+    "primerTitle": "Découvrez les vidéos de votre quartier",
+    "primerBody": "Votre position sert à trouver les vidéos proches. La position affichée sur les publications est approximative.",
     "allow": "Utiliser ma position",
     "later": "Plus tard",
-    "needed": "Activez la localisation pour voir les vidéos autour de vous.",
-    "denied": "Localisation refusée. Autorisez-la dans les réglages du navigateur pour ce site, puis réessayez.",
-    "error": "Position indisponible pour le moment.",
+    "needed": "Autorisez la localisation pour afficher les vidéos proches de vous.",
+    "denied": "Accès à la position refusé. Autorisez-le dans les réglages du navigateur pour ce site, puis réessayez.",
+    "error": "Votre position est indisponible pour le moment.",
     "locating": "Recherche de votre position…"
   },
   "hero": {
-    "title": "Ce qui se passe à deux pas de chez vous",
-    "body": "Vidéos, commerces, événements et bons plans du quartier, filmés par vos voisins.",
+    "title": "Les infos utiles, à deux pas de chez vous.",
+    "body": "Découvrez les courtes vidéos publiées par vos voisins : alertes, entraide, événements et offres locales.",
     "features": [
-      { "title": "Vidéos locales", "body": "La vie du quartier en temps réel" },
-      { "title": "Carte interactive", "body": "Tout ce qui se passe autour de vous" },
-      { "title": "Commerces de proximité", "body": "Soutenez les acteurs locaux" },
-      { "title": "Événements & bons plans", "body": "Ne ratez plus rien près de chez vous" }
+      {
+        "title": "Vidéos de quartier",
+        "body": "Des vidéos courtes publiées par vos voisins"
+      },
+      {
+        "title": "Carte interactive",
+        "body": "Repérez les publications autour de vous"
+      },
+      {
+        "title": "Commerces de proximité",
+        "body": "Découvrez les commerces et leurs offres"
+      },
+      {
+        "title": "Événements et bons plans",
+        "body": "Trouvez des idées utiles près de chez vous"
+      }
     ],
-    "shops": "Voir les commerces",
+    "shops": "Découvrir les commerces",
     "login": "Se connecter"
   },
   "empty": {
-    "title": "Aucun résultat dans cette zone",
-    "radius": "Aucune vidéo n’est disponible dans le rayon de {radius}. Essayez d’élargir la zone ou revenez plus tard.",
-    "filtered": "Aucune vidéo de catégorie « {category} » n’est disponible dans le rayon de {radius}. Vous pouvez retirer ce filtre ou élargir la zone.",
+    "title": "Aucune vidéo dans cette zone",
+    "radius": "Aucune vidéo n’est disponible à moins de {radius}. Élargissez la zone ou revenez un peu plus tard.",
+    "filtered": "Aucune vidéo de la catégorie « {category} » n’est disponible à moins de {radius}. Retirez le filtre ou élargissez la zone.",
     "searchArea": "Zone recherchée : {radius} autour de vous",
-    "cta": "Filmer",
+    "cta": "Filmer une vidéo",
     "clearCategory": "Voir toutes les catégories",
     "wider": "Élargir à {radius}"
   },
-  "error": "Impossible de charger les vidéos.",
-  "loadingMore": "Chargement de vidéos supplémentaires…",
-  "end": "Vous avez tout vu dans ce rayon.",
-  "deleted": "Votre compte a été supprimé. Merci d’avoir participé."
+  "error": "Impossible de charger les vidéos. Vérifiez votre connexion, puis réessayez.",
+  "loadingMore": "Chargement d’autres vidéos…",
+  "end": "Vous avez vu toutes les vidéos disponibles dans cette zone.",
+  "deleted": "Votre compte a été supprimé."
 }

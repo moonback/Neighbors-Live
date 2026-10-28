@@ -20,7 +20,7 @@
     "event": "Event",
     "help": "Helping out",
     "shop": "Business",
-    "lost": "Lost item"
+    "lost": "Lost / found"
   },
   "radius": {
     "300": "300 m",
