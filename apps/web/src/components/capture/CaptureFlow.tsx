@@ -258,6 +258,14 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
               </select>
             </Field>
           )}
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <h2 className="text-sm font-semibold">{t('form.safety.title')}</h2>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-fog">
+              <li>{t('form.safety.people')}</li>
+              <li>{t('form.safety.plates')}</li>
+              <li>{t('form.safety.emergency')}</li>
+            </ul>
+          </section>
           <section
             aria-live="polite"
             aria-label={t('form.preview.title')}

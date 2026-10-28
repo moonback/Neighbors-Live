@@ -65,6 +65,12 @@
       "lost": "E.g. Tabby cat spotted near … around …",
       "shop": "E.g. …% off … until …"
     },
+    "safety": {
+      "title": "Safety before publishing",
+      "people": "Film useful neighborhood facts, not people. Automatic face blur can miss some faces.",
+      "plates": "Avoid showing license plates or exact addresses if they could identify a person or place.",
+      "emergency": "If there is an immediate danger, call 112 first: Voisino is not an emergency service."
+    },
     "preview": {
       "title": "Post preview",
       "emptyCaption": "Your caption will appear here.",

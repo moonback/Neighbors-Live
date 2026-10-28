@@ -69,6 +69,12 @@
       "lost": "Ex. : Chat tigré aperçu près de … vers …",
       "shop": "Ex. : … % de réduction sur … jusqu’à …"
     },
+    "safety": {
+      "title": "Sécurité avant publication",
+      "people": "Filmez des faits utiles au quartier, pas des personnes. Le floutage automatique des visages peut en manquer.",
+      "plates": "Ne montrez pas de plaques ni d’adresses précises si elles peuvent identifier un lieu ou une personne.",
+      "emergency": "En cas de danger immédiat, appelez d’abord le 112 : Voisino n’est pas un service d’urgence."
+    },
     "preview": {
       "title": "Aperçu de la publication",
       "emptyCaption": "Ta légende apparaîtra ici.",
