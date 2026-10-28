@@ -139,12 +139,18 @@ export default async function ProfilePage({ params }: Params) {
           </p>
         )}
         {isOwner && (
-          <nav className="relative mt-2 grid w-full max-w-sm grid-cols-2 gap-2 text-sm">
+          <nav className="relative mt-2 grid w-full max-w-sm grid-cols-3 gap-2 text-sm">
             <Link
               href="/parametres"
               className="glow inline-flex min-h-11 items-center justify-center rounded-2xl bg-accent px-4 font-semibold text-white"
             >
               {t('edit')}
+            </Link>
+            <Link
+              href="/me/sauvegardes"
+              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 font-semibold hover:border-accent/60"
+            >
+              {t('savedVideos')}
             </Link>
             <Link
               href="/me/decisions"

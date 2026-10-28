@@ -11,6 +11,7 @@ import { Logo } from '@/components/Logo';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
+import { isVideoHidden } from '@/lib/hidden-videos';
 import { useLocation } from '@/lib/useLocation';
 import { useNeighborhoodFilters } from '@/lib/useNeighborhoodFilters';
 import { AlertsBanner } from './AlertsBanner';
@@ -106,6 +107,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
   );
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
   const [reportFor, setReportFor] = useState<string | null>(null);
+  const [hiddenVersion, setHiddenVersion] = useState(0);
   const autoplay = !prefersReducedMotion;
   const listRef = useRef<HTMLDivElement>(null);
   const categoryMenuRef = useRef<HTMLDivElement>(null);
@@ -128,6 +130,12 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [isCategoryMenuOpen]);
+
+  useEffect(() => {
+    const handle = () => setHiddenVersion((value) => value + 1);
+    window.addEventListener('nl-hidden-videos-change', handle);
+    return () => window.removeEventListener('nl-hidden-videos-change', handle);
+  }, []);
 
   const lat = location.status === 'ok' ? location.lat : null;
   const lng = location.status === 'ok' ? location.lng : null;
@@ -161,8 +169,9 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
       ]);
       if (!alive) return;
       if (!page?.ok) return setStatus('error');
-      const first = focused?.ok ? [focused.data] : [];
-      setItems([...first, ...page.data.items.filter((i) => i.id !== focusId)]);
+      const visible = page.data.items.filter((item) => !isVideoHidden(item.id));
+      const first = focused?.ok && !isVideoHidden(focused.data.id) ? [focused.data] : [];
+      setItems([...first, ...visible.filter((i) => i.id !== focusId)]);
       setCursor(page.data.nextCursor);
       setActive(0);
       listRef.current?.scrollTo({ top: 0 });
@@ -172,7 +181,7 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
     return () => {
       alive = false;
     };
-  }, [fetchPage, filtersReady, focusId, lat, reloadKey]);
+  }, [fetchPage, filtersReady, focusId, lat, reloadKey, hiddenVersion]);
 
   const loadMore = useCallback(async () => {
     if (!cursor || loadingMore.current) return;
@@ -182,7 +191,9 @@ export function Feed({ initialRadius, signedIn, focusId, initialCategory, notice
     if (page?.ok) {
       setItems((prev) => [
         ...prev,
-        ...page.data.items.filter((i) => !prev.some((p) => p.id === i.id)),
+        ...page.data.items
+          .filter((i) => !isVideoHidden(i.id))
+          .filter((i) => !prev.some((p) => p.id === i.id)),
       ]);
       setCursor(page.data.nextCursor);
     }

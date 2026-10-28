@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar } from '@/components/Avatar';
 import { api } from '@/lib/client-api';
 import type { FeedItem } from '@/lib/feed';
+import { isVideoHidden, toggleHiddenVideo } from '@/lib/hidden-videos';
 import { isVideoSaved, toggleSavedVideo } from '@/lib/saved-videos';
 import { formatDistance } from './format';
 
@@ -52,6 +53,7 @@ export function VideoCard({
   const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [usefulPending, setUsefulPending] = useState(false);
   const [saved, setSaved] = useState(() => isVideoSaved(item.id));
+  const [hidden, setHidden] = useState(() => isVideoHidden(item.id));
   const [progress, setProgress] = useState(0);
   const mediaRetries = useRef(0);
   const mediaRequest = useRef<{
@@ -177,8 +179,14 @@ export function VideoCard({
       authorName: item.author.username || undefined,
     });
     setSaved(next.saved);
-    window.dispatchEvent(new Event('nl-saved-videos-change'));
     setToast(next.saved ? t('saveToast') : t('unsaveToast'));
+    setTimeout(() => setToast(null), 2000);
+  }
+
+  async function toggleHide() {
+    const next = toggleHiddenVideo(item.id);
+    setHidden(next.hidden);
+    setToast(next.hidden ? t('hideToast') : t('unhideToast'));
     setTimeout(() => setToast(null), 2000);
   }
 
@@ -404,6 +412,12 @@ export function VideoCard({
           pressed={saved}
           onClick={toggleSave}
           icon="M7 4.5h10a1.5 1.5 0 011.5 1.5v14l-6.5-4.2-6.5 4.2V6A1.5 1.5 0 017 4.5z"
+        />
+        <ActionButton
+          label={hidden ? t('hidden') : t('hide')}
+          pressed={hidden}
+          onClick={toggleHide}
+          icon="M3 3l18 18M10.5 10.5A2.5 2.5 0 0013.5 13.5M9 6.7A9.7 9.7 0 0112 6c4.2 0 7.9 2.5 9.5 6-.8 1.6-2.2 3-3.9 4.1M6.6 7.5A16.2 16.2 0 002.5 12c1.6 3.5 5.3 6 9.5 6a11 11 0 004.1-.8"
         />
         <ActionButton
           label={t('share')}
