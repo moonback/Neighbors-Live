@@ -309,6 +309,10 @@ body {
   overflow: hidden;
 }
 
+.app-sidebar-note {
+  padding: 0.7rem 0.75rem;
+}
+
 .app-sidebar nav > * {
   animation: sidebar-item-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
