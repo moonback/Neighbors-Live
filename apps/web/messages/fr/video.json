@@ -17,6 +17,8 @@
   "mute": "Couper le son",
   "useful": "Utile",
   "usefulCount": "{count, plural, =0 {Utile} one {# utile} other {# utiles}}",
+  "markUseful": "Marquer cette vidéo comme utile",
+  "removeUseful": "Retirer votre vote « Utile »",
   "save": "Enregistrer",
   "saved": "Enregistrée",
   "saveToast": "Vidéo enregistrée.",

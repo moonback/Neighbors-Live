@@ -17,6 +17,8 @@
   "mute": "Mute",
   "useful": "Useful",
   "usefulCount": "{count, plural, =0 {Mark as useful} one {# useful vote} other {# useful votes}}",
+  "markUseful": "Mark this video as useful",
+  "removeUseful": "Remove your Useful vote",
   "save": "Save",
   "saved": "Saved",
   "saveToast": "Video saved.",

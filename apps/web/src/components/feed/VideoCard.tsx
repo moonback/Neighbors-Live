@@ -474,6 +474,7 @@ export function VideoCard({
       <div className="feed-action-rail absolute right-2 bottom-8 z-20 flex flex-col items-center gap-2 text-xs font-semibold text-white sm:gap-3">
         <ActionButton
           label={t('usefulCount', { count: useful.count })}
+          ariaLabel={t(useful.reacted ? 'removeUseful' : 'markUseful')}
           pressed={useful.reacted}
           onClick={toggleUseful}
           disabled={usefulPending}
@@ -557,12 +558,14 @@ export function VideoCard({
 
 function ActionButton({
   label,
+  ariaLabel,
   icon,
   onClick,
   pressed,
   disabled = false,
 }: {
   label: string;
+  ariaLabel?: string;
   icon: string;
   onClick: () => void;
   pressed?: boolean;
@@ -572,6 +575,7 @@ function ActionButton({
     <button
       type="button"
       onClick={onClick}
+      aria-label={ariaLabel}
       aria-pressed={pressed}
       disabled={disabled}
       className="feed-action-button group flex min-h-11 w-14 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60"
