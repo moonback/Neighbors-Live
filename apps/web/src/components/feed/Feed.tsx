@@ -377,7 +377,7 @@ export function Feed({
               <nav
                 id="feed-category-options"
                 aria-label={t('filters.label')}
-                className="glass absolute left-0 top-full z-30 mt-2 grid max-h-[min(60svh,24rem)] w-[min(20rem,calc(100vw-2rem))] grid-cols-2 gap-2 overflow-y-auto rounded-2xl p-3 shadow-xl"
+                className="feed-category-options glass absolute left-0 top-full z-30 mt-2 grid max-h-[min(60svh,24rem)] w-[min(20rem,calc(100vw-2rem))] grid-cols-2 gap-2 overflow-y-auto rounded-2xl p-3 shadow-xl"
               >
                 <FilterChip
                   active={category === null}

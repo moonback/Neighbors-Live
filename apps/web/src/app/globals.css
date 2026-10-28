@@ -518,6 +518,11 @@ body {
     grid-area: categories;
   }
 
+  .feed-category-options {
+    right: 0;
+    left: auto;
+  }
+
   .feed-radius {
     grid-area: radius;
     margin-left: 0;
