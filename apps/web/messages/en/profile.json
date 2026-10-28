@@ -31,6 +31,8 @@
   "offerExpired": "Offer expired",
   "offerInvalid": "Invalid offer — check with the business",
   "offerValidUntil": "Offer valid until {when}",
+  "offerTerms": "Offer terms",
+  "offerTermsMissing": "The business did not specify any terms.",
   "videoModerated": "Video hidden by moderators",
   "noCaption": "No caption",
   "collectionAuthor": "By @{name}",

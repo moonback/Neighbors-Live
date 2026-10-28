@@ -31,6 +31,8 @@
   "offerExpired": "Offre expirée",
   "offerInvalid": "Offre invalide — vérifiez auprès du commerce",
   "offerValidUntil": "Offre valide jusqu’à {when}",
+  "offerTerms": "Conditions de l’offre",
+  "offerTermsMissing": "Conditions non précisées par le commerce.",
   "videoModerated": "Vidéo masquée par la modération",
   "noCaption": "Aucune légende",
   "collectionAuthor": "Par @{name}",

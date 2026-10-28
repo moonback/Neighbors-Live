@@ -500,6 +500,23 @@ export function VideoCard({
               )}
             </div>
           )}
+          {item.category === 'shop' && (
+            <div className="text-xs text-white/85">
+              <span className="font-semibold">{t('offerTermsLabel')}: </span>
+              <span className={captionExpanded ? 'whitespace-pre-wrap' : 'line-clamp-2'}>
+                {item.offerTerms || t('offerTermsMissing')}
+              </span>
+            </div>
+          )}
+          {item.category === 'shop' && item.offerTerms.length > 100 && !captionExpanded && (
+            <button
+              type="button"
+              onClick={() => setCaptionExpanded(true)}
+              className="min-h-11 rounded-lg px-1 text-left text-sm font-semibold text-white underline underline-offset-4 transition-colors duration-200 ease-out hover:text-white/75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {t('offerTermsMore')}
+            </button>
+          )}
         </div>
       </div>
 

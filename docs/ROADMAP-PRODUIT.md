@@ -117,7 +117,7 @@ Ces propositions ne font pas de l’app un canal d’urgence. En cas de danger i
 - Ajouter des informations utiles au profil approuvé : horaires confirmés par le commerce, itinéraire externe, téléphone/site si fournis et lien vers les offres actives.
 - Sur une vidéo d’offre, proposer **Voir l’offre**, **Appeler** ou **Itinéraire** uniquement si la donnée correspondante est présente et vérifiée par le commerce.
 - Afficher validité et conditions de l’offre, date de fin et état expiré ; ne jamais garder une offre expirée comme active.
-- État d’expiration du parcours actuel : le feed et les collections distinguent les publications `shop` valides jusqu’à leur `expires_at`, expirées ou invalides (date absente/invalide ou publication non marquée commerçante). Les conditions restent dans la légende et ne sont pas encore des données structurées ; voir [docs/PROGRESS.md](./PROGRESS.md).
+- État du parcours actuel : le feed, le deep link et les collections distinguent les publications `shop` valides jusqu’à leur `expires_at`, expirées ou invalides (date absente/invalide ou auteur non approuvé). Les conditions sont stockées séparément dans `videos.offer_terms`, saisies obligatoirement pour les nouvelles offres et affichées dans les surfaces publiques/privées ; les publications anciennes sans conditions sont explicitement signalées. Voir [docs/PROGRESS.md](./PROGRESS.md).
 - Plus tard, proposer au commerçant un récapitulatif agrégé des vues et interactions uniquement si la mesure respecte la vie privée et si ses limites sont expliquées. Pas de promesse d’audience ou de retour sur investissement.
 
 ## Phase 5 — accessibilité et cohérence visuelle continue (P1)

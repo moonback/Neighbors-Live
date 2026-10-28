@@ -13,6 +13,7 @@ export interface PublishMeta {
   durationMs: number;
   eventEndsAt?: string;
   merchantHours?: number;
+  offerTerms?: string;
 }
 
 export interface Fix {

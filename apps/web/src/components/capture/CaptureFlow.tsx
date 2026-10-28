@@ -41,6 +41,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
   const [rec, setRec] = useState<Recording | null>(null);
   const [category, setCategory] = useState<Category>('alert');
   const [caption, setCaption] = useState('');
+  const [offerTerms, setOfferTerms] = useState('');
   const [eventEnd, setEventEnd] = useState('');
   const [merchantHours, setMerchantHours] = useState<number>(24);
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +91,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
       mimeType: containerOf(rec.mime),
       durationMs: rec.durationMs,
       ...(category === 'event' && eventEnd && { eventEndsAt: new Date(eventEnd).toISOString() }),
-      ...(category === 'shop' && { merchantHours }),
+      ...(category === 'shop' && { merchantHours, offerTerms }),
     };
     const requestId = crypto.randomUUID();
     const keepForLater = async (error?: unknown) => {
@@ -243,6 +244,19 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
             </Field>
           )}
           {category === 'shop' && (
+            <Field label={t('form.offerTerms')} htmlFor="offer-terms">
+              <textarea
+                id="offer-terms"
+                className={`${inputClass} min-h-20`}
+                maxLength={280}
+                required
+                value={offerTerms}
+                onChange={(e) => setOfferTerms(e.target.value)}
+                placeholder={t('form.offerTermsPlaceholder')}
+              />
+            </Field>
+          )}
+          {category === 'shop' && (
             <Field label={t('form.merchantDuration')} htmlFor="merchant-hours">
               <select
                 id="merchant-hours"
@@ -276,6 +290,14 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
             <p className="mt-1 whitespace-pre-wrap text-sm">
               {caption.trim() || t('form.preview.emptyCaption')}
             </p>
+            {category === 'shop' && (
+              <div className="mt-2 text-sm">
+                <p className="text-xs font-semibold text-fog">{t('form.offerTerms')}</p>
+                <p className="mt-1 whitespace-pre-wrap">
+                  {offerTerms.trim() || t('form.offerTermsMissing')}
+                </p>
+              </div>
+            )}
             {category === 'event' && eventEnd && (
               <p className="mt-2 text-xs text-fog">
                 {t('form.preview.eventEnd', {
@@ -303,7 +325,12 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
           )}
           <Button
             type="submit"
-            disabled={step === 'sending' || locating || (category === 'event' && !eventEnd)}
+            disabled={
+              step === 'sending' ||
+              locating ||
+              (category === 'event' && !eventEnd) ||
+              (category === 'shop' && offerTerms.trim().length < 3)
+            }
           >
             {locating
               ? t('form.locating')
@@ -327,6 +354,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
             onClick={() => {
               setRec(null);
               setCaption('');
+              setOfferTerms('');
               setProgress(0);
               setStep('camera');
             }}

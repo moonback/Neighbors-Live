@@ -83,6 +83,9 @@
     "eventEnd": "Fin de l’événement",
     "eventEndHint": "Dans les 7 prochains jours.",
     "merchantDuration": "Durée de l’offre",
+    "offerTerms": "Conditions de l’offre",
+    "offerTermsPlaceholder": "Ex. : hors boissons, sur présentation de cette vidéo…",
+    "offerTermsMissing": "Conditions non précisées.",
     "hours": "{count, plural, one {# heure} other {# heures}}",
     "lifetime": {
       "alert": "Visible 6 heures.",

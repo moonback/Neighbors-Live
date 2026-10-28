@@ -55,6 +55,9 @@
     "invalid": "Invalid offer — check with the business",
     "unavailable": "Offer unavailable"
   },
+  "offerTermsLabel": "Offer terms",
+  "offerTermsMissing": "The business did not specify any terms.",
+  "offerTermsMore": "Read offer terms",
   "captionMore": "Read more",
   "captionLess": "Show less",
   "commentsPanel": {

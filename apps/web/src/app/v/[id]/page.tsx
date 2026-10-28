@@ -62,6 +62,14 @@ export default async function VideoPage({ params }: Params) {
           />
           <p className="text-sm font-semibold">{tc(`categories.${item.category}`)}</p>
           {item.caption && <p className="text-lg">{item.caption}</p>}
+          {item.category === 'shop' && (
+            <div className="rounded-xl border border-white/10 bg-panel p-3 text-sm">
+              <p className="font-semibold">{t('offerTermsLabel')}</p>
+              <p className="mt-1 whitespace-pre-wrap text-fog">
+                {item.offerTerms || t('offerTermsMissing')}
+              </p>
+            </div>
+          )}
           <p className="text-sm text-fog">{t('by', { username: item.author.username ?? '' })}</p>
           {offerStatus && (
             <p

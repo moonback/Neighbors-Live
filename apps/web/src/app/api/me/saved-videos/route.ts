@@ -38,7 +38,7 @@ export const GET = route(async (req) => {
   const { data: videoRows, error: videoError } = await admin
     .from('videos')
     .select(
-      'id, author_id, category, caption, poster_path, status, published_at, expires_at, is_merchant',
+      'id, author_id, category, caption, offer_terms, poster_path, status, published_at, expires_at, is_merchant',
     )
     .in(
       'id',
@@ -71,6 +71,7 @@ export const GET = route(async (req) => {
         savedAt: new Date(row.created_at).getTime(),
         category: video?.category ?? null,
         caption: video?.caption ?? null,
+        offerTerms: video?.offer_terms ?? '',
         authorName: video ? (authors.get(video.author_id)?.username ?? null) : null,
         posterUrl: video?.poster_path ? (posters.get(video.poster_path) ?? null) : null,
         status: video?.status ?? null,

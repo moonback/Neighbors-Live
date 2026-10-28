@@ -13,6 +13,7 @@ type CollectionVideo = {
   savedAt: number;
   category: string | null;
   caption: string | null;
+  offerTerms: string;
   authorName: string | null;
   posterUrl: string | null;
   status: string | null;
@@ -244,6 +245,14 @@ export function VideoCollection({ kind }: { kind: CollectionKind }) {
                       <p className="line-clamp-3 text-sm font-medium text-white">
                         {video.caption || t('noCaption')}
                       </p>
+                      {video.category === 'shop' && (
+                        <div className="w-full rounded-lg border border-white/10 bg-white/5 p-2 text-xs">
+                          <p className="font-semibold text-fog">{t('offerTerms')}</p>
+                          <p className="mt-1 whitespace-pre-wrap text-white">
+                            {video.offerTerms || t('offerTermsMissing')}
+                          </p>
+                        </div>
+                      )}
                       <div className="mt-auto flex w-full flex-col gap-1 text-xs text-fog">
                         {video.authorName && (
                           <Link

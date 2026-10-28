@@ -68,8 +68,10 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
 - Les publications de catégorie `shop` affichent « valide jusqu’à », « expirée » ou « invalide »
   selon `expires_at` et le rôle commerçant approuvé du profil. Le champ vidéo `is_merchant` identifie
   une publication de catégorie Commerce ; il ne suffit pas à valider le statut du vendeur. Les
-  actions « Voir l’offre » sont masquées pour une offre expirée/invalide. Les conditions de l’offre
-  restent dans la légende et ne sont pas structurées.
+  actions « Voir l’offre » sont masquées pour une offre expirée/invalide. Les conditions sont
+  conservées dans `videos.offer_terms` (280 caractères maximum), distinctes de la légende, et
+  transmises par la fonction de réservation de vidéo dans la même transaction. Les anciennes
+  publications sans conditions restent lisibles avec un état « non précisées ».
 - Les panneaux de commentaires, de signalement et de partage suspendent la lecture du feed ; le
   conteneur de défilement reste monté pour conserver la vidéo et sa position au retour.
 - Carte : `GET /api/map` (même RPC, format GeoJSON) ; MapLibre GL, clustering côté source GeoJSON,

@@ -79,6 +79,9 @@
     "eventEnd": "Event ends",
     "eventEndHint": "Within the next 7 days.",
     "merchantDuration": "Offer duration",
+    "offerTerms": "Offer terms",
+    "offerTermsPlaceholder": "E.g. excludes drinks, show this video to redeem…",
+    "offerTermsMissing": "No terms provided.",
     "hours": "{count, plural, one {# hour} other {# hours}}",
     "lifetime": {
       "alert": "Visible for 6 hours.",

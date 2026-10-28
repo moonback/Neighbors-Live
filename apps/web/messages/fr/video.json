@@ -55,6 +55,9 @@
     "invalid": "Offre invalide — vérifiez auprès du commerce",
     "unavailable": "Offre indisponible"
   },
+  "offerTermsLabel": "Conditions",
+  "offerTermsMissing": "Conditions non précisées par le commerce.",
+  "offerTermsMore": "Lire les conditions",
   "captionMore": "Lire la suite",
   "captionLess": "Réduire",
   "commentsPanel": {

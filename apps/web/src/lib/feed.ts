@@ -9,6 +9,7 @@ export interface FeedItem {
   id: string;
   category: Category;
   caption: string;
+  offerTerms: string;
   author: {
     id: string;
     username: string | null;
@@ -64,7 +65,7 @@ export async function hydrate(
   const ids = rows.map((r) => r.id);
   const { data: paths } = await adminClient()
     .from('videos')
-    .select('id, video_path, poster_path')
+    .select('id, video_path, poster_path, offer_terms')
     .in('id', ids);
   const byId = new Map((paths ?? []).map((p) => [p.id, p]));
   const urls = await signMedia((paths ?? []).flatMap((p) => [p.video_path, p.poster_path]));
@@ -88,6 +89,7 @@ export async function hydrate(
       id: r.id,
       category: r.category,
       caption: r.caption,
+      offerTerms: p?.offer_terms ?? '',
       author: {
         id: r.author_id,
         username: r.author_username,

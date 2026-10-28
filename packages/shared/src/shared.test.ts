@@ -97,6 +97,31 @@ describe('schemas', () => {
     expect(createVideoSchema.parse(baseVideo).caption).toBe('Pain au chocolat à 1 €');
   });
 
+  it('sanitises and validates structured offer terms', () => {
+    expect(
+      createVideoSchema.parse({
+        ...baseVideo,
+        category: 'shop',
+        merchantHours: 24,
+        offerTerms: '  Hors boissons\n  ',
+      }).offerTerms,
+    ).toBe('Hors boissons');
+    expect(
+      createVideoSchema.safeParse({
+        ...baseVideo,
+        category: 'shop',
+        merchantHours: 24,
+        offerTerms: 'x'.repeat(281),
+      }).success,
+    ).toBe(false);
+    expect(
+      createVideoSchema.safeParse({
+        ...baseVideo,
+        offerTerms: 'conditions',
+      }).success,
+    ).toBe(false);
+  });
+
   it('rejects poor accuracy, long captions, missing event end, long recordings', () => {
     const bad = (patch: object) => createVideoSchema.safeParse({ ...baseVideo, ...patch }).success;
     expect(bad({ accuracy: 150 })).toBe(false);

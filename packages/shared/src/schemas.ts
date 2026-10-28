@@ -80,6 +80,7 @@ export const createVideoSchema = z
     requestId: z.uuid().optional(),
     eventEndsAt: z.iso.datetime({ offset: true }).optional(),
     merchantHours: z.union(MERCHANT_DURATIONS_H.map((h) => z.literal(h))).optional(),
+    offerTerms: cleanText(280).optional(),
   })
   .superRefine((v, ctx) => {
     const fix = fixSchema.safeParse({ lat: v.lat, lng: v.lng, accuracy: v.accuracy });
@@ -95,6 +96,20 @@ export const createVideoSchema = z
         code: 'custom',
         message: 'merchant_duration_required',
         path: ['merchantHours'],
+      });
+    }
+    if (v.offerTerms && v.offerTerms.length < 3) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'offer_terms_too_short',
+        path: ['offerTerms'],
+      });
+    }
+    if (v.category !== 'shop' && v.offerTerms) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'offer_terms_not_allowed',
+        path: ['offerTerms'],
       });
     }
   });

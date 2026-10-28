@@ -41,6 +41,7 @@ export const POST = route(async (req) => {
       p_duration_ms: input.durationMs,
       p_expires_at: expiresAt.toISOString(),
       p_request_id: input.requestId ?? crypto.randomUUID(),
+      p_offer_terms: input.offerTerms ?? '',
     }),
   );
   if (!videoId) throw new ApiError('internal', 500);
