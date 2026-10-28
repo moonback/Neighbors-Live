@@ -35,6 +35,8 @@
   "decisions": {
     "title": "Décisions me concernant",
     "empty": "Aucune décision de modération vous concernant.",
+    "loadError": "Impossible de charger vos décisions de modération. Votre historique n’est pas nécessairement vide.",
+    "retry": "Réessayer",
     "kinds": {
       "validate": "Vidéo validée",
       "hide": "Vidéo masquée",
