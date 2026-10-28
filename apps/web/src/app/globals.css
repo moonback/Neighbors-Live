@@ -33,9 +33,9 @@ body {
 }
 
 body {
-  background-image:
-    radial-gradient(60rem 40rem at -10% -10%, rgb(37 99 235 / 0.1), transparent 60%),
-    radial-gradient(50rem 40rem at 110% 110%, rgb(14 165 233 / 0.08), transparent 60%);
+  background:
+    radial-gradient(75rem 42rem at 0% 0%, rgb(37 99 235 / 0.12), transparent 52%),
+    radial-gradient(50rem 40rem at 120% 120%, rgb(14 165 233 / 0.08), transparent 60%), #091427;
   background-attachment: fixed;
 }
 
@@ -292,6 +292,8 @@ body {
 
 .app-shell {
   isolation: isolate;
+  max-width: 1460px;
+  margin: 0 auto;
 }
 
 .app-sidebar {
@@ -492,7 +494,7 @@ body {
   }
 
   .app-sidebar {
-    width: 17.25rem;
+    width: 17.5rem;
     height: calc(100vh - 2rem);
     max-height: 60rem;
     padding-top: 1.25rem;
@@ -518,7 +520,7 @@ body {
   }
 
   .feed-stage {
-    width: min(100%, 31rem);
+    width: min(100%, 32rem);
     height: calc(100svh - 2rem);
     margin: 0 auto;
     overflow: hidden;
