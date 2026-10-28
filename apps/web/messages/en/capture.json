@@ -101,7 +101,7 @@
   },
   "location": {
     "denied": "Location access was denied. It is required to publish. Allow it in your browser settings.",
-    "imprecise": "Location is too imprecise (±{accuracy} m; 100 m maximum). Move to an open area or wait a few seconds, then try again.",
+    "imprecise": "Location is too imprecise (±{accuracy} m; 500 m maximum). Move to an open area or wait a few seconds, then try again.",
     "unavailable": "Location is unavailable. Check that location services are on, then try again.",
     "retry": "Try location again"
   },

@@ -37,8 +37,8 @@ describe('offline queue republication rules', () => {
       'drop-moved',
     );
   });
-  it('waits for a precise position instead of deciding on a bad fix', () => {
-    expect(judge(item, t0 + 60_000, { ...filmed, accuracy: 250 })).toBe('wait-precision');
+  it('waits for a position exceeding the 500 m accuracy limit', () => {
+    expect(judge(item, t0 + 60_000, { ...filmed, accuracy: 501 })).toBe('wait-precision');
   });
   it('drops stale recordings', () => {
     expect(judge(item, t0 + MAX_AGE_MS + 1, filmed)).toBe('drop-stale');

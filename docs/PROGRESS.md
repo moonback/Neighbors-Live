@@ -4,6 +4,8 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
+Mise à jour 2026-10-29 — précision GPS maximale à la publication portée de 100 m à 500 m : constante partagée, validation client/serveur, messages FR/EN, fonction SQL et contrainte via migration, et tests de frontière. Le test E2E refuse maintenant 550 m au lieu de 450 m. Typecheck, lint, tests, build et tests SQL à exécuter.
+
 Mise à jour 2026-10-29 — limite d’envoi vidéo portée à 500 MiB dans la validation partagée, le stockage Supabase local et les buckets privés via une nouvelle migration. Tests de frontière TypeScript et pgTAP ajoutés. `git diff --cached --check` réussi ; typecheck, lint, Vitest, build et pgTAP non exécutés (exécution `pnpm` refusée par l’environnement, Supabase local non vérifié).
 
 Mise à jour 2026-10-28 — nouvelle entrée « En voir plus » dans la navigation, vers la page Découvrir qui présente les vidéos locales en grille asymétrique. Onglets de catégories, compteur réel de mentions utiles, aperçus signés, distances arrondies et chargement automatique à l’ouverture ; la position n’est utilisée qu’en mémoire pour la requête. Textes FR/EN. Typecheck, lint ciblé, Prettier, 105 tests workspace et build réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache` ; revue visuelle navigateur/appareil réel non effectuée.
@@ -141,7 +143,7 @@ Documentation 2026-10-27 : README réécrit pour décrire les parcours habitants
 | 3.2 | 30 s max + jauge, aperçu, refaire               | 🟢   | e2e                                                                                                       |
 | 3.3 | Import galerie interdit                         | 🟢   | Aucun `input[type=file]` (assertion e2e) ; limite : le serveur ne peut pas prouver l'origine d'un fichier |
 | 3.4 | `mimeType` MP4/WebM                             | ✅   | Tests unitaires ; WebM vérifié en e2e, MP4 Safari non testé sur appareil                                  |
-| 3.5 | Refus si précision > 100 m                      | 🟢   | e2e (450 m refusé) + validation serveur                                                                   |
+| 3.5 | Refus si précision > 500 m                      | ✅   | E2E refuse 550 m ; tests partagés et SQL couvrent la limite de 500 m                                      |
 | 3.6 | Formulaire catégorie / légende / durée de vie   | 🟢   |                                                                                                           |
 | 3.7 | Upload résumable (TUS)                          | 🟢   | e2e ; reprise après coupure non testée automatiquement                                                    |
 | 3.8 | File hors ligne IndexedDB                       | ✅   | Règles testées (unitaires) ; parcours hors ligne complet non automatisé                                   |

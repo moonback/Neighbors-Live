@@ -127,7 +127,7 @@ Les constats de cette section proviennent de la lecture du code et des tests ; *
 
 - **Profil/objectif :** membre avec pseudo ; publier une courte vidéo de son quartier.
 - **Entrée/prérequis :** `/filmer` exige session et pseudo ; catégorie commerce réservée au statut approuvé.
-- **Étapes :** explication → caméra/micro → enregistrement (30 s max selon constante partagée) → aperçu/refaire → catégorie/légende/durée → position fraîche ≤ 100 m → réservation serveur → upload TUS → confirmation `uploaded` → job worker → `active` ou `rejected` → suivi dans `/me`.
+- **Étapes :** explication → caméra/micro → enregistrement (30 s max selon constante partagée) → aperçu/refaire → catégorie/légende/durée → position fraîche (précision ≤ 500 m) → réservation serveur → upload TUS → confirmation `uploaded` → job worker → `active` ou `rejected` → suivi dans `/me`.
 - **Effets/retours :** `create_video` valide identité, précision, cohérence position, quota et débit ; worker traite/floute/transcode, supprime l’original au succès, retente puis rejette ; page vidéo personnelle interroge périodiquement `processing`.
 - **Alternatives :** caméra refusée/absente/non supportée affiche un message ; position refusée/imprécise reste récupérable ; hors ligne immédiat conserve vidéo et métadonnées localement ; l’utilisateur peut retirer sa vidéo.
 - **Accès/fichiers/tests :** `Camera.tsx`, `CaptureFlow.tsx`, `publish.ts`, `offline-queue.ts`, `OfflineQueueRunner.tsx`, API videos, worker, fonctions SQL ; E2E de publication réussie, précision insuffisante et tests unitaires de format/règles hors ligne présents.

@@ -105,7 +105,7 @@
   },
   "location": {
     "denied": "La localisation est refusée. Elle est nécessaire pour publier : autorisez-la dans les réglages du navigateur.",
-    "imprecise": "Position trop imprécise (± {accuracy} m, 100 m maximum). Sortez à découvert ou attendez quelques secondes, puis réessayez.",
+    "imprecise": "Position trop imprécise (± {accuracy} m, 500 m maximum). Sortez à découvert ou attendez quelques secondes, puis réessayez.",
     "unavailable": "Position indisponible. Vérifiez que la localisation est activée et réessayez.",
     "retry": "Réessayer la localisation"
   },

@@ -26,7 +26,7 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
 
 1. Client : enregistre ≤ 30 s (`MediaRecorder`, `mimeType` détecté : `video/mp4` Safari,
    `video/webm;codecs=vp9/vp8` sinon), relève la position (`enableHighAccuracy`), refuse si
-   précision > 100 m.
+   précision > 500 m.
 2. `POST /api/videos` : Zod (catégorie, légende ≤ 140, lat/lng/accuracy, `expires_at` événement),
    cohérence position (bornes, précision, pas de saut physiquement impossible depuis la dernière
    publication de l'auteur), rate limit, calcul `h3_cell` (h3-js, rés. 8) → insère `videos`
@@ -37,7 +37,7 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
    `pg_notify`.
 5. Hors ligne : la vidéo + métadonnées vont dans IndexedDB ; au retour réseau, la position est
    relevée à nouveau et la publication n'est rejouée que si elle reste à < 100 m de la position
-   d'origine avec une précision ≤ 100 m.
+   d'origine avec une précision ≤ 500 m.
 
 **Traitement (worker)**
 

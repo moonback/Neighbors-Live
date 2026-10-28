@@ -40,7 +40,7 @@ test('records a video with the camera, publishes it, and the worker makes it act
 
 test('refuses to publish with an imprecise position', async ({ page, context }) => {
   await signUp(page, 'gps');
-  await context.setGeolocation({ latitude: 48.8722, longitude: 2.3767, accuracy: 450 });
+  await context.setGeolocation({ latitude: 48.8722, longitude: 2.3767, accuracy: 550 });
   await page.goto('/filmer');
   await page.getByRole('button', { name: 'Activer la caméra' }).click();
   await page.getByRole('button', { name: 'Démarrer l’enregistrement' }).click();
@@ -48,6 +48,6 @@ test('refuses to publish with an imprecise position', async ({ page, context }) 
   await page.getByRole('button', { name: 'Arrêter l’enregistrement' }).click();
   await page.getByRole('button', { name: 'Continuer' }).click();
   await page.getByRole('button', { name: 'Publier ici' }).click();
-  await expect(page.getByText(/Position trop imprécise \(± 450 m/)).toBeVisible();
+  await expect(page.getByText(/Position trop imprécise \(± 550 m/)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Réessayer la localisation' })).toBeVisible();
 });

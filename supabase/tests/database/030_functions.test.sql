@@ -147,9 +147,12 @@ select ok(
   'create_video: starts processing with a fuzzed public location');
 select throws_ok($$select pg_temp.publish((select eve from u), 45.7640, 4.8357)$$, 'position_incoherent', 'create_video: rejects impossible jump');
 select throws_ok($$select pg_temp.publish((select fresh from u), 48.8722, 2.3767)$$, 'profile_incomplete', 'create_video: username required');
+select isnt(
+  public.create_video((select dan from u), 'help', 'x', 48.8722, 2.3767, 500, '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000, now() + interval '1 day', gen_random_uuid()),
+  null, 'create_video: accepts accuracy of 500 m');
 select throws_ok(
-  $$select public.create_video((select dan from u), 'help', 'x', 48.8722, 2.3767, 150, '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000, now() + interval '1 day')$$,
-  'accuracy_too_low', 'create_video: accuracy > 100 m rejected');
+  $$select public.create_video((select dan from u), 'help', 'x', 48.8722, 2.3767, 501, '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000, now() + interval '1 day', gen_random_uuid())$$,
+  'accuracy_too_low', 'create_video: accuracy above 500 m rejected');
 select throws_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'not_merchant', 'create_video: shop category requires approved merchant');
 
 insert into public.merchant_profiles (user_id, business_name, status, daily_quota) values ((select shop from u), 'Épicerie', 'approved', 3);

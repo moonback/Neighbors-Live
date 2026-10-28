@@ -11,7 +11,7 @@ brouillons.
 - Le compte utilise une adresse e-mail, un identifiant utilisateur, un pseudo et les champs de
   profil renseignés. L’authentification et les sessions sont gérées par Supabase Auth.
 - Une publication contient une vidéo, sa catégorie, une légende, une position et sa précision au
-  moment de la capture. Le serveur refuse les positions dont la précision dépasse 100 m. La
+  moment de la capture. Le serveur refuse les positions dont la précision dépasse 500 m. La
   position exacte est nécessaire aux calculs de proximité et n’est pas renvoyée au client public.
 - Les réponses destinées au public utilisent une position approximative et des distances arrondies.
   Les requêtes de position du feed ne sont pas conservées par l’application.

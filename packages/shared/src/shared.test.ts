@@ -134,9 +134,14 @@ describe('schemas', () => {
     ).toBe(false);
   });
 
-  it('rejects poor accuracy, long captions, missing event end, long recordings', () => {
+  it('accepts accuracy up to 500 m and rejects poorer accuracy', () => {
     const bad = (patch: object) => createVideoSchema.safeParse({ ...baseVideo, ...patch }).success;
-    expect(bad({ accuracy: 150 })).toBe(false);
+    expect(bad({ accuracy: 500 })).toBe(true);
+    expect(bad({ accuracy: 501 })).toBe(false);
+  });
+
+  it('rejects long captions, missing event end, and long recordings', () => {
+    const bad = (patch: object) => createVideoSchema.safeParse({ ...baseVideo, ...patch }).success;
     expect(bad({ caption: 'x'.repeat(141) })).toBe(false);
     expect(bad({ category: 'event' })).toBe(false);
     expect(bad({ durationMs: 45_000 })).toBe(false);
