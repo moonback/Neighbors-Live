@@ -10,6 +10,7 @@ import type { FeedItem } from '@/lib/feed';
 import { fetchIsVideoHidden, toggleHiddenVideoServer, isVideoHidden } from '@/lib/hidden-videos';
 import { fetchIsVideoSaved, toggleSavedVideoServer, isVideoSaved } from '@/lib/saved-videos';
 import { formatDistance } from './format';
+import { Sheet } from './Sheet';
 
 interface Props {
   item: FeedItem;
@@ -86,6 +87,7 @@ export function VideoCard({
   }>({ generation: 0, controller: null });
   const [useful, setUseful] = useState({ reacted: item.reacted, count: item.usefulCount });
   const [captionExpanded, setCaptionExpanded] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
@@ -231,18 +233,36 @@ export function VideoCard({
     }
   }
 
-  async function share() {
+  async function copyShareLink() {
     const url = `${window.location.origin}/v/${item.id}`;
     try {
-      if (navigator.share)
-        await navigator.share({ title: tc(item.category), text: item.caption, url });
-      else {
-        await navigator.clipboard.writeText(url);
-        setToast(t('shared'));
-        setTimeout(() => setToast(null), 2000);
-      }
+      await navigator.clipboard.writeText(url);
+      setShareOpen(false);
+      setToast(t('shared'));
+      setTimeout(() => setToast(null), 2000);
     } catch {
-      /* share sheet dismissed */
+      setToast(t('shareError'));
+      setTimeout(() => setToast(null), 3000);
+    }
+  }
+
+  async function shareWithDevice() {
+    if (!navigator.share) {
+      await copyShareLink();
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title: tc(item.category),
+        text: item.caption,
+        url: `${window.location.origin}/v/${item.id}`,
+      });
+      setShareOpen(false);
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      setToast(t('shareError'));
+      setTimeout(() => setToast(null), 3000);
     }
   }
 
@@ -480,7 +500,7 @@ export function VideoCard({
         />
         <ActionButton
           label={t('share')}
-          onClick={share}
+          onClick={() => setShareOpen(true)}
           icon="M14 5l6 6-6 6M20 11H9a5 5 0 00-5 5v3"
         />
         <ActionButton
@@ -507,6 +527,30 @@ export function VideoCard({
           {toast}
         </p>
       )}
+      <Sheet
+        open={shareOpen}
+        title={t('sharePanel.title')}
+        onClose={() => setShareOpen(false)}
+        closeLabel={t('sharePanel.close')}
+      >
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-white/75">{t('sharePanel.description')}</p>
+          <button
+            type="button"
+            onClick={() => void shareWithDevice()}
+            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-accent px-4 font-semibold text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {t('sharePanel.system')}
+          </button>
+          <button
+            type="button"
+            onClick={() => void copyShareLink()}
+            className="glass flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {t('sharePanel.copyLink')}
+          </button>
+        </div>
+      </Sheet>
     </article>
   );
 }

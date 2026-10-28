@@ -62,6 +62,9 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   (fraîcheur décroissante pondérée par « utile » et distance), pagination par curseur opaque
   (`score,id`). La route signe en lot les URL vidéo/poster (TTL court) avec la clé service.
 - La position de la requête n'est ni stockée ni journalisée.
+- Le lien public `/v/[id]` affiche uniquement les vidéos encore publiables via un aperçu et des URL
+  média signées à durée courte ; aucune coordonnée exacte n'est incluse. Le feed propose le partage
+  natif ou la copie explicite de ce lien.
 - Carte : `GET /api/map` (même RPC, format GeoJSON) ; MapLibre GL, clustering côté source GeoJSON,
   style de tuiles via `NEXT_PUBLIC_MAP_STYLE_URL`. Le viewport cartographique courant est conservé
   uniquement en mémoire pendant la navigation client vers le feed et retour ; il n'est pas ajouté à

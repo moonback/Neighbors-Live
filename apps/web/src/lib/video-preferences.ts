@@ -20,7 +20,8 @@ export function getVideoMuted(storage?: StorageLike | null): boolean {
 
   try {
     const saved = target.getItem(STORAGE_KEY);
-    return saved === null ? true : saved !== 'false';
+    if (saved === null) return memoryMuted;
+    return saved === 'false' ? false : true;
   } catch {
     return memoryMuted;
   }
