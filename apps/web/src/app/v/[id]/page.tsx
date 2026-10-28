@@ -33,6 +33,10 @@ export default async function VideoPage({ params }: Params) {
   const item = await load(id);
   const t = await getTranslations('video');
   const tc = await getTranslations('common');
+  const hasMerchantWebsite = item?.author.isMerchant && Boolean(item.author.merchantWebsite);
+  const hasMerchantPhone = item?.author.isMerchant && Boolean(item.author.merchantPhone);
+  const hasMerchantAddress = item?.author.isMerchant && Boolean(item.author.merchantAddress);
+
   return (
     <main id="main" className="mx-auto flex min-h-dvh max-w-md flex-col gap-4 p-4">
       {!item ? (
@@ -53,6 +57,38 @@ export default async function VideoPage({ params }: Params) {
           <p className="text-sm font-semibold">{tc(`categories.${item.category}`)}</p>
           {item.caption && <p className="text-lg">{item.caption}</p>}
           <p className="text-sm text-fog">{t('by', { username: item.author.username ?? '' })}</p>
+          {(hasMerchantWebsite || hasMerchantPhone || hasMerchantAddress) && (
+            <div className="flex flex-wrap gap-2">
+              {hasMerchantWebsite && (
+                <a
+                  href={item.author.merchantWebsite!}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-panel px-4 text-sm font-semibold text-white"
+                >
+                  {t('offerView')}
+                </a>
+              )}
+              {hasMerchantPhone && (
+                <a
+                  href={`tel:${item.author.merchantPhone!}`}
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-panel px-4 text-sm font-semibold text-white"
+                >
+                  {t('callBusiness')}
+                </a>
+              )}
+              {hasMerchantAddress && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.author.merchantAddress!)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-panel px-4 text-sm font-semibold text-white"
+                >
+                  {t('directions')}
+                </a>
+              )}
+            </div>
+          )}
         </>
       )}
       <Link
