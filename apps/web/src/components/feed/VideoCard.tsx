@@ -400,7 +400,7 @@ export function VideoCard({
         type="button"
         onClick={onToggleFit}
         aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
-        className="glass absolute right-4 top-[10.5rem] z-30 lg:top-6 lg:right-auto lg:left-6 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="glass absolute right-4 top-[10.5rem] z-30 lg:top-auto lg:right-20 lg:bottom-3 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         <svg
           aria-hidden="true"
