@@ -17,6 +17,7 @@ export default tseslint.config(
       'apps/web/next-env.d.ts',
       'packages/shared/src/database.types.ts',
       'supabase/.temp/**',
+      '.swc-safe-cache/**',
     ],
   },
   js.configs.recommended,

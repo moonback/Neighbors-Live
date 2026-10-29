@@ -181,6 +181,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
         <p>{t('primer.privacy')}</p>
       </PermissionPrimer>
 
+      {step === 'camera' && <h1 className="sr-only">{t('title')}</h1>}
       {step === 'camera' && (
         <Camera
           onRecorded={(r) => {

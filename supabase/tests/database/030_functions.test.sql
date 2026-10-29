@@ -73,6 +73,8 @@ select ok(
      on regular.id = reduced.id
    where reduced.id = (select alert_v from nv)),
   'nearby_videos: reduced categories receive a lower relevance score');
+-- Fixture updates need the owner role; the previous assertions ran as anon.
+select tests.clear_authentication();
 update public.videos set published_at = now() - interval '2 days' where id = (select near_v from nv);
 update public.videos set published_at = now() - interval '1 hour' where id = (select alert_v from nv);
 update public.videos set published_at = now() - interval '4 days' where id = (select far_v from nv);

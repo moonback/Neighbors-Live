@@ -379,7 +379,6 @@ export function VideoCard({
           type="button"
           onClick={onToggleMute}
           aria-label={muted ? t('unmute') : t('mute')}
-          aria-pressed={!muted}
           className="ml-auto flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
         >
           <svg
@@ -407,7 +406,7 @@ export function VideoCard({
           type="button"
           onClick={onToggleFit}
           aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
-          className="glass absolute right-4 top-[10.5rem] z-30 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:top-auto lg:right-20 lg:bottom-3"
+          className="glass absolute left-4 top-[10.5rem] z-30 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:top-auto lg:right-20 lg:bottom-3 lg:left-auto"
         >
           <svg
             aria-hidden="true"
@@ -575,7 +574,13 @@ export function VideoCard({
           icon="M7 11v9H4v-9zm2 9h8.5a2 2 0 002-1.6l1.4-6A2 2 0 0019 10h-5V6a2 2 0 00-2-2l-3 7z"
         />
         <ActionButton
-          label={t('comments', { count: item.commentCount })}
+          // The rail is 64px wide: show the bare count, keep the full phrase for screen readers.
+          label={
+            item.commentCount > 0
+              ? String(item.commentCount)
+              : t('comments', { count: item.commentCount })
+          }
+          ariaLabel={t('comments', { count: item.commentCount })}
           onClick={() => onComments(item)}
           icon="M4 5h16v11H8l-4 4z"
         />
@@ -617,7 +622,8 @@ export function VideoCard({
           icon="M7 4.5h10a1.5 1.5 0 011.5 1.5v14l-6.5-4.2-6.5 4.2V6A1.5 1.5 0 017 4.5z"
         />
         <ActionButton
-          label={hidden ? t('hidden') : t('hide')}
+          label={hidden ? t('hidden') : t('hideShort')}
+          ariaLabel={hidden ? undefined : t('hide')}
           pressed={hidden}
           onClick={toggleHide}
           disabled={collectionPending !== null}
@@ -723,9 +729,10 @@ function ActionButton({
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
-      aria-pressed={pressed}
+      // Every caller already states the state in its label; aria-pressed would announce it twice.
+      data-pressed={pressed || undefined}
       disabled={disabled}
-      className={`${className} feed-action-button group flex min-h-11 w-14 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60`}
+      className={`${className} feed-action-button group flex min-h-11 w-16 flex-col items-center gap-1 text-center transition-[transform,opacity] duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-60`}
     >
       <span
         className={`feed-action-icon flex h-11 w-11 items-center justify-center rounded-full transition-[transform,background-color,color,box-shadow] duration-200 ease-out group-active:scale-95 ${pressed ? 'glow bg-accent text-white' : 'text-white'}`}

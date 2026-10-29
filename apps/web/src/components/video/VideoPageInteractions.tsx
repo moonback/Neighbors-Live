@@ -143,7 +143,6 @@ export function VideoPageInteractions({
           type="button"
           onClick={() => void toggleUseful()}
           disabled={!signedIn || usefulPending}
-          aria-pressed={useful.reacted}
           aria-label={t(useful.reacted ? 'removeUseful' : 'markUseful')}
           title={!signedIn ? t('publicPage.signInToReact') : undefined}
           className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70"
@@ -185,7 +184,6 @@ export function VideoPageInteractions({
           type="button"
           onClick={() => void toggleSave()}
           disabled={!signedIn || collectionPending !== null}
-          aria-pressed={saved}
           className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70"
         >
           <svg
@@ -206,7 +204,6 @@ export function VideoPageInteractions({
           type="button"
           onClick={() => void toggleHide()}
           disabled={!signedIn || collectionPending !== null}
-          aria-pressed={hidden}
           className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70"
         >
           <svg

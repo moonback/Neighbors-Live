@@ -13,6 +13,7 @@ export default async function DiscoverPage() {
   return (
     <div className="discover-page min-h-[calc(100dvh-3.5rem)] px-4 py-5 sm:px-8 sm:py-8 lg:py-5">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:gap-10">
+        <h1 className="sr-only">{t('title')}</h1>
         <ExploreSpotlightGrid />
 
         <section aria-label={t('nearbyTitle')} className="grid gap-4 lg:grid-cols-2">

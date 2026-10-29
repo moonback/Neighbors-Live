@@ -74,7 +74,7 @@
     "clearCategory": "Voir toutes les catégories",
     "wider": "Élargir à {radius}"
   },
-  "error": "Impossible de charger les vidéos. Vérifiez votre connexion, puis réessayez.",
+  "error": "Impossible de charger les vidéos pour le moment. Vérifiez votre connexion ou réessayez dans un instant.",
   "loadingMore": "Chargement d’autres vidéos…",
   "end": "Vous avez vu toutes les vidéos disponibles dans cette zone.",
   "deleted": "Votre compte a été supprimé."

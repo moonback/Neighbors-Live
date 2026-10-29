@@ -13,3 +13,4 @@ apps/web/.env.local
 next-env.d.ts
 .demo-media/
 apps/web/public/maplibre-gl-worker.mjs
+.swc-safe-cache/

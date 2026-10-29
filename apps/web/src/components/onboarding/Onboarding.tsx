@@ -12,6 +12,24 @@ import { ONBOARDED_COOKIE } from '@/lib/onboarding';
 
 const ONBOARDING_STEP_KEY = 'neighbors-onboarding-step';
 
+/** Step resume is a convenience: blocked browser storage must not break or block onboarding. */
+function readSavedStep(): number {
+  try {
+    return Number(window.localStorage.getItem(ONBOARDING_STEP_KEY));
+  } catch {
+    return Number.NaN;
+  }
+}
+
+function saveStep(step: number | null) {
+  try {
+    if (step === null) window.localStorage.removeItem(ONBOARDING_STEP_KEY);
+    else window.localStorage.setItem(ONBOARDING_STEP_KEY, String(step));
+  } catch {
+    // Without storage the current step simply is not resumed after a reload.
+  }
+}
+
 interface InstallPrompt extends Event {
   prompt: () => Promise<void>;
 }
@@ -50,7 +68,7 @@ export function Onboarding({
               ? 'android'
               : 'other',
       );
-      const saved = Number(window.localStorage.getItem(ONBOARDING_STEP_KEY));
+      const saved = readSavedStep();
       const requestedInstallGuide =
         new URLSearchParams(window.location.search).get('step') === 'install';
       if (
@@ -69,7 +87,7 @@ export function Onboarding({
   }, []);
 
   async function finish() {
-    window.localStorage.removeItem(ONBOARDING_STEP_KEY);
+    saveStep(null);
     // Non-sensitive preference cookie read by src/proxy.ts (no tracking, no personal data).
     document.cookie = `${ONBOARDED_COOKIE}=1; path=/; max-age=31536000; samesite=lax`;
     if (signedIn) await api('/api/me/settings', { method: 'PATCH', body: { onboarded: true } });
@@ -80,7 +98,7 @@ export function Onboarding({
   const list = (k: string) => t.raw(k) as string[];
   const changeStep = (nextStep: number) => {
     const bounded = Math.max(0, Math.min(INSTALL_STEP, nextStep));
-    window.localStorage.setItem(ONBOARDING_STEP_KEY, String(bounded));
+    saveStep(bounded);
     setStep(bounded);
   };
 

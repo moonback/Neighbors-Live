@@ -12,3 +12,4 @@ apps/worker/models
 supabase/seed.sql
 supabase/tests
 apps/web/public/maplibre-gl-worker.mjs
+.swc-safe-cache

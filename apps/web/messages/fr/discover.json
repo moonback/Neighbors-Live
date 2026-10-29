@@ -14,7 +14,7 @@
     "loading": "Chargement des vidéos…",
     "denied": "Accès à la position refusé. Autorisez-le dans les réglages du navigateur, puis réessayez.",
     "locationError": "Votre position est indisponible pour le moment.",
-    "fetchError": "Impossible de charger les vidéos. Vérifiez votre connexion, puis réessayez.",
+    "fetchError": "Impossible de charger les vidéos pour le moment. Vérifiez votre connexion ou réessayez dans un instant.",
     "empty": "Aucune vidéo n’est disponible dans cette zone pour le moment.",
     "usefulCount": "{count, plural, one {# mention utile} other {# mentions utiles}}",
     "searchLabel": "Rechercher dans les vidéos",

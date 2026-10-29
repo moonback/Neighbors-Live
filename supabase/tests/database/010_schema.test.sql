@@ -13,7 +13,8 @@ select is(
 select tables_are('public', array[
   'app_config', 'profiles', 'user_settings', 'merchant_profiles', 'videos', 'media_jobs',
   'notification_outbox', 'reactions', 'saved_videos', 'hidden_videos', 'comments', 'reports', 'zone_moderators',
-  'moderation_actions', 'appeals', 'push_subscriptions', 'rate_limits'
+  'moderation_actions', 'appeals', 'push_subscriptions', 'rate_limits',
+  'media_settings_audit', 'media_worker_status'
 ]);
 
 select col_type_is('public', 'videos', 'location', 'extensions', 'geography(Point,4326)', 'location is geography(Point,4326)');

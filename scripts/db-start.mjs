@@ -14,6 +14,8 @@ const run = (cmd, args, opts = {}) => {
 
 console.log('▶ Starting local Supabase…');
 run('pnpm', ['exec', 'supabase', 'start', '-x', 'imgproxy,edge-runtime,logflare,vector,supavisor']);
+// `supabase start` reuses an existing volume without applying newer migrations.
+run('pnpm', ['exec', 'supabase', 'migration', 'up', '--local']);
 
 const raw = execFileSync('pnpm', ['exec', 'supabase', 'status', '-o', 'json'], {
   cwd: root,

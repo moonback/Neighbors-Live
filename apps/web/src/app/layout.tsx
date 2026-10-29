@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { Inter } from 'next/font/google';
+import { headers } from 'next/headers';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { PwaShell } from '@/components/pwa/PwaShell';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
@@ -27,10 +28,19 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
+// Applies the saved light theme before first paint (the provider only runs after hydration).
+const themeScript =
+  "try{if(localStorage.getItem('neighbors-theme')==='light'){var d=document.documentElement;d.dataset.theme='light';d.style.colorScheme='light'}}catch(e){}";
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   return (
-    <html lang={locale} className={inter.variable}>
+    // The theme script may set data-theme before React hydrates.
+    <html lang={locale} className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="font-sans antialiased">
         <NextIntlClientProvider>
           <ThemeProvider>

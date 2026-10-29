@@ -74,7 +74,7 @@
     "clearCategory": "Show all categories",
     "wider": "Expand to {radius}"
   },
-  "error": "Could not load videos. Check your connection and try again.",
+  "error": "Could not load videos right now. Check your connection or try again in a moment.",
   "loadingMore": "Loading more videos…",
   "end": "You’ve seen all available videos in this area.",
   "deleted": "Your account has been deleted."

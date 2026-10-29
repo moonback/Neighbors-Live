@@ -39,6 +39,7 @@
   "unsaveToast": "Removed from your saved list.",
   "saveError": "Could not update your saved videos. Please try again.",
   "hide": "Hide from my feed",
+  "hideShort": "Hide",
   "hidden": "Hidden from my feed",
   "hideConfirm": "Hide this video from your personal feed? It will not be deleted or reported. You can restore it from your profile.",
   "hideToast": "Video hidden.",

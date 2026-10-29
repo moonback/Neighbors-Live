@@ -39,6 +39,7 @@
   "unsaveToast": "Vidéo retirée de votre liste.",
   "saveError": "Impossible de modifier vos vidéos enregistrées. Réessayez.",
   "hide": "Masquer de mon feed",
+  "hideShort": "Masquer",
   "hidden": "Masquée de mon feed",
   "hideConfirm": "Masquer cette vidéo de votre feed personnel ? Elle ne sera ni supprimée ni signalée. Vous pourrez la rétablir depuis votre profil.",
   "hideToast": "Vidéo masquée.",

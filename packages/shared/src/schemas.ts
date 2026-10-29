@@ -16,7 +16,7 @@ import {
   VIDEO_ORIENTATIONS,
   type FeedSort,
 } from './constants.ts';
-import { isPlausiblePosition } from './geo.ts';
+import { isPlausiblePosition } from './position.ts';
 import { sanitizeText } from './text.ts';
 
 const cleanText = (max: number) => z.string().transform(sanitizeText).pipe(z.string().max(max));

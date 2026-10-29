@@ -54,7 +54,7 @@ export function BottomNav({
       className="bottom-nav fixed inset-x-3 z-40 mx-auto max-w-lg rounded-2xl px-1 pb-1 lg:hidden"
       style={{ bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
     >
-      <ul className="mx-auto flex max-w-lg items-center justify-around px-2">
+      <ul className="mx-auto flex max-w-lg items-center justify-around px-1">
         {items.map((item) => {
           if (item.key === 'record') {
             return (
@@ -85,7 +85,7 @@ export function BottomNav({
               <Link
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0 px-2 text-[10px] font-medium transition-colors ${active ? 'text-white' : 'text-fog hover:text-white'}`}
+                className={`relative flex min-h-12 min-w-14 flex-col items-center justify-center gap-0 whitespace-nowrap px-1 pb-2 text-[10px] font-medium transition-colors ${active ? 'text-white' : 'text-fog hover:text-white'}`}
               >
                 {item.key === 'profile' && profileAvatar?.imageUrl ? (
                   <Avatar
@@ -112,7 +112,7 @@ export function BottomNav({
                 {active && (
                   <span
                     aria-hidden="true"
-                    className="absolute bottom-1.5 h-1 w-5 rounded-full bg-accent"
+                    className="absolute bottom-1 h-1 w-5 rounded-full bg-accent"
                   />
                 )}
               </Link>

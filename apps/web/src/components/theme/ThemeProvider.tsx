@@ -21,8 +21,15 @@ function subscribe(onChange: () => void) {
   };
 }
 
+// Fallback when browser storage throws (blocked cookies, some private modes).
+let memoryTheme: Theme = 'dark';
+
 function getSnapshot(): Theme {
-  return window.localStorage.getItem('neighbors-theme') === 'light' ? 'light' : 'dark';
+  try {
+    return window.localStorage.getItem('neighbors-theme') === 'light' ? 'light' : 'dark';
+  } catch {
+    return memoryTheme;
+  }
 }
 
 function getServerSnapshot(): Theme {
@@ -38,7 +45,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const setTheme = useCallback((next: Theme) => {
-    window.localStorage.setItem('neighbors-theme', next);
+    memoryTheme = next;
+    try {
+      window.localStorage.setItem('neighbors-theme', next);
+    } catch {
+      // The in-memory theme still applies for this page session.
+    }
     window.dispatchEvent(new Event('neighbors-theme-change'));
   }, []);
 

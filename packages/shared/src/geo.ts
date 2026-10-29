@@ -1,10 +1,8 @@
 import { cellToLatLng, getHexagonEdgeLengthAvg, gridDisk, latLngToCell, UNITS } from 'h3-js';
 import { H3_REALTIME_RES, H3_ZONE_RES } from './constants.ts';
+import type { LatLng } from './position.ts';
 
-export interface LatLng {
-  lat: number;
-  lng: number;
-}
+export { isPlausiblePosition, type LatLng } from './position.ts';
 
 const EARTH_RADIUS_M = 6_371_008.8;
 const toRad = (deg: number) => (deg * Math.PI) / 180;
@@ -16,13 +14,6 @@ export function haversineMeters(a: LatLng, b: LatLng): number {
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(h));
-}
-
-export function isPlausiblePosition({ lat, lng }: LatLng): boolean {
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
-  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return false;
-  // (0,0) is the classic "no fix" value returned by broken GPS stacks.
-  return !(Math.abs(lat) < 1e-6 && Math.abs(lng) < 1e-6);
 }
 
 /** Rejects moves faster than `maxSpeedMps` (default ~250 km/h) between two publications. */

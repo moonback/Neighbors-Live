@@ -14,7 +14,7 @@
     "loading": "Loading videos…",
     "denied": "Location access was denied. Allow it in your browser settings, then try again.",
     "locationError": "Your location is unavailable right now.",
-    "fetchError": "Could not load videos. Check your connection and try again.",
+    "fetchError": "Could not load videos right now. Check your connection or try again in a moment.",
     "empty": "No videos are available in this area right now.",
     "usefulCount": "{count, plural, one {# useful mention} other {# useful mentions}}",
     "searchLabel": "Search videos",

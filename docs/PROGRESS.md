@@ -4,6 +4,26 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
+Audit 2026-10-29 — UI/UX, accessibilité, performance (détail : `docs/audit-uiux-performance.md`).
+Lint global débloqué (`.swc-safe-cache/` ignoré) ; `db:start` applique désormais les migrations en
+attente (la base locale en avait 11 de retard, feed en 500). `ThemeProvider` et `Onboarding`
+résistent à un stockage navigateur bloqué ; thème clair appliqué avant le premier rendu. Contrastes
+AA corrigés (danger, erreur, bleu, accent, succès) dans les deux thèmes ; `aria-pressed` retiré des
+boutons dont le libellé porte déjà l'état ; `<h1>` ajouté sur Découvrir et la caméra. Lecteur mobile :
+libellés d'actions sans troncature, barre défilable et bornée sous l'en-tête (vidéos commerçantes à
+10 actions), bouton plein écran déplacé à gauche ; navigation basse sur une ligne à 320 px.
+`text-xs` relevé à 12 px. `h3-js` retiré des pages d'authentification (`/login` 124 → 63 Ko gzip).
+Deux tests pgTAP en retard sur le schéma corrigés. Vérifié : typecheck, lint, 111 tests Vitest,
+build, pgTAP 244/244, parcours navigateur (feed, signalement, profil, paramètres, découvrir, thèmes)
+à 320, 375 et 1440 px. Non vérifié : Lighthouse/Web Vitals, lecteur d'écran réel, navigateur à
+stockage bloqué, vidéo commerçante réelle (simulée), appareils physiques. `prettier --check .` reste
+bloqué par `EPERM` sur `.swc-safe-cache` (fichiers modifiés vérifiés individuellement).
+E2E Playwright exécutés : 11 réussis, 7 en échec, diagnostic reporté. Au moins 4 échecs sont des
+tests en retard sur l'app (textes « Découvrir près de chez vous » et combobox « Rayon » absents,
+refus attendu à ±150 m alors que la limite est 500 m, lien d'export désormais dans l'onglet Compte) ;
+pagination et réservation semblent liées à l'état de la base après un premier run ; les deux tests
+de publication (« Publier ici » introuvable) ne sont pas diagnostiqués.
+
 Correction 2026-10-29 — les erreurs `MediaRecorder` affichent maintenant l’état d’erreur caméra sans soumettre de clip incomplet. Le chronomètre mesure les segments avec `Date.now()` et un timer indépendant de `requestAnimationFrame` arrête l’enregistrement à 30 s, y compris si l’onglet est en arrière-plan (sous réserve du throttling des timers du navigateur). La durée réelle du fichier reste vérifiée en différé par `ffprobe` dans le worker, avec rejet au-delà de 31 s ; cette limite et l’asynchronisme sont documentés. Typecheck, 111 tests workspace, build, ESLint ciblé, Prettier et contrôle des changements ciblés réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache`.
 
 Correction 2026-10-29 — les lecteurs du feed et de la page publique utilisent désormais l’orientation enregistrée avec la vidéo. Les exports paysage sont affichés en entier (sans recadrage) au format 16:9 ; le contrôle de remplissage reste disponible pour les vidéos portrait. Typecheck, 111 tests workspace, build, ESLint ciblé, Prettier et contrôle des changements ciblés réussis. Lint global bloqué par `EPERM` sur `.swc-safe-cache` ; revue visuelle navigateur et appareil réel non effectuée.
