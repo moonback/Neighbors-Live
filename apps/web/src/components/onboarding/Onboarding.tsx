@@ -32,7 +32,7 @@ export function Onboarding({
   const router = useRouter();
   const [step, setStep] = useState(initialStep);
   const [prompt, setPrompt] = useState<InstallPrompt | null>(null);
-  const [platform, setPlatform] = useState<'ios' | 'other' | 'installed'>('other');
+  const [platform, setPlatform] = useState<'ios' | 'android' | 'other' | 'installed'>('other');
 
   useEffect(() => {
     const onPrompt = (e: Event) => {
@@ -41,7 +41,15 @@ export function Onboarding({
     };
     window.addEventListener('beforeinstallprompt', onPrompt);
     const timer = setTimeout(() => {
-      setPlatform(isStandalone() ? 'installed' : isIos() ? 'ios' : 'other');
+      setPlatform(
+        isStandalone()
+          ? 'installed'
+          : isIos()
+            ? 'ios'
+            : /Android/i.test(navigator.userAgent)
+              ? 'android'
+              : 'other',
+      );
       const saved = Number(window.localStorage.getItem(ONBOARDING_STEP_KEY));
       if (Number.isInteger(saved) && saved >= 0 && saved <= INSTALL_STEP) setStep(saved);
     }, 0);
@@ -73,24 +81,30 @@ export function Onboarding({
       className="mx-auto flex h-dvh w-full max-w-xl flex-col gap-4 overflow-hidden px-5 py-4 sm:gap-6 sm:p-6"
     >
       <div className="flex shrink-0 items-center justify-between pt-1 text-sm text-fog">
-        <p aria-live="polite">
-          {t('step', {
-            current: Math.min(step + 1, STEPS.length),
-            total: STEPS.length,
-          })}
-        </p>
+        {step !== INSTALL_STEP ? (
+          <p aria-live="polite">
+            {t('step', {
+              current: step + 1,
+              total: STEPS.length,
+            })}
+          </p>
+        ) : (
+          <span aria-hidden="true" />
+        )}
         <Button variant="ghost" onClick={finish}>
           {t('skip')}
         </Button>
       </div>
-      <div className="flex shrink-0 gap-1.5" aria-hidden="true">
-        {STEPS.map((s, i) => (
-          <span
-            key={s}
-            className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-accent' : 'bg-line'}`}
-          />
-        ))}
-      </div>
+      {step !== INSTALL_STEP && (
+        <div className="flex shrink-0 gap-1.5" aria-hidden="true">
+          {STEPS.map((s, i) => (
+            <span
+              key={s}
+              className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-accent' : 'bg-line'}`}
+            />
+          ))}
+        </div>
+      )}
 
       <section
         className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
@@ -141,21 +155,17 @@ export function Onboarding({
               <p className="text-fog">{t('install.body')}</p>
               {platform === 'installed' && <Notice kind="success">{t('install.installed')}</Notice>}
               {platform === 'ios' && <Notice>{t('install.ios')}</Notice>}
-              {platform === 'other' && (
-                <>
-                  <Notice>{t('install.android')}</Notice>
-                  {prompt && (
-                    <Button
-                      onClick={async () => {
-                        await prompt.prompt();
-                        setPrompt(null);
-                      }}
-                    >
-                      {t('install.button')}
-                    </Button>
-                  )}
-                  <p className="text-sm text-fog">{t('install.ios')}</p>
-                </>
+              {platform === 'android' && <Notice>{t('install.android')}</Notice>}
+              {platform === 'other' && <Notice>{t('install.manual')}</Notice>}
+              {platform !== 'installed' && prompt && (
+                <Button
+                  onClick={async () => {
+                    await prompt.prompt();
+                    setPrompt(null);
+                  }}
+                >
+                  {t('install.button')}
+                </Button>
               )}
             </>
           )}
@@ -175,7 +185,7 @@ export function Onboarding({
       </section>
 
       <div className="flex shrink-0 gap-3 border-t border-line bg-ink pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-        {step > 0 && (
+        {step > 0 && step < INSTALL_STEP && (
           <Button variant="secondary" className="flex-1" onClick={() => changeStep(step - 1)}>
             {t('back')}
           </Button>
