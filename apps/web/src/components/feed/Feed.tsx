@@ -473,7 +473,7 @@ export function Feed({
                 id="feed-category-options"
                 role="group"
                 aria-label={t('filters.label')}
-                className="feed-category-options glass absolute right-0 top-full z-30 mt-2 flex max-h-[min(65svh,30rem)] w-[min(22rem,calc(100vw-1.5rem))] flex-col gap-3 overflow-y-auto rounded-2xl p-3 shadow-xl"
+                className="feed-category-options glass absolute left-1/2 top-full z-30 mt-2 flex max-h-[min(65svh,30rem)] w-[min(22rem,calc(100vw-1.5rem))] -translate-x-1/2 flex-col gap-3 overflow-y-auto rounded-2xl p-3 shadow-xl sm:left-auto sm:right-0 sm:translate-x-0"
               >
                 <div className="grid grid-cols-2 gap-2">
                 <FilterChip
