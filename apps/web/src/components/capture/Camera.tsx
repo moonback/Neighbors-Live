@@ -80,6 +80,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const pointersRef = useRef(new Map<number, { x: number; y: number }>());
   const pinchRef = useRef<{ distance: number; zoom: number } | null>(null);
   const zoomRef = useRef(1);
+  const countdownDeadlineRef = useRef<number | null>(null);
   const lastGood = useRef<Target | null>(null);
   const [target, setTarget] = useState<Target>({ deviceId: null, facing: 'environment' });
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
@@ -183,15 +184,16 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   });
   const zoomLevels = [0.5, 1, 2].filter((level) => {
     const hasPhysicalLens = physicalLenses.some((lens) => lens.level === level);
+    // If hardware zoom is unavailable, expose the CSS zoom fallback as well.
     const hasDigitalRange = zoomRange
       ? level >= zoomRange.min && level <= zoomRange.max
-      : level >= 1;
+      : level >= 0.5 && level <= 3;
     return hasPhysicalLens || hasDigitalRange;
   });
 
   const setZoomLevel = useCallback(
     (value: number) => {
-      const min = zoomRange?.min ?? 1;
+      const min = zoomRange?.min ?? 0.5;
       const max = zoomRange?.max ?? 3;
       const next = Math.min(max, Math.max(min, value));
       zoomRef.current = next;
@@ -210,6 +212,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   }, [zoom, zoomRange]);
 
   function onPointerDown(event: PointerEvent<HTMLVideoElement>) {
+    event.currentTarget.setPointerCapture(event.pointerId);
     pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (pointersRef.current.size === 2) {
       const [a, b] = [...pointersRef.current.values()];
@@ -381,6 +384,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
 
   const record = useCallback(() => {
     if (timerDelay > 0) {
+      countdownDeadlineRef.current = Date.now() + timerDelay * 1000;
       setCountdown(timerDelay);
       countdownBeep();
       return;
@@ -388,22 +392,29 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
     startRecording();
   }, [countdownBeep, startRecording, timerDelay]);
 
-  const advanceCountdown = useCallback(() => {
-    if (countdown === null) return;
-    if (countdown <= 1) {
-      setCountdown(null);
-      startRecording();
-      return;
-    }
-    countdownBeep();
-    setCountdown(countdown - 1);
-  }, [countdown, countdownBeep, startRecording]);
-
   useEffect(() => {
     if (countdown === null) return;
-    const timeout = setTimeout(advanceCountdown, 1000);
+    let timeout: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      const deadline = countdownDeadlineRef.current;
+      if (deadline === null) return;
+      const msLeft = deadline - Date.now();
+      if (msLeft <= 0) {
+        countdownDeadlineRef.current = null;
+        setCountdown(null);
+        startRecording();
+        return;
+      }
+      const secondsLeft = Math.ceil(msLeft / 1000);
+      if (secondsLeft < countdown) {
+        countdownBeep();
+        setCountdown(secondsLeft);
+      }
+      timeout = setTimeout(tick, Math.min(250, msLeft));
+    };
+    timeout = setTimeout(tick, 250);
     return () => clearTimeout(timeout);
-  }, [advanceCountdown, countdown]);
+  }, [countdown, countdownBeep, startRecording]);
 
   const progress = Math.min(1, elapsed / MAX_RECORDING_MS);
   const completedDuration = takeDurations.reduce((sum, duration) => sum + duration, 0);
@@ -610,7 +621,10 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
         <button
           type="button"
           className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/45 text-white"
-          onClick={() => setCountdown(null)}
+          onClick={() => {
+            countdownDeadlineRef.current = null;
+            setCountdown(null);
+          }}
           aria-label={t('timer.cancel')}
         >
           <span aria-live="assertive" className="text-8xl font-bold tabular-nums">
