@@ -13,6 +13,7 @@ import {
   MODERATION_ACTIONS,
   RADII_M,
   REPORT_REASONS,
+  VIDEO_ORIENTATIONS,
   type FeedSort,
 } from './constants.ts';
 import { isPlausiblePosition } from './geo.ts';
@@ -21,6 +22,7 @@ import { sanitizeText } from './text.ts';
 const cleanText = (max: number) => z.string().transform(sanitizeText).pipe(z.string().max(max));
 
 export const categorySchema = z.enum(CATEGORIES);
+export const videoOrientationSchema = z.enum(VIDEO_ORIENTATIONS).default('portrait');
 export const radiusSchema = z.coerce
   .number()
   .int()
@@ -74,6 +76,7 @@ export const createVideoSchema = z
     lng: z.number(),
     accuracy: z.number(),
     mimeType: recordedMimeSchema,
+    orientation: videoOrientationSchema,
     durationMs: z
       .number()
       .int()

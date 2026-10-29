@@ -152,10 +152,9 @@ describe('pixelate', () => {
 });
 
 describe('media helpers', () => {
-  it('uses a fixed 1080×1920 portrait output canvas', () => {
-    expect(targetSize(1920, 1080, 0)).toEqual({ width: 1080, height: 1920 });
-    expect(targetSize(1920, 1080, 90)).toEqual({ width: 1080, height: 1920 });
-    expect(targetSize(641, 361, 0)).toEqual({ width: 1080, height: 1920 });
+  it('uses the selected portrait or landscape output canvas, independent of source dimensions', () => {
+    expect(targetSize('portrait')).toEqual({ width: 1080, height: 1920 });
+    expect(targetSize('landscape')).toEqual({ width: 1920, height: 1080 });
   });
 
   it('routes paths to buckets and protects demo media', () => {

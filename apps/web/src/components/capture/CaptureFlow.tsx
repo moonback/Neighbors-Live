@@ -6,6 +6,7 @@ import {
   MAX_ACCURACY_M,
   MERCHANT_DURATIONS_H,
   type Category,
+  type VideoOrientation,
 } from '@nl/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -41,6 +42,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
   const [step, setStep] = useState<Step>('primer');
   const [rec, setRec] = useState<Recording | null>(null);
   const [category, setCategory] = useState<Category>('alert');
+  const [orientation, setOrientation] = useState<VideoOrientation>('portrait');
   const [caption, setCaption] = useState('');
   const [offerTerms, setOfferTerms] = useState('');
   const [eventEnd, setEventEnd] = useState('');
@@ -118,6 +120,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
       category,
       caption,
       mimeType: containerOf(rec.mime),
+      orientation,
       durationMs: rec.durationMs,
       ...(category === 'event' && eventEnd && { eventEndsAt: new Date(eventEnd).toISOString() }),
       ...(category === 'shop' && { merchantHours, offerTerms }),
@@ -253,6 +256,27 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
               ))}
             </div>
             <p className="text-xs text-fog">{t(`form.lifetime.${category}`)}</p>
+          </fieldset>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-1 text-sm font-medium">{t('form.orientation')}</legend>
+            <div className="grid grid-cols-2 gap-2">
+              {(['portrait', 'landscape'] as const).map((value) => (
+                <label
+                  key={value}
+                  className={`flex min-h-11 cursor-pointer items-center justify-center rounded-xl border px-2 text-sm focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent ${orientation === value ? 'border-accent bg-accent text-ink' : 'border-line'}`}
+                >
+                  <input
+                    type="radio"
+                    name="orientation"
+                    value={value}
+                    checked={orientation === value}
+                    onChange={() => setOrientation(value)}
+                    className="sr-only"
+                  />
+                  {t(`form.orientations.${value}`)}
+                </label>
+              ))}
+            </div>
           </fieldset>
           <Field
             label={t('form.caption')}

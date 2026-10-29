@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Pool } from 'pg';
+import type { VideoOrientation } from '@nl/shared';
 import type { Detector } from './blur/types.ts';
 import { NonRetryableError } from './media/ffmpeg.ts';
 import { blurAndTranscode } from './media/pipeline.ts';
@@ -106,7 +107,10 @@ async function processVideo(job: MediaJob, deps: JobDeps): Promise<void> {
     status: string;
     raw_path: string | null;
     duration_ms: number;
-  }>('select status, raw_path, duration_ms from public.videos where id = $1', [job.video_id]);
+    orientation: VideoOrientation;
+  }>('select status, raw_path, duration_ms, orientation from public.videos where id = $1', [
+    job.video_id,
+  ]);
   const video = rows[0];
   if (!video || video.status !== 'processing' || !video.raw_path) {
     // Withdrawn or already handled meanwhile: nothing to do.
@@ -149,6 +153,7 @@ async function processVideo(job: MediaJob, deps: JobDeps): Promise<void> {
     let progressWrite = Promise.resolve();
     const stats = await blurAndTranscode(input, output, poster, {
       detectors,
+      orientation: video.orientation,
       detectEvery: mediaSettings.detectEvery,
       expectedDurationS: video.duration_ms / 1000,
       onProgress: (percent) => {

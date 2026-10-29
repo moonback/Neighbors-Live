@@ -62,6 +62,9 @@ export const VIDEO_STATUSES = [
 ] as const;
 export type VideoStatus = (typeof VIDEO_STATUSES)[number];
 
+export const VIDEO_ORIENTATIONS = ['portrait', 'landscape'] as const;
+export type VideoOrientation = (typeof VIDEO_ORIENTATIONS)[number];
+
 export const CATEGORY_COLORS: Record<Category, string> = {
   alert: '#1d4ed8',
   deal: '#0369a1',

@@ -202,6 +202,26 @@ select throws_ok(
   'invalid_offer_terms',
   'create_video: offer terms are restricted to shop category'
 );
+create temp table landscape_video as
+select public.create_video(
+  (select dan from u), 'help', 'Format paysage', 48.8722, 2.3767, 12,
+  '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000,
+  now() + interval '1 day', gen_random_uuid(), '', 'landscape'
+) as id;
+select is(
+  (select orientation from public.videos where id = (select id from landscape_video)),
+  'landscape',
+  'create_video: stores selected landscape orientation'
+);
+select throws_ok(
+  $$select public.create_video(
+    (select dan from u), 'help', 'Format invalide', 48.8722, 2.3767, 12,
+    '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000,
+    now() + interval '1 day', gen_random_uuid(), '', 'square'
+  )$$,
+  'invalid_video_orientation',
+  'create_video: rejects unsupported orientation'
+);
 select lives_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'merchant offer 1');
 select lives_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'merchant offer 2');
 select throws_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'merchant_quota_exceeded', 'create_video: merchant daily quota');
@@ -275,6 +295,14 @@ select ok(
     where video ->> 'offer_terms' = 'Hors boissons'
   ),
   'export_my_data: includes structured offer terms'
+);
+select ok(
+  exists (
+    select 1
+    from jsonb_array_elements(public.export_my_data((select dan from u)) -> 'videos') as exported_video(video)
+    where video ->> 'orientation' = 'landscape'
+  ),
+  'export_my_data: includes video orientation'
 );
 select ok(cardinality(public.prepare_account_deletion((select eve from u))) > 0, 'prepare_account_deletion: lists files');
 delete from auth.users where id = (select eve from u);

@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import type { Readable } from 'node:stream';
+import type { VideoOrientation } from '@nl/shared';
 
 export interface Probe {
   width: number;
@@ -62,13 +63,9 @@ export async function probe(path: string): Promise<Probe> {
   };
 }
 
-/** Published video canvas: portrait 9:16 at 1080 × 1920 (even H.264 dimensions). */
-export function targetSize(
-  _width: number,
-  _height: number,
-  _rotation: number,
-): { width: number; height: number } {
-  return { width: 1080, height: 1920 };
+/** Published video canvas follows the selected aspect ratio (even H.264 dimensions). */
+export function targetSize(orientation: VideoOrientation): { width: number; height: number } {
+  return orientation === 'portrait' ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 };
 }
 
 export const FPS = 30;
