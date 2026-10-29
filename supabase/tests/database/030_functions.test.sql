@@ -153,6 +153,32 @@ select ok(
 select throws_ok(
   $$select public.create_video((select dan from u), 'help', 'x', 48.8722, 2.3767, 500.01, '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000, now() + interval '1 day', gen_random_uuid())$$,
   'accuracy_too_low', 'create_video: accuracy above 500 m rejected');
+
+  
+-- A lost HTTP response followed by a retry must return the same reservation.
+create temp table idem_key as select gen_random_uuid() as request_id;
+create temp table idem_first as
+select public.create_video(
+  (select dan from u), 'help', 'Idempotence', 48.8722, 2.3767, 12,
+  '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000,
+  now() + interval '1 day', (select request_id from idem_key)
+) as id;
+select is(
+  public.create_video(
+    (select dan from u), 'help', 'Idempotence', 48.8722, 2.3767, 12,
+    '881fb46625fffff', '871fb4662ffffff', 'video/webm', 9000,
+    now() + interval '1 day', (select request_id from idem_key)
+  ),
+  (select id from idem_first),
+  'create_video: retry returns the original reservation'
+);
+select is(
+  (select count(*)::integer from public.videos
+   where author_id = (select dan from u)
+     and client_request_id = (select request_id from idem_key)),
+  1,
+  'create_video: idempotent retry creates only one video row'
+);
 select throws_ok($$select pg_temp.publish((select shop from u), 48.8722, 2.3767, 'shop')$$, 'not_merchant', 'create_video: shop category requires approved merchant');
 
 insert into public.merchant_profiles (user_id, business_name, status, daily_quota) values ((select shop from u), 'Épicerie', 'approved', 3);
