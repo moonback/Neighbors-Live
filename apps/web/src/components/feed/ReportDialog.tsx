@@ -1,6 +1,7 @@
 'use client';
 
 import { REPORT_REASONS, type ReportReason } from '@nl/shared';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Button, Field, inputClass, Notice } from '@/components/ui';
@@ -48,11 +49,18 @@ export function ReportDialog({
       {status?.kind === 'success' ? (
         <div className="flex flex-col gap-3">
           <Notice kind="success">{status.text}</Notice>
+          <Link
+            href="/me/decisions"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-line bg-white/[0.04] px-4 text-sm font-semibold"
+          >
+            {t('viewDecisions')}
+          </Link>
           <Button onClick={close}>{tc('close')}</Button>
         </div>
       ) : (
         <form onSubmit={submit} className="flex flex-col gap-4">
           <p className="text-sm text-fog">{t('intro')}</p>
+          <p className="text-xs text-fog">{t('threshold')}</p>
           <fieldset className="flex flex-col gap-2">
             <legend className="mb-1 text-sm font-medium">{t('reason')}</legend>
             {REPORT_REASONS.map((r) => (

@@ -84,6 +84,8 @@
   "reportPanel": {
     "title": "Report this video",
     "intro": "Reports are reviewed by neighborhood moderators. After reports from 3 different people, the video is hidden while they review it.",
+    "threshold": "The moderation threshold is 3 reports from different accounts. You can check your moderation decisions at any time from your account.",
+    "viewDecisions": "View my moderation decisions",
     "reason": "Reason",
     "reasons": {
       "recognizable_person": "A person can be identified",

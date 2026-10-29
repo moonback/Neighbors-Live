@@ -84,6 +84,8 @@
   "reportPanel": {
     "title": "Signaler cette vidéo",
     "intro": "Les signalements sont examinés par les modérateurs du quartier. À partir de 3 signalements de personnes différentes, la vidéo est masquée en attendant leur décision.",
+    "threshold": "Le seuil de modération est de 3 signalements de comptes différents. Vous pouvez consulter l’état de vos décisions de modération à tout moment depuis votre compte.",
+    "viewDecisions": "Voir mes décisions de modération",
     "reason": "Motif",
     "reasons": {
       "recognizable_person": "Une personne est reconnaissable",
