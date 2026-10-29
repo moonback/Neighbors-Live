@@ -70,5 +70,31 @@
   "approved": "Votre compte commerce est actif.",
   "quota": "Offres publiées sur 24 h : {used} / {quota}",
   "publish": "Publier une offre",
-  "rules": "Une offre = une vidéo filmée sur place, catégorie « Commerce », avec une durée de visibilité de 6 h à 7 jours."
+  "rules": "Une offre = une vidéo filmée sur place, catégorie « Commerce », avec une durée de visibilité de 6 h à 7 jours.",
+  "dashboard": {
+    "title": "Vos offres",
+    "description": "L’état de chaque offre et les réactions des voisins, tels qu’enregistrés par l’application.",
+    "prepare": "Préparer une offre",
+    "quotaReached": "Quota atteint : vous pourrez publier à nouveau quand une offre sortira de la fenêtre de 24 h.",
+    "empty": "Aucune offre publiée pour l’instant.",
+    "loadError": "Impossible de recharger vos offres.",
+    "totals": {
+      "active": "Offres en cours",
+      "expired": "Offres terminées",
+      "useful": "« Utile »",
+      "comments": "Commentaires",
+      "saves": "Sauvegardes"
+    },
+    "views": "Vues",
+    "statsUnavailable": "Statistiques non disponibles",
+    "noPurchases": "Les achats en boutique ne sont pas visibles dans l’application : aucun taux de conversion n’est calculé.",
+    "measuredSince": "Mesuré depuis le {date}. Une offre publiée avant cette date n’a pas de statistiques de vues ni de clics.",
+    "dailyViews": "Vues des 7 derniers jours"
+  },
+  "edit": {
+    "title": "Fiche du commerce",
+    "description": "Ces informations sont visibles sur votre profil et vos offres. Pour changer le nom du commerce, contactez l’équipe de modération.",
+    "submit": "Enregistrer",
+    "saved": "Fiche mise à jour."
+  }
 }

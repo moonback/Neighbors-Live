@@ -34,14 +34,20 @@ function eventBounds() {
   return { minEvent: local(now + 15 * 60_000), maxEvent: local(now + 7 * 24 * 3_600_000 - 60_000) };
 }
 
-export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
+export function CaptureFlow({
+  isMerchant,
+  initialCategory = 'alert',
+}: {
+  isMerchant: boolean;
+  initialCategory?: Category;
+}) {
   const t = useTranslations('capture');
   const tc = useTranslations('common.categories');
   const errorText = useErrorText();
   const router = useRouter();
   const [step, setStep] = useState<Step>('primer');
   const [rec, setRec] = useState<Recording | null>(null);
-  const [category, setCategory] = useState<Category>('alert');
+  const [category, setCategory] = useState<Category>(initialCategory);
   const [orientation, setOrientation] = useState<VideoOrientation>('portrait');
   const [caption, setCaption] = useState('');
   const [offerTerms, setOfferTerms] = useState('');

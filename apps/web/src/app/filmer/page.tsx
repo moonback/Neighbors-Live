@@ -9,7 +9,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('capture'))('title') };
 }
 
-export default async function RecordPage() {
+export default async function RecordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
   const viewer = await getViewer();
   if (!viewer) redirect('/login?next=/filmer');
   if (!viewer.username) redirect('/bienvenue?next=/filmer');
@@ -18,9 +22,14 @@ export default async function RecordPage() {
     .select('status')
     .eq('user_id', viewer.id)
     .maybeSingle();
+  const isMerchant = merchant?.status === 'approved';
+  const { category } = await searchParams;
   return (
     <main id="main">
-      <CaptureFlow isMerchant={merchant?.status === 'approved'} />
+      <CaptureFlow
+        isMerchant={isMerchant}
+        initialCategory={isMerchant && category === 'shop' ? 'shop' : 'alert'}
+      />
     </main>
   );
 }

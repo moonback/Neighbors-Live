@@ -7,6 +7,7 @@ import { getOfferStatus } from '@/lib/offer-status';
 import { adminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { Avatar } from '@/components/Avatar';
+import { TrackedOfferLink, TrackOfferView } from '@/components/video/OfferTracking';
 import { VideoPageInteractions } from '@/components/video/VideoPageInteractions';
 
 type Params = { params: Promise<{ id: string }> };
@@ -161,6 +162,9 @@ export default async function VideoPage({ params }: Params) {
                     : t(`offerStatus.${offerStatus}`)}
                 </p>
               )}
+              {item.category === 'shop' && item.author.isMerchant && (
+                <TrackOfferView videoId={item.id} />
+              )}
               {item.category === 'shop' && (
                 <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm">
                   <p className="font-semibold">{t('offerTermsLabel')}</p>
@@ -172,32 +176,38 @@ export default async function VideoPage({ params }: Params) {
               {(hasMerchantWebsite || hasMerchantPhone || hasMerchantAddress) && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {hasMerchantWebsite && (
-                    <a
+                    <TrackedOfferLink
+                      videoId={item.id}
+                      kind="offer_click"
                       href={item.author.merchantWebsite!}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold"
                     >
                       {t('offerView')}
-                    </a>
+                    </TrackedOfferLink>
                   )}
                   {hasMerchantPhone && (
-                    <a
+                    <TrackedOfferLink
+                      videoId={item.id}
+                      kind="call_click"
                       href={`tel:${item.author.merchantPhone!}`}
                       className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold"
                     >
                       {t('callBusiness')}
-                    </a>
+                    </TrackedOfferLink>
                   )}
                   {hasMerchantAddress && (
-                    <a
+                    <TrackedOfferLink
+                      videoId={item.id}
+                      kind="directions_click"
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.author.merchantAddress!)}`}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] px-4 text-sm font-semibold"
                     >
                       {t('directions')}
-                    </a>
+                    </TrackedOfferLink>
                   )}
                 </div>
               )}

@@ -70,5 +70,31 @@
   "approved": "Your merchant account is active.",
   "quota": "Offers published in the last 24 hours: {used} / {quota}",
   "publish": "Publish an offer",
-  "rules": "One offer is one video filmed on site, in the Merchant category, with a visibility period from 6 hours to 7 days."
+  "rules": "One offer is one video filmed on site, in the Merchant category, with a visibility period from 6 hours to 7 days.",
+  "dashboard": {
+    "title": "Your offers",
+    "description": "The status of each offer and how neighbours reacted, as recorded by the app.",
+    "prepare": "Prepare an offer",
+    "quotaReached": "Quota reached: you can publish again once an offer leaves the 24-hour window.",
+    "empty": "No offers published yet.",
+    "loadError": "Could not reload your offers.",
+    "totals": {
+      "active": "Live offers",
+      "expired": "Ended offers",
+      "useful": "“Useful”",
+      "comments": "Comments",
+      "saves": "Saves"
+    },
+    "views": "Views",
+    "statsUnavailable": "Statistics not available",
+    "noPurchases": "In-store purchases are not visible to the app: no conversion rate is calculated.",
+    "measuredSince": "Measured since {date}. Offers published before that date have no view or click statistics.",
+    "dailyViews": "Views over the last 7 days"
+  },
+  "edit": {
+    "title": "Business details",
+    "description": "This information is shown on your profile and offers. To change the business name, contact the moderation team.",
+    "submit": "Save",
+    "saved": "Details updated."
+  }
 }
