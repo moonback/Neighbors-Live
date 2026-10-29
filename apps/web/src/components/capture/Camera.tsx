@@ -74,6 +74,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const activeDurationRef = useRef(0);
   const takeStartedAtRef = useRef<number | null>(null);
+  const maxDurationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const frameRef = useRef<number | null>(null);
   const updateRecordingTimeRef = useRef<FrameRequestCallback>(() => {});
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -158,6 +159,7 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
     () => () => {
       stopTracks();
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      if (maxDurationTimeoutRef.current !== null) clearTimeout(maxDurationTimeoutRef.current);
       void audioContextRef.current?.close();
     },
     [stopTracks],
@@ -288,17 +290,33 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
     }
   }, []);
 
+  const clearMaxDurationTimeout = useCallback(() => {
+    if (maxDurationTimeoutRef.current !== null) clearTimeout(maxDurationTimeoutRef.current);
+    maxDurationTimeoutRef.current = null;
+  }, []);
+
+  const scheduleMaxDurationStop = useCallback(() => {
+    clearMaxDurationTimeout();
+    maxDurationTimeoutRef.current = setTimeout(
+      () => {
+        maxDurationTimeoutRef.current = null;
+        if (recorderRef.current?.state === 'recording') recorderRef.current.stop();
+      },
+      Math.max(0, MAX_RECORDING_MS - activeDurationRef.current),
+    );
+  }, [clearMaxDurationTimeout]);
+
   const updateRecordingTime = useCallback(() => {
     const start = takeStartedAtRef.current;
-    const currentTake = start === null ? 0 : performance.now() - start;
+    const currentTake = start === null ? 0 : Date.now() - start;
     const ms = activeDurationRef.current + currentTake;
     setElapsed(ms);
     if (ms >= MAX_RECORDING_MS) {
-      recorderRef.current?.stop();
+      stop();
       return;
     }
     frameRef.current = requestAnimationFrame(updateRecordingTimeRef.current);
-  }, []);
+  }, [stop]);
 
   useEffect(() => {
     updateRecordingTimeRef.current = updateRecordingTime;
@@ -308,22 +326,24 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
     const recorder = recorderRef.current;
     const start = takeStartedAtRef.current;
     if (recorder?.state !== 'recording' || start === null) return;
-    const duration = performance.now() - start;
+    const duration = Date.now() - start;
     activeDurationRef.current += duration;
     takeStartedAtRef.current = null;
+    clearMaxDurationTimeout();
     if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     setTakeDurations((takes) => [...takes, duration]);
     setElapsed(activeDurationRef.current);
     recorder.pause();
     setPaused(true);
-  }, []);
+  }, [clearMaxDurationTimeout]);
 
   function resumeTake() {
     const recorder = recorderRef.current;
     if (recorder?.state !== 'paused') return;
-    takeStartedAtRef.current = performance.now();
+    takeStartedAtRef.current = Date.now();
     recorder.resume();
     setPaused(false);
+    scheduleMaxDurationStop();
     frameRef.current = requestAnimationFrame(updateRecordingTimeRef.current);
   }
 
@@ -353,15 +373,29 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
     if (!stream || !mime) return;
     const chunks: Blob[] = [];
     const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 2_500_000 });
+    let recorderFailed = false;
     activeDurationRef.current = 0;
-    takeStartedAtRef.current = performance.now();
+    takeStartedAtRef.current = Date.now();
     setTakeDurations([]);
     recorder.ondataavailable = (e) => {
       if (e.data.size > 0) chunks.push(e.data);
     };
+    recorder.onerror = () => {
+      recorderFailed = true;
+      clearMaxDurationTimeout();
+      takeStartedAtRef.current = null;
+      activeDurationRef.current = 0;
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      setRecording(false);
+      setPaused(false);
+      setError('generic');
+      stopTracks();
+    };
     recorder.onstop = () => {
+      clearMaxDurationTimeout();
+      if (recorderFailed) return;
       const start = takeStartedAtRef.current;
-      const duration = activeDurationRef.current + (start === null ? 0 : performance.now() - start);
+      const duration = activeDurationRef.current + (start === null ? 0 : Date.now() - start);
       takeStartedAtRef.current = null;
       activeDurationRef.current = 0;
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
@@ -376,8 +410,9 @@ export function Camera({ onRecorded }: { onRecorded: (r: Recording) => void }) {
     setRecording(true);
     setPaused(false);
     setElapsed(0);
+    scheduleMaxDurationStop();
     frameRef.current = requestAnimationFrame(updateRecordingTimeRef.current);
-  }, [onRecorded, stopTracks]);
+  }, [clearMaxDurationTimeout, onRecorded, scheduleMaxDurationStop, stopTracks]);
 
   const record = useCallback(() => {
     if (timerDelay > 0) {

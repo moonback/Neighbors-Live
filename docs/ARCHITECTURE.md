@@ -28,7 +28,10 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
    `video/webm;codecs=vp9/vp8` sinon), permet de choisir le canevas portrait 9:16 (1080 × 1920)
    ou paysage 16:9 (1920 × 1080), relève la position à la fin de l’enregistrement
    (`enableHighAccuracy`) et la conserve pendant le formulaire. Une position de plus de 5 minutes
-   est actualisée avant publication ; une précision > 500 m est refusée.
+   est actualisée avant publication ; une précision > 500 m est refusée. Le compteur utilise
+   l’horloge murale (indépendante des rafraîchissements d’écran) et un timer arrête aussi le
+   `MediaRecorder` à la limite ; les erreurs du recorder sont affichées et ne produisent pas de
+   publication.
 2. `POST /api/videos` : Zod (catégorie, orientation, légende ≤ 140, lat/lng/accuracy,
    `expires_at` événement),
    cohérence position (bornes, précision, pas de saut physiquement impossible depuis la dernière
@@ -50,6 +53,10 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   `Detector`, visages YuNet ONNX une image sur 3 + suivi IoU/interpolation entre détections) →
   adaptation proportionnelle avec padding noir sur le canevas choisi → pixellisation des boîtes en
   mémoire → ffmpeg exporte H.264 + AAC (audio de la source) et un poster au même format.
+- La durée déclarée lors de la réservation est une métadonnée client, pas une preuve de la durée du
+  fichier. Le worker mesure la durée réelle avec `ffprobe` et rejette de façon asynchrone tout média
+  de plus de 31 s (`MAX_DURATION_S`, marge technique par rapport aux 30 s de l’interface) ; une
+  vidéo peut donc être réservée et envoyée avant ce contrôle.
 - Succès : upload `videos/<video_id>.mp4` + poster, `status='active'`, suppression de l'original
   `raw-videos`. Échec : retries backoff exponentiel (3 tentatives), puis `status='rejected'` +
   notification à l'auteur.
