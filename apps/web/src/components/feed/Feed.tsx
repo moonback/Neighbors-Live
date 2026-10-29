@@ -339,9 +339,9 @@ export function Feed({
       )}
 
       {coords && (
-        <header className="feed-header absolute inset-x-0 top-0 z-20 flex flex-col gap-1.5 px-3 pt-2 pb-2 text-white sm:px-4">
+        <header className="feed-header absolute inset-x-0 top-0 z-20 flex items-start gap-2 px-3 pt-2 pb-2 text-white sm:px-4">
           <h1 className="sr-only">{t('title')}</h1>
-          <div className="feed-header-controls flex min-w-0 items-center gap-1.5">
+          <div className="feed-header-controls flex min-w-0 flex-1 items-center gap-1.5">
             {/* <Logo name={tc('appName')} size={22} className="shrink-0" /> */}
             <AlertsBanner
               lat={coords.lat}
@@ -349,7 +349,7 @@ export function Feed({
               radius={radius}
               onShow={() => changeCategory('alert')}
             />
-            <div ref={radiusMenuRef} className="feed-radius relative ml-auto w-fit shrink-0">
+            <div ref={radiusMenuRef} className="feed-radius relative w-fit shrink-0">
               <button
                 type="button"
                 aria-label={`${t('filters.radius')}: ${tc(`radius.${radius}`)}`}
@@ -428,10 +428,9 @@ export function Feed({
                 </div>
               )}
             </div>
-          </div>
           <div
             ref={categoryMenuRef}
-            className="feed-category-filters relative flex w-fit max-w-full items-center gap-2 pl-0.5"
+            className="feed-category-filters relative flex min-w-0 max-w-[42vw] shrink-0 items-center gap-1 pl-0.5 sm:max-w-[14rem]"
           >
             <button
               type="button"
@@ -470,11 +469,13 @@ export function Feed({
               </svg>
             </button>
             {isCategoryMenuOpen && (
-              <nav
+              <div
                 id="feed-category-options"
+                role="group"
                 aria-label={t('filters.label')}
-                className="feed-category-options glass absolute left-0 top-full z-30 mt-2 grid max-h-[min(60svh,24rem)] w-[min(20rem,calc(100vw-2rem))] grid-cols-2 gap-2 overflow-y-auto rounded-2xl p-3 shadow-xl"
+                className="feed-category-options glass absolute left-1/2 top-full z-30 mt-2 flex max-h-[min(65svh,30rem)] w-[min(22rem,calc(100vw-1.5rem))] -translate-x-1/2 flex-col gap-3 overflow-y-auto rounded-2xl p-3 shadow-xl sm:left-auto sm:right-0 sm:translate-x-0"
               >
+                <div className="grid grid-cols-2 gap-2">
                 <FilterChip
                   active={category === null && section === null}
                   onClick={() => {
@@ -543,64 +544,71 @@ export function Feed({
                     </button>
                   </div>
                 ))}
-              </nav>
-            )}
-            {(filtersCustomized || section !== null) && (
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                className="glass inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-white/90 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                {t('filters.reset')}
-              </button>
+                </div>
+                <div className="border-t border-white/10 pt-3">
+                  <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-fog">
+                    {t('sections.label')}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <SectionChip
+                      active={section === null && category === null}
+                      onClick={() => {
+                        setSection(null);
+                        setCategory(null);
+                        clearCategoryQuery();
+                        setIsCategoryMenuOpen(false);
+                      }}
+                    >
+                      {t('sections.all')}
+                    </SectionChip>
+                    {FEED_SECTIONS.map((value) => (
+                      <SectionChip
+                        key={value}
+                        active={section === value}
+                        onClick={() => {
+                          setCategory(null);
+                          clearCategoryQuery();
+                          setSection(value);
+                          setIsCategoryMenuOpen(false);
+                        }}
+                      >
+                        {t(`sections.${value}`)}
+                      </SectionChip>
+                    ))}
+                  </div>
+                </div>
+                <div className="border-t border-white/10 pt-3">
+                  <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-fog">
+                    {t('sort.label')}
+                  </p>
+                  <div role="group" aria-label={t('sort.label')} className="flex flex-wrap gap-1 rounded-full bg-black/35 p-1">
+                    {FEED_SORTS.map((value) => (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={sortMode === value}
+                        onClick={() => setSortMode(value)}
+                        className={`min-h-8 rounded-full px-3 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${
+                          sortMode === value ? 'bg-white text-ink' : 'text-white/80 hover:text-white'
+                        }`}
+                      >
+                        {t(`sort.${value}`)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {(filtersCustomized || section !== null) && (
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    className="glass inline-flex min-h-9 items-center justify-center rounded-full px-3 text-xs font-semibold text-white/90 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  >
+                    {t('filters.reset')}
+                  </button>
+                )}
+              </div>
             )}
           </div>
-          <nav
-            aria-label={t('sections.label')}
-            className="feed-section-filters flex w-full max-w-full gap-1.5 overflow-x-auto pb-0.5"
-          >
-            <SectionChip
-              active={section === null && category === null}
-              onClick={() => {
-                setSection(null);
-                setCategory(null);
-                clearCategoryQuery();
-              }}
-            >
-              {t('sections.all')}
-            </SectionChip>
-            {FEED_SECTIONS.map((value) => (
-              <SectionChip
-                key={value}
-                active={section === value}
-                onClick={() => {
-                  setCategory(null);
-                  clearCategoryQuery();
-                  setSection(value);
-                }}
-              >
-                {t(`sections.${value}`)}
-              </SectionChip>
-            ))}
-          </nav>
-          <div
-            role="group"
-            aria-label={t('sort.label')}
-            className="flex w-fit items-center gap-1 rounded-full bg-black/35 p-1"
-          >
-            {FEED_SORTS.map((value) => (
-              <button
-                key={value}
-                type="button"
-                aria-pressed={sortMode === value}
-                onClick={() => setSortMode(value)}
-                className={`min-h-8 rounded-full px-3 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${
-                  sortMode === value ? 'bg-white text-ink' : 'text-white/80 hover:text-white'
-                }`}
-              >
-                {t(`sort.${value}`)}
-              </button>
-            ))}
           </div>
           {category === 'alert' && (
             <p className="rounded-xl border border-alert/50 bg-black/80 px-3 py-2 text-sm text-white">
