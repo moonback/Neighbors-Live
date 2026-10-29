@@ -2,30 +2,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
+import { MerchantDashboard } from '@/components/merchant/MerchantDashboard';
 import { MerchantForm } from '@/components/merchant/MerchantForm';
 import { Card, Notice } from '@/components/ui';
+import { loadMerchantDashboard } from '@/lib/merchant-dashboard.server';
 import { getViewer } from '@/lib/session';
-import { adminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('merchant'))('title') };
-}
-
-async function merchantQuota(userId: string) {
-  const admin = adminClient();
-  const since = new Date(Date.now() - 24 * 3_600_000).toISOString();
-  const [{ count }, own, config] = await Promise.all([
-    admin
-      .from('videos')
-      .select('id', { count: 'exact', head: true })
-      .eq('author_id', userId)
-      .eq('is_merchant', true)
-      .gt('created_at', since),
-    admin.from('merchant_profiles').select('daily_quota').eq('user_id', userId).single(),
-    admin.from('app_config').select('value').eq('key', 'merchant_daily_quota').single(),
-  ]);
-  return { used: count ?? 0, quota: own.data?.daily_quota ?? Number(config.data?.value ?? 3) };
 }
 
 export default async function MerchantPage() {
@@ -39,7 +24,7 @@ export default async function MerchantPage() {
     .select('business_name, status, created_at, website, phone, address, opening_hours')
     .eq('user_id', viewer.id)
     .maybeSingle();
-  const quota = merchant?.status === 'approved' ? await merchantQuota(viewer.id) : null;
+  const dashboard = merchant?.status === 'approved' ? await loadMerchantDashboard(viewer.id) : null;
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6 p-4 pb-8 sm:p-6">
@@ -95,7 +80,7 @@ export default async function MerchantPage() {
             </Link>
           </div>
         )}
-        {merchant?.status === 'approved' && quota && (
+        {merchant?.status === 'approved' && dashboard && (
           <>
             <Notice kind="success">
               {t('approved')} — {merchant.business_name}
@@ -130,19 +115,11 @@ export default async function MerchantPage() {
                 </span>
               )}
             </div>
-            <p>{t('quota', quota)}</p>
             <p className="text-sm text-fog">{t('rules')}</p>
-            {quota.used < quota.quota && (
-              <Link
-                href="/filmer"
-                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-ink"
-              >
-                {t('publish')}
-              </Link>
-            )}
           </>
         )}
       </Card>
+      {dashboard && <MerchantDashboard initial={dashboard} />}
     </div>
   );
 }
