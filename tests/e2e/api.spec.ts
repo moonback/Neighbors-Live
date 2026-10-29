@@ -184,6 +184,7 @@ test('first visit gets a concise onboarding and can skip the optional install gu
   await expect(page).toHaveURL(/\/carte$/);
   await page.goto('/');
   await expect(page).not.toHaveURL(/onboarding/);
+  await page.evaluate(() => localStorage.setItem('neighbors-onboarding-step', '1'));
   await page.goto('/onboarding?step=install');
   await expect(page.getByRole('heading', { name: 'Installer l’application' })).toBeVisible();
   await expect(page.getByText(/Sur Android \(Chrome\)/)).toBeVisible();
