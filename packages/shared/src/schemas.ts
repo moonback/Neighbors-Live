@@ -145,6 +145,10 @@ export const reportSchema = z.object({
   details: cleanText(500).optional(),
 });
 
+export const VIDEO_EVENT_KINDS = ['view', 'offer_click', 'call_click', 'directions_click'] as const;
+export type VideoEventKind = (typeof VIDEO_EVENT_KINDS)[number];
+export const videoEventSchema = z.object({ kind: z.enum(VIDEO_EVENT_KINDS) });
+
 export const moderationDecisionSchema = z
   .object({ action: z.enum(MODERATION_ACTIONS), note: cleanText(1000).default('') })
   .refine((d) => d.action !== 'remove' || d.note.length >= 3, {

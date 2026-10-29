@@ -21,7 +21,9 @@ export default async function MerchantPage() {
   const format = await getFormatter();
   const { data: merchant, error: merchantError } = await supabase
     .from('merchant_profiles')
-    .select('business_name, status, created_at, website, phone, address, opening_hours')
+    .select(
+      'business_name, description, status, created_at, website, phone, address, opening_hours',
+    )
     .eq('user_id', viewer.id)
     .maybeSingle();
   const dashboard = merchant?.status === 'approved' ? await loadMerchantDashboard(viewer.id) : null;
@@ -120,6 +122,21 @@ export default async function MerchantPage() {
         )}
       </Card>
       {dashboard && <MerchantDashboard initial={dashboard} />}
+      {merchant?.status === 'approved' && (
+        <Card className="flex max-w-3xl flex-col gap-3">
+          <h2 className="text-lg font-semibold">{t('edit.title')}</h2>
+          <p className="text-sm text-fog">{t('edit.description')}</p>
+          <MerchantForm
+            initial={{
+              description: merchant.description,
+              website: merchant.website,
+              phone: merchant.phone,
+              address: merchant.address,
+              openingHours: merchant.opening_hours,
+            }}
+          />
+        </Card>
+      )}
     </div>
   );
 }

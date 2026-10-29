@@ -21,6 +21,14 @@ brouillons.
   ses appareils. Ces listes sont privées, accessibles uniquement à leur propriétaire via RLS et
   supprimées avec le compte ou la vidéo correspondante. Les miniatures sont fournies par URL signée
   temporaire et ne sont pas stockées dans ces préférences.
+- Statistiques commerçants : pour les offres (catégorie Commerce d’un compte approuvé), l’application
+  compte les vues (offre visible ≥ 2 s) et les clics « Voir l’offre », « Appeler », « Itinéraire »
+  dans `video_daily_stats`, agrégés par vidéo et par jour. Aucun identifiant de visiteur, position
+  ou IP n’y est stocké ; la limite d’envois utilise l’identifiant du compte ou un hash salé de l’IP
+  dans `rate_limits`, purgé après un jour. Seul l’auteur de la vidéo (et l’admin) lit ces compteurs,
+  qui disparaissent avec la vidéo ou le compte. Rien n’est ajouté à l’export personnel, faute de
+  donnée rattachée à un utilisateur. Les vues ne sont dédoublonnées que par onglet du navigateur.
+  Les achats en boutique ne sont pas observés : aucun taux de conversion n’est calculé.
 - Les abonnements push contiennent l’endpoint et les clés fournis par le navigateur ainsi qu’une
   zone approximative choisie à partir de la position. La position brute n’est pas conservée pour
   cette préférence.

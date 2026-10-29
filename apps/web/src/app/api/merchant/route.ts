@@ -1,6 +1,6 @@
 import { sanitizeText } from '@nl/shared';
 import { z } from 'zod';
-import { ApiError, json, parseBody, requireUser, route, unwrap } from '@/lib/api';
+import { ApiError, fromDbError, json, parseBody, requireUser, route, unwrap } from '@/lib/api';
 import { createClient } from '@/lib/supabase/server';
 
 function normalizeWebsite(value: string) {
@@ -16,8 +16,7 @@ function normalizePhone(value: string) {
   return digits.length > 30 ? digits.slice(0, 30) : digits;
 }
 
-const schema = z.object({
-  businessName: z.string().transform(sanitizeText).pipe(z.string().min(2).max(80)),
+const contactSchema = z.object({
   description: z.string().transform(sanitizeText).pipe(z.string().max(280)).default(''),
   website: z.string().transform(sanitizeText).pipe(z.string().max(200)).default(''),
   phone: z.string().transform(sanitizeText).pipe(z.string().max(30)).default(''),
@@ -25,38 +24,55 @@ const schema = z.object({
   openingHours: z.string().transform(sanitizeText).pipe(z.string().max(200)).default(''),
 });
 
-/** Merchant application (pending until an admin approves it). */
-export const POST = route(async (req) => {
-  const user = await requireUser();
-  const { businessName, description, website, phone, address, openingHours } = await parseBody(
-    req,
-    schema,
-  );
-  const normalizedWebsite = normalizeWebsite(website);
-  const normalizedPhone = normalizePhone(phone);
-  const normalizedAddress = sanitizeText(address).trim();
-  const normalizedOpeningHours = sanitizeText(openingHours).trim();
-  if (normalizedWebsite && !/^https?:\/\//i.test(normalizedWebsite)) {
-    throw new ApiError('invalid_website', 422);
-  }
-  if (normalizedWebsite) {
+const schema = contactSchema.extend({
+  businessName: z.string().transform(sanitizeText).pipe(z.string().min(2).max(80)),
+});
+
+function contactColumns(input: z.infer<typeof contactSchema>) {
+  const website = normalizeWebsite(input.website);
+  if (website && !/^https?:\/\//i.test(website)) throw new ApiError('invalid_website', 422);
+  if (website) {
     try {
-      new URL(normalizedWebsite);
+      new URL(website);
     } catch {
       throw new ApiError('invalid_website', 422);
     }
   }
+  return {
+    description: input.description,
+    website,
+    phone: normalizePhone(input.phone),
+    address: sanitizeText(input.address).trim(),
+    opening_hours: sanitizeText(input.openingHours).trim(),
+  };
+}
+
+/** Merchant application (pending until an admin approves it). */
+export const POST = route(async (req) => {
+  const user = await requireUser();
+  const body = await parseBody(req, schema);
+  const columns = contactColumns(body);
   const supabase = await createClient();
-  const res = await supabase.from('merchant_profiles').insert({
-    user_id: user.id,
-    business_name: businessName,
-    description,
-    website: normalizedWebsite,
-    phone: normalizedPhone,
-    address: normalizedAddress,
-    opening_hours: normalizedOpeningHours,
-  });
+  const res = await supabase
+    .from('merchant_profiles')
+    .insert({ user_id: user.id, business_name: body.businessName, ...columns });
   if (res.error?.code === '23505') throw new ApiError('conflict', 409);
   unwrap(res);
   return json({ status: 'pending' }, 201);
+});
+
+/** Approved merchant edits description and contacts; the name stays as reviewed by an admin. */
+export const PATCH = route(async (req) => {
+  const user = await requireUser();
+  const columns = contactColumns(await parseBody(req, contactSchema));
+  const supabase = await createClient();
+  const { data: merchant, error } = await supabase
+    .from('merchant_profiles')
+    .select('status')
+    .eq('user_id', user.id)
+    .maybeSingle();
+  if (error) throw fromDbError(error);
+  if (merchant?.status !== 'approved') throw new ApiError('forbidden', 403);
+  unwrap(await supabase.from('merchant_profiles').update(columns).eq('user_id', user.id));
+  return json({ status: 'approved' });
 });

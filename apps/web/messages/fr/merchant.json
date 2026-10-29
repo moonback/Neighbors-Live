@@ -87,6 +87,14 @@
     },
     "views": "Vues",
     "statsUnavailable": "Statistiques non disponibles",
-    "noPurchases": "Les achats en boutique ne sont pas visibles dans l’application : aucun taux de conversion n’est calculé."
+    "noPurchases": "Les achats en boutique ne sont pas visibles dans l’application : aucun taux de conversion n’est calculé.",
+    "measuredSince": "Mesuré depuis le {date}. Une offre publiée avant cette date n’a pas de statistiques de vues ni de clics.",
+    "dailyViews": "Vues des 7 derniers jours"
+  },
+  "edit": {
+    "title": "Fiche du commerce",
+    "description": "Ces informations sont visibles sur votre profil et vos offres. Pour changer le nom du commerce, contactez l’équipe de modération.",
+    "submit": "Enregistrer",
+    "saved": "Fiche mise à jour."
   }
 }

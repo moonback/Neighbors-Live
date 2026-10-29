@@ -1,4 +1,4 @@
-import type { Database } from '@nl/shared';
+import type { Database, VideoEventKind } from '@nl/shared';
 import { getOfferStatus, type OfferStatus } from './offer-status';
 
 type VideoStatus = Database['public']['Enums']['video_status'];
@@ -33,19 +33,55 @@ export type MerchantVideoStats = {
   offerClicks: number | null;
   callClicks: number | null;
   directionsClicks: number | null;
+  dailyViews: { day: string; views: number }[] | null; // last 7 days, oldest first
 };
 
 export type MerchantDashboard = {
   quota: MerchantQuota;
   totals: { active: number; expired: number; useful: number; comments: number; saves: number };
   videos: MerchantVideoStats[];
+  measuredSince: string | null;
 };
+
+export type StatRow = { video_id: string; day: string; kind: VideoEventKind; count: number };
+export type MeasuredStats = { since: Date; rows: StatRow[] };
+
+const DAY_MS = 86_400_000;
+
+function measured(r: DashboardRow, stats: MeasuredStats | null, now: Date) {
+  // A video published before measurement started has partial data: report it as unavailable.
+  if (!stats || Date.parse(r.created_at) < stats.since.getTime()) {
+    return {
+      views: null,
+      offerClicks: null,
+      callClicks: null,
+      directionsClicks: null,
+      dailyViews: null,
+    };
+  }
+  const own = stats.rows.filter((s) => s.video_id === r.id);
+  const total = (kind: VideoEventKind) =>
+    own.filter((s) => s.kind === kind).reduce((n, s) => n + s.count, 0);
+  const dailyViews = Array.from({ length: 7 }, (_, i) => {
+    const day = new Date(now.getTime() - (6 - i) * DAY_MS).toISOString().slice(0, 10);
+    const views = own.find((s) => s.kind === 'view' && s.day === day)?.count ?? 0;
+    return { day, views };
+  });
+  return {
+    views: total('view'),
+    offerClicks: total('offer_click'),
+    callClicks: total('call_click'),
+    directionsClicks: total('directions_click'),
+    dailyViews,
+  };
+}
 
 export function buildMerchantDashboard(
   rows: DashboardRow[],
   saves: Map<string, number>,
   quota: MerchantQuota,
   now: Date,
+  stats: MeasuredStats | null = null,
 ): MerchantDashboard {
   const videos = rows.map((r): MerchantVideoStats => ({
     id: r.id,
@@ -58,10 +94,7 @@ export function buildMerchantDashboard(
     useful: r.useful_count,
     comments: r.comment_count,
     saves: saves.get(r.id) ?? 0,
-    views: null,
-    offerClicks: null,
-    callClicks: null,
-    directionsClicks: null,
+    ...measured(r, stats, now),
   }));
   const live = (v: MerchantVideoStats) =>
     v.status === 'active' && Date.parse(v.expiresAt) > now.getTime();
@@ -77,5 +110,6 @@ export function buildMerchantDashboard(
       saves: sum('saves'),
     },
     videos,
+    measuredSince: stats?.since.toISOString() ?? null,
   };
 }

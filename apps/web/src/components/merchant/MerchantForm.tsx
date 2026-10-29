@@ -7,39 +7,57 @@ import { Button, Field, inputClass, Notice } from '@/components/ui';
 import { useErrorText } from '@/components/useErrorText';
 import { api } from '@/lib/client-api';
 
-export function MerchantForm() {
+export interface MerchantContact {
+  description: string;
+  website: string;
+  phone: string;
+  address: string;
+  openingHours: string;
+}
+
+/** Application form, or contact edition for an approved merchant when `initial` is given. */
+export function MerchantForm({ initial }: { initial?: MerchantContact }) {
   const t = useTranslations('merchant');
   const errorText = useErrorText();
   const router = useRouter();
+  const editing = initial !== undefined;
   const [businessName, setBusinessName] = useState('');
-  const [description, setDescription] = useState('');
-  const [website, setWebsite] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [openingHours, setOpeningHours] = useState('');
+  const [description, setDescription] = useState(initial?.description ?? '');
+  const [website, setWebsite] = useState(initial?.website ?? '');
+  const [phone, setPhone] = useState(initial?.phone ?? '');
+  const [address, setAddress] = useState(initial?.address ?? '');
+  const [openingHours, setOpeningHours] = useState(initial?.openingHours ?? '');
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setSaved(false);
+    const contact = { description, website, phone, address, openingHours };
     const res = await api('/api/merchant', {
-      body: { businessName, description, website, phone, address, openingHours },
+      ...(editing && { method: 'PATCH' }),
+      body: editing ? contact : { businessName, ...contact },
     });
     if (!res.ok) return setError(errorText(res.error));
+    setError(null);
+    if (editing) setSaved(true);
     router.refresh();
   }
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
-      <Field label={t('businessName')} htmlFor="m-name">
-        <input
-          id="m-name"
-          className={inputClass}
-          maxLength={80}
-          required
-          value={businessName}
-          onChange={(e) => setBusinessName(e.target.value)}
-        />
-      </Field>
+      {!editing && (
+        <Field label={t('businessName')} htmlFor="m-name">
+          <input
+            id="m-name"
+            className={inputClass}
+            maxLength={80}
+            required
+            value={businessName}
+            onChange={(e) => setBusinessName(e.target.value)}
+          />
+        </Field>
+      )}
       <Field label={t('description')} htmlFor="m-desc">
         <textarea
           id="m-desc"
@@ -90,8 +108,9 @@ export function MerchantForm() {
         />
       </Field>
       {error && <Notice kind="error">{error}</Notice>}
-      <Button type="submit" disabled={businessName.trim().length < 2}>
-        {t('submit')}
+      {saved && <Notice kind="success">{t('edit.saved')}</Notice>}
+      <Button type="submit" disabled={!editing && businessName.trim().length < 2}>
+        {editing ? t('edit.submit') : t('submit')}
       </Button>
     </form>
   );

@@ -141,6 +141,40 @@ export type Database = {
           },
         ];
       };
+      hidden_videos: {
+        Row: {
+          created_at: string;
+          user_id: string;
+          video_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          user_id: string;
+          video_id: string;
+        };
+        Update: {
+          created_at?: string;
+          user_id?: string;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'hidden_videos_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'hidden_videos_video_id_fkey';
+            columns: ['video_id'];
+            isOneToOne: false;
+            referencedRelation: 'videos';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       media_jobs: {
         Row: {
           attempts: number;
@@ -204,29 +238,43 @@ export type Database = {
           actor_id: string | null;
           created_at: string;
           id: number;
-          new_settings: Json;
-          previous_settings: Json;
+          new_settings: NonNullable<Json>;
+          previous_settings: NonNullable<Json>;
         };
+        ComputedFields: never;
         Insert: {
           actor_id?: string | null;
           created_at?: string;
           id?: never;
-          new_settings: Json;
-          previous_settings: Json;
+          new_settings: NonNullable<Json>;
+          previous_settings: NonNullable<Json>;
         };
         Update: {
           actor_id?: string | null;
           created_at?: string;
           id?: never;
-          new_settings?: Json;
-          previous_settings?: Json;
+          new_settings?: NonNullable<Json>;
+          previous_settings?: NonNullable<Json>;
         };
         Relationships: [];
       };
       media_worker_status: {
-        Row: { detectors: Json; last_seen: string; worker_id: string };
-        Insert: { detectors: Json; last_seen?: string; worker_id: string };
-        Update: { detectors?: Json; last_seen?: string; worker_id?: string };
+        Row: {
+          detectors: NonNullable<Json>;
+          last_seen: string;
+          worker_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          detectors: NonNullable<Json>;
+          last_seen?: string;
+          worker_id: string;
+        };
+        Update: {
+          detectors?: NonNullable<Json>;
+          last_seen?: string;
+          worker_id?: string;
+        };
         Relationships: [];
       };
       merchant_profiles: {
@@ -380,8 +428,8 @@ export type Database = {
           avatar_path: string | null;
           banned_at: string | null;
           bio: string;
-          created_at: string;
           cover_path: string | null;
+          created_at: string;
           id: string;
           reputation: number;
           role: Database['public']['Enums']['user_role'];
@@ -393,8 +441,8 @@ export type Database = {
           avatar_path?: string | null;
           banned_at?: string | null;
           bio?: string;
-          created_at?: string;
           cover_path?: string | null;
+          created_at?: string;
           id: string;
           reputation?: number;
           role?: Database['public']['Enums']['user_role'];
@@ -405,8 +453,8 @@ export type Database = {
           avatar_path?: string | null;
           banned_at?: string | null;
           bio?: string;
-          created_at?: string;
           cover_path?: string | null;
+          created_at?: string;
           id?: string;
           reputation?: number;
           role?: Database['public']['Enums']['user_role'];
@@ -515,74 +563,6 @@ export type Database = {
           },
         ];
       };
-      hidden_videos: {
-        Row: {
-          created_at: string;
-          user_id: string;
-          video_id: string;
-        };
-        ComputedFields: never;
-        Insert: {
-          created_at?: string;
-          user_id: string;
-          video_id: string;
-        };
-        Update: {
-          created_at?: string;
-          user_id?: string;
-          video_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'hidden_videos_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'hidden_videos_video_id_fkey';
-            columns: ['video_id'];
-            isOneToOne: false;
-            referencedRelation: 'videos';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      saved_videos: {
-        Row: {
-          created_at: string;
-          user_id: string;
-          video_id: string;
-        };
-        ComputedFields: never;
-        Insert: {
-          created_at?: string;
-          user_id: string;
-          video_id: string;
-        };
-        Update: {
-          created_at?: string;
-          user_id?: string;
-          video_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'saved_videos_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'saved_videos_video_id_fkey';
-            columns: ['video_id'];
-            isOneToOne: false;
-            referencedRelation: 'videos';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
       reports: {
         Row: {
           created_at: string;
@@ -629,6 +609,40 @@ export type Database = {
           },
         ];
       };
+      saved_videos: {
+        Row: {
+          created_at: string;
+          user_id: string;
+          video_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          user_id: string;
+          video_id: string;
+        };
+        Update: {
+          created_at?: string;
+          user_id?: string;
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'saved_videos_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'saved_videos_video_id_fkey';
+            columns: ['video_id'];
+            isOneToOne: false;
+            referencedRelation: 'videos';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       user_settings: {
         Row: {
           default_radius: number;
@@ -665,6 +679,36 @@ export type Database = {
           },
         ];
       };
+      video_daily_stats: {
+        Row: {
+          count: number;
+          day: string;
+          kind: Database['public']['Enums']['video_event_kind'];
+          video_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          count?: number;
+          day: string;
+          kind: Database['public']['Enums']['video_event_kind'];
+          video_id: string;
+        };
+        Update: {
+          count?: number;
+          day?: string;
+          kind?: Database['public']['Enums']['video_event_kind'];
+          video_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'video_daily_stats_video_id_fkey';
+            columns: ['video_id'];
+            isOneToOne: false;
+            referencedRelation: 'videos';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       videos: {
         Row: {
           accuracy_m: number;
@@ -682,8 +726,8 @@ export type Database = {
           is_merchant: boolean;
           location: unknown;
           mime_type: string;
-          orientation: string;
           offer_terms: string;
+          orientation: string;
           poster_path: string | null;
           public_location: unknown;
           published_at: string | null;
@@ -711,8 +755,8 @@ export type Database = {
           is_merchant?: boolean;
           location: unknown;
           mime_type: string;
-          orientation?: string;
           offer_terms?: string;
+          orientation?: string;
           poster_path?: string | null;
           public_location: unknown;
           published_at?: string | null;
@@ -739,8 +783,8 @@ export type Database = {
           is_merchant?: boolean;
           location?: unknown;
           mime_type?: string;
-          orientation?: string;
           offer_terms?: string;
+          orientation?: string;
           poster_path?: string | null;
           public_location?: unknown;
           published_at?: string | null;
@@ -793,10 +837,6 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      admin_set_media_settings: {
-        Args: { p_admin: string; p_settings: Json };
-        Returns: undefined;
-      };
       admin_revert_action: {
         Args: { p_action: number; p_admin: string; p_note: string };
         Returns: number;
@@ -809,6 +849,7 @@ export type Database = {
         Args: { p_admin: string; p_banned: boolean; p_note: string; p_user: string };
         Returns: undefined;
       };
+      admin_set_media_settings: { Args: { p_admin: string; p_settings: Json }; Returns: undefined };
       admin_stats: { Args: { p_admin: string }; Returns: Json };
       appeals_queue: {
         Args: { p_reviewer: string };
@@ -854,7 +895,10 @@ export type Database = {
           locked_by: string | null;
           max_attempts: number;
           payload: NonNullable<Json>;
+          phase: string;
+          progress: number;
           run_after: string;
+          settings_snapshot: Json | null;
           status: Database['public']['Enums']['job_status'];
           updated_at: string;
           video_id: string | null;
@@ -891,25 +935,77 @@ export type Database = {
         Returns: undefined;
       };
       config_int: { Args: { p_key: string }; Returns: number };
-      create_video: {
-        Args: {
-          p_accuracy: number;
-          p_author: string;
-          p_caption: string;
-          p_category: Database['public']['Enums']['video_category'];
-          p_duration_ms: number;
-          p_expires_at: string;
-          p_h3_cell: string;
-          p_lat: number;
-          p_lng: number;
-          p_mime: string;
-          p_offer_terms: string;
-          p_orientation: string;
-          p_realtime_cell: string;
-          p_request_id: string;
-        };
-        Returns: string;
-      };
+      create_video:
+        | {
+            Args: {
+              p_accuracy: number;
+              p_author: string;
+              p_caption: string;
+              p_category: Database['public']['Enums']['video_category'];
+              p_duration_ms: number;
+              p_expires_at: string;
+              p_h3_cell: string;
+              p_lat: number;
+              p_lng: number;
+              p_mime: string;
+              p_realtime_cell: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              p_accuracy: number;
+              p_author: string;
+              p_caption: string;
+              p_category: Database['public']['Enums']['video_category'];
+              p_duration_ms: number;
+              p_expires_at: string;
+              p_h3_cell: string;
+              p_lat: number;
+              p_lng: number;
+              p_mime: string;
+              p_realtime_cell: string;
+              p_request_id: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              p_accuracy: number;
+              p_author: string;
+              p_caption: string;
+              p_category: Database['public']['Enums']['video_category'];
+              p_duration_ms: number;
+              p_expires_at: string;
+              p_h3_cell: string;
+              p_lat: number;
+              p_lng: number;
+              p_mime: string;
+              p_offer_terms: string;
+              p_realtime_cell: string;
+              p_request_id: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              p_accuracy: number;
+              p_author: string;
+              p_caption: string;
+              p_category: Database['public']['Enums']['video_category'];
+              p_duration_ms: number;
+              p_expires_at: string;
+              p_h3_cell: string;
+              p_lat: number;
+              p_lng: number;
+              p_mime: string;
+              p_offer_terms: string;
+              p_orientation: string;
+              p_realtime_cell: string;
+              p_request_id: string;
+            };
+            Returns: string;
+          };
       enqueue_processing: {
         Args: { p_author: string; p_raw_path: string; p_video: string };
         Returns: number;
@@ -923,9 +1019,14 @@ export type Database = {
       get_public_video: {
         Args: { p_id: string };
         Returns: {
+          author_address: string;
           author_color: string;
           author_id: string;
+          author_is_merchant: boolean;
+          author_opening_hours: string;
+          author_phone: string;
           author_username: string;
+          author_website: string;
           caption: string;
           category: Database['public']['Enums']['video_category'];
           comment_count: number;
@@ -954,6 +1055,17 @@ export type Database = {
           id: string;
           public_lat: number;
           public_lng: number;
+        }[];
+      };
+      merchant_public_contact: {
+        Args: { p_user_id: string };
+        Returns: {
+          address: string;
+          business_name: string;
+          description: string;
+          opening_hours: string;
+          phone: string;
+          website: string;
         }[];
       };
       moderate_video: {
@@ -988,6 +1100,7 @@ export type Database = {
       moderator_eligible: { Args: { p_user: string }; Returns: boolean };
       nearby_videos: {
         Args: {
+          p_categories?: Database['public']['Enums']['video_category'][];
           p_category?: Database['public']['Enums']['video_category'];
           p_cursor_id?: string;
           p_cursor_score?: number;
@@ -995,7 +1108,6 @@ export type Database = {
           p_limit?: number;
           p_lng: number;
           p_radius_m: number;
-          p_categories?: Database['public']['Enums']['video_category'][];
           p_reduced_categories?: Database['public']['Enums']['video_category'][];
           p_ref_time?: string;
           p_sort_mode?: string;
@@ -1021,6 +1133,15 @@ export type Database = {
       };
       prepare_account_deletion: { Args: { p_user: string }; Returns: string[] };
       public_point: { Args: { p_id: string; p_loc: unknown }; Returns: unknown };
+      record_video_event: {
+        Args: {
+          p_actor?: string;
+          p_kind: Database['public']['Enums']['video_event_kind'];
+          p_rate_key: string;
+          p_video: string;
+        };
+        Returns: undefined;
+      };
       resolve_appeal: {
         Args: { p_appeal: string; p_note?: string; p_reviewer: string; p_uphold: boolean };
         Returns: undefined;
@@ -1062,6 +1183,7 @@ export type Database = {
         | 'other';
       user_role: 'user' | 'merchant' | 'admin';
       video_category: 'alert' | 'deal' | 'event' | 'help' | 'shop' | 'lost';
+      video_event_kind: 'view' | 'offer_click' | 'call_click' | 'directions_click';
       video_status: 'processing' | 'active' | 'hidden' | 'removed' | 'expired' | 'rejected';
     };
     CompositeTypes: {
@@ -1204,6 +1326,7 @@ export const Constants = {
       ],
       user_role: ['user', 'merchant', 'admin'],
       video_category: ['alert', 'deal', 'event', 'help', 'shop', 'lost'],
+      video_event_kind: ['view', 'offer_click', 'call_click', 'directions_click'],
       video_status: ['processing', 'active', 'hidden', 'removed', 'expired', 'rejected'],
     },
   },

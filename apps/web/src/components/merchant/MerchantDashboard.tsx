@@ -133,10 +133,35 @@ export function MerchantDashboard({ initial }: { initial: Dashboard }) {
                   ))
                 )}
               </ul>
+              {v.dailyViews && (
+                <ol className="flex h-12 items-end gap-1" aria-label={t('dashboard.dailyViews')}>
+                  {v.dailyViews.map((d) => {
+                    const max = Math.max(1, ...v.dailyViews!.map((x) => x.views));
+                    const label = `${format.dateTime(new Date(d.day), { weekday: 'short', timeZone: 'UTC' })} : ${format.number(d.views)}`;
+                    return (
+                      <li
+                        key={d.day}
+                        title={label}
+                        className="flex-1 rounded-t bg-accent/70"
+                        style={{ height: `${Math.max(4, (d.views / max) * 100)}%` }}
+                      >
+                        <span className="sr-only">{label}</span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
             </li>
           );
         })}
       </ul>
+      {data.measuredSince && (
+        <p className="text-xs text-fog">
+          {t('dashboard.measuredSince', {
+            date: format.dateTime(new Date(data.measuredSince), { dateStyle: 'long' }),
+          })}
+        </p>
+      )}
       <p className="text-xs text-fog">{t('dashboard.noPurchases')}</p>
     </section>
   );

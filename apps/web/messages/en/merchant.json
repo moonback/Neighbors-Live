@@ -87,6 +87,14 @@
     },
     "views": "Views",
     "statsUnavailable": "Statistics not available",
-    "noPurchases": "In-store purchases are not visible to the app: no conversion rate is calculated."
+    "noPurchases": "In-store purchases are not visible to the app: no conversion rate is calculated.",
+    "measuredSince": "Measured since {date}. Offers published before that date have no view or click statistics.",
+    "dailyViews": "Views over the last 7 days"
+  },
+  "edit": {
+    "title": "Business details",
+    "description": "This information is shown on your profile and offers. To change the business name, contact the moderation team.",
+    "submit": "Save",
+    "saved": "Details updated."
   }
 }

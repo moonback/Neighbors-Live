@@ -4,6 +4,24 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
+Mise à jour 2026-10-29 — espace de pilotage commerçant (plan :
+`docs/superpowers/plans/2026-10-29-espace-pilotage-commercant.md`) : `/commerce` affiche pour un
+commerce approuvé le quota, les totaux et chaque offre (état, « Utile », commentaires, sauvegardes,
+vues et clics « Voir l’offre / Appeler / Itinéraire » mesurés dans `video_daily_stats`), le retrait
+d’une offre, « Préparer une offre » (capture avec Commerce présélectionné) et l’édition de la fiche
+(contacts, horaires ; nom réservé à l’admin). Sans mesure : « Statistiques non disponibles » ;
+aucun taux de conversion. Vérifié réellement : `db reset`, pgTAP 266/266, typecheck, lint, 136 tests
+unitaires, build, e2e `merchant-dashboard.spec.ts` 3/3, rendu navigateur 375 px et desktop.
+Non vérifié : affichage des barres « vues des 7 derniers jours » sur une offre réellement mesurée
+(le seed ne contient que des offres antérieures aux mesures), suite e2e complète, appareil réel.
+Revue finale : `20261029001100` durcit `record_video_event` (offres de commerçants approuvés
+uniquement, plafond anonyme par vidéo contre la rotation de `X-Forwarded-For`), pgTAP 269/269 ;
+la page `/v/[id]` compte aussi vues et clics. ⚠️ Le feed n’affiche plus les boutons « Voir
+l’offre / Appeler / Itinéraire » depuis `20261029000500` (`nearby_videos` ne renvoie plus les
+contacts) : les clics ne sont mesurés que depuis `/v/[id]`. Jours comptés en UTC.
+Migration `20261025000200` restaurée (cassée par `21f9582`). `030_functions` a échoué une fois sur
+`position_incoherent` puis réussi : test instable préexistant.
+
 Audit 2026-10-29 — UI/UX, accessibilité, performance (détail : `docs/audit-uiux-performance.md`).
 Lint global débloqué (`.swc-safe-cache/` ignoré) ; `db:start` applique désormais les migrations en
 attente (la base locale en avait 11 de retard, feed en 500). `ThemeProvider` et `Onboarding`

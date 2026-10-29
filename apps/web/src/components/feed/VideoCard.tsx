@@ -10,6 +10,7 @@ import type { FeedItem } from '@/lib/feed';
 import { fetchIsVideoHidden, toggleHiddenVideoServer, isVideoHidden } from '@/lib/hidden-videos';
 import { fetchIsVideoSaved, toggleSavedVideoServer, isVideoSaved } from '@/lib/saved-videos';
 import { getOfferStatus } from '@/lib/offer-status';
+import { trackVideoEvent } from '@/lib/video-events';
 import { formatDistance } from './format';
 import { Sheet } from './Sheet';
 
@@ -64,6 +65,13 @@ export function VideoCard({
   const [time, setTime] = useState({ current: 0, duration: 0 });
   const progress = time.duration > 0 ? (time.current / time.duration) * 100 : 0;
   const [toast, setToast] = useState<string | null>(null);
+
+  // Merchant statistics: a view is an offer on screen (≥60 % visible) for 2 s.
+  useEffect(() => {
+    if (!active || item.category !== 'shop' || !item.author.isMerchant) return;
+    const timer = setTimeout(() => trackVideoEvent(item.id, 'view'), 2000);
+    return () => clearTimeout(timer);
+  }, [active, item.id, item.category, item.author.isMerchant]);
 
   useEffect(() => {
     if (!signedIn) return;
@@ -587,7 +595,10 @@ export function VideoCard({
         {offerStatus === 'valid' && merchantWebsite && (
           <ActionButton
             label={t('offerView')}
-            onClick={() => window.open(merchantWebsite, '_blank', 'noopener,noreferrer')}
+            onClick={() => {
+              trackVideoEvent(item.id, 'offer_click');
+              window.open(merchantWebsite, '_blank', 'noopener,noreferrer');
+            }}
             icon="M5 7h14v11H5zm2-3h10v3H7z"
           />
         )}
@@ -595,6 +606,7 @@ export function VideoCard({
           <ActionButton
             label={t('callBusiness')}
             onClick={() => {
+              trackVideoEvent(item.id, 'call_click');
               window.location.href = `tel:${merchantPhone}`;
             }}
             icon="M5 4.5h3l1 4-2 2.5a14 14 0 0010.5 10.5l2.5-2-4-1v-3a2 2 0 011.5-2.2l2.5-.5a2 2 0 011.8 2l-.3 4a2 2 0 01-2 1.8A18 18 0 014.7 6.7a2 2 0 011.8-2l4-.3A2 2 0 0113.3 6l-.5 2.5A2 2 0 0110.6 10.5z"
@@ -604,6 +616,7 @@ export function VideoCard({
           <ActionButton
             label={t('directions')}
             onClick={() => {
+              trackVideoEvent(item.id, 'directions_click');
               const query = encodeURIComponent(merchantAddress);
               window.open(
                 `https://www.google.com/maps/search/?api=1&query=${query}`,
