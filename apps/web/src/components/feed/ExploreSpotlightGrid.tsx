@@ -3,7 +3,7 @@
 import { CATEGORIES, type Category } from '@nl/shared';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Button, Notice } from '@/components/ui';
 import { api } from '@/lib/client-api';
@@ -25,6 +25,8 @@ export function ExploreSpotlightGrid() {
   const tc = useTranslations('common');
   const locale = useLocale();
   const [category, setCategory] = useState<Category | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortMode, setSortMode] = useState<'relevance' | 'popular' | 'nearest'>('relevance');
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [items, setItems] = useState<SpotlightItem[]>([]);
   const [previewId, setPreviewId] = useState<string | null>(null);
@@ -122,6 +124,28 @@ export function ExploreSpotlightGrid() {
   }
 
   const busy = status === 'locating' || status === 'loading';
+  const visibleItems = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLocaleLowerCase(locale);
+    const filtered = items.filter((item) => {
+      if (!normalizedQuery) return true;
+      const searchable = [
+        item.caption,
+        item.author.username ?? '',
+        tc(`categories.${item.category}`),
+      ].join(' ').toLocaleLowerCase(locale);
+      return searchable.includes(normalizedQuery);
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (sortMode === 'popular') return b.usefulCount - a.usefulCount;
+      if (sortMode === 'nearest') {
+        if (a.distanceM === null) return b.distanceM === null ? 0 : 1;
+        if (b.distanceM === null) return -1;
+        return a.distanceM - b.distanceM;
+      }
+      return items.indexOf(a) - items.indexOf(b);
+    });
+  }, [items, locale, searchQuery, sortMode, tc]);
 
   return (
     <section aria-labelledby="spotlight-title" className="flex flex-col gap-4 sm:gap-5">
@@ -174,6 +198,49 @@ export function ExploreSpotlightGrid() {
 
       <p className="text-xs leading-relaxed text-fog">{t('locationHint')}</p>
 
+      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-panel/70 p-3 sm:flex-row sm:items-center sm:p-4">
+        <div className="relative min-w-0 flex-1">
+          <label htmlFor="spotlight-search" className="sr-only">{t('searchLabel')}</label>
+          <input
+            id="spotlight-search"
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder={t('searchPlaceholder')}
+            disabled={busy || items.length === 0}
+            className="min-h-11 w-full rounded-xl border border-line bg-ink/60 px-3 text-sm text-white placeholder:text-fog focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+          />
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <label htmlFor="spotlight-sort" className="text-xs font-semibold text-fog">{t('sortLabel')}</label>
+          <select
+            id="spotlight-sort"
+            value={sortMode}
+            onChange={(event) => setSortMode(event.target.value as typeof sortMode)}
+            disabled={busy || items.length === 0}
+            className="min-h-11 min-w-0 flex-1 rounded-xl border border-line bg-ink px-3 text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
+          >
+            <option value="relevance">{t('sortRelevance')}</option>
+            <option value="popular">{t('sortPopular')}</option>
+            <option value="nearest">{t('sortNearest')}</option>
+          </select>
+        </div>
+      </div>
+      {status === 'ready' && items.length > 0 && (
+        <div className="flex items-center justify-between gap-3 text-xs text-fog" aria-live="polite">
+          <span>{t('resultsCount', { count: visibleItems.length })}</span>
+          {(searchQuery || sortMode !== 'relevance') && (
+            <button
+              type="button"
+              onClick={() => { setSearchQuery(''); setSortMode('relevance'); }}
+              className="min-h-9 shrink-0 rounded-lg px-2 font-semibold text-white underline underline-offset-4 transition-colors hover:text-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              {t('resetSearchSort')}
+            </button>
+          )}
+        </div>
+      )}
+
       {error && (
         <Notice kind="error">
           {error === 'denied'
@@ -190,12 +257,29 @@ export function ExploreSpotlightGrid() {
       )}
       {status === 'ready' &&
         (items.length === 0 ? (
-          <p className="rounded-2xl border border-line bg-panel p-4 text-sm text-fog">
-            {t('empty')}
-          </p>
+          <div className="rounded-2xl border border-line bg-panel p-5 text-sm text-fog">
+            <p>{t('empty')}</p>
+            {category && (
+              <button type="button" onClick={() => selectCategory(null)} className="mt-3 min-h-10 rounded-lg px-2 font-semibold text-white underline underline-offset-4 hover:text-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                {t('clearCategory')}
+              </button>
+            )}
+          </div>
+        ) : visibleItems.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-line bg-panel/60 p-6 text-center">
+            <p className="text-sm font-semibold text-white">{t('noResults')}</p>
+            <p className="mt-1 text-sm text-fog">{t('noResultsHint')}</p>
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="mt-3 min-h-10 rounded-lg px-3 text-sm font-semibold text-white underline underline-offset-4 hover:text-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              {t('clearSearch')}
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {items.map((item, index) => {
+            {visibleItems.map((item, index) => {
               const distance =
                 item.distanceM === null ? null : formatDistance(item.distanceM, locale);
               return (
