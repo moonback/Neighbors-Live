@@ -13,7 +13,7 @@ import { formatDistance } from './format';
 
 type SpotlightItem = Pick<
   FeedItem,
-  'id' | 'category' | 'caption' | 'posterUrl' | 'author' | 'distanceM' | 'usefulCount'
+  'id' | 'category' | 'caption' | 'posterUrl' | 'videoUrl' | 'author' | 'distanceM' | 'usefulCount'
 >;
 type Status = 'idle' | 'locating' | 'loading' | 'ready';
 type ErrorKind = 'denied' | 'locationError' | 'fetchError';
@@ -27,6 +27,9 @@ export function ExploreSpotlightGrid() {
   const [category, setCategory] = useState<Category | null>(null);
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [items, setItems] = useState<SpotlightItem[]>([]);
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const cardRefs = useRef(new Map<string, HTMLAnchorElement>());
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState<ErrorKind | null>(null);
   const initialLoadStarted = useRef(false);
@@ -73,6 +76,38 @@ export function ExploreSpotlightGrid() {
     },
     [],
   );
+
+  useEffect(() => {
+    const media = window.matchMedia('(hover: none), (pointer: coarse)');
+    const updateInputMode = () => setIsMobile(media.matches);
+    updateInputMode();
+    media.addEventListener('change', updateInputMode);
+    return () => media.removeEventListener('change', updateInputMode);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile || status !== 'ready') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.65)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) {
+          setPreviewId(visible.target.getAttribute('data-spotlight-id'));
+        } else {
+          setPreviewId((current) => {
+            const stillVisible = [...cardRefs.current.values()].some((card) =>
+              card.getAttribute('data-spotlight-id') === current && card.getBoundingClientRect().top < window.innerHeight && card.getBoundingClientRect().bottom > 0,
+            );
+            return stillVisible ? current : null;
+          });
+        }
+      },
+      { threshold: [0, 0.65, 0.85] },
+    );
+    cardRefs.current.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, [isMobile, items, status]);
 
   useEffect(() => {
     if (initialLoadStarted.current) return;
@@ -167,6 +202,13 @@ export function ExploreSpotlightGrid() {
                 <Link
                   key={item.id}
                   href={`/v/${item.id}`}
+                  ref={(node) => {
+                    if (node) cardRefs.current.set(item.id, node);
+                    else cardRefs.current.delete(item.id);
+                  }}
+                  data-spotlight-id={item.id}
+                  onMouseEnter={() => { if (!isMobile) setPreviewId(item.id); }}
+                  onMouseLeave={() => { if (!isMobile) setPreviewId((current) => current === item.id ? null : current); }}
                   className={`group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-3xl border border-line bg-panel transition duration-200 hover:-translate-y-1 hover:border-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
                     index === 0 ? 'col-span-2 row-span-2 min-h-[22rem] sm:min-h-[26rem]' : ''
                   }`}
@@ -183,6 +225,19 @@ export function ExploreSpotlightGrid() {
                     <div
                       aria-hidden="true"
                       className="absolute inset-0 bg-gradient-to-br from-panel to-ink"
+                    />
+                  )}
+                  {item.videoUrl && (
+                    <video
+                      src={previewId === item.id ? item.videoUrl : undefined}
+                      poster={item.posterUrl ?? undefined}
+                      muted
+                      loop
+                      playsInline
+                      autoPlay
+                      preload={previewId === item.id ? 'metadata' : 'none'}
+                      aria-hidden="true"
+                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-200 ${previewId === item.id ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
                     />
                   )}
                   <div
