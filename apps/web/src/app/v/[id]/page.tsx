@@ -203,6 +203,7 @@ export default async function VideoPage({ params }: Params) {
             </div>
 
             <VideoPageInteractions
+              key={user ? 'signed-in' : 'signed-out'}
               item={item}
               signedIn={Boolean(user)}
               creatorHref={

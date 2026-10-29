@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Comments } from '@/components/feed/Comments';
 import type { FeedItem } from '@/lib/feed';
 import { api } from '@/lib/client-api';
+import { fetchIsVideoHidden, toggleHiddenVideoServer } from '@/lib/hidden-videos';
+import { fetchIsVideoSaved, toggleSavedVideoServer } from '@/lib/saved-videos';
 
 export function VideoPageInteractions({
   item,
@@ -19,8 +21,33 @@ export function VideoPageInteractions({
   const t = useTranslations('video');
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [collectionPending, setCollectionPending] = useState<'saved' | 'hidden' | null>(null);
   const [useful, setUseful] = useState({ reacted: item.reacted, count: item.usefulCount });
   const [usefulPending, setUsefulPending] = useState(false);
+
+  useEffect(() => {
+    if (!signedIn) return;
+
+    let active = true;
+    void Promise.all([fetchIsVideoSaved(item.id), fetchIsVideoHidden(item.id)])
+      .then(([isSaved, isHidden]) => {
+        if (!active) return;
+        setSaved(isSaved);
+        setHidden(isHidden);
+      })
+      .catch(() => {
+        if (active) {
+          setToast(t('collectionReadError'));
+          window.setTimeout(() => setToast(null), 3000);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [item.id, signedIn, t]);
 
   async function toggleUseful() {
     if (!signedIn || usefulPending) return;
@@ -36,6 +63,41 @@ export function VideoPageInteractions({
       window.setTimeout(() => setToast(null), 3000);
     }
     setUsefulPending(false);
+  }
+
+  async function toggleSave() {
+    if (!signedIn) return;
+    if (collectionPending) return;
+    setCollectionPending('saved');
+    try {
+      const next = await toggleSavedVideoServer(item.id);
+      setSaved(next.saved);
+      setToast(next.saved ? t('saveToast') : t('unsaveToast'));
+      window.setTimeout(() => setToast(null), 2000);
+    } catch {
+      setToast(t('saveError'));
+      window.setTimeout(() => setToast(null), 3000);
+    } finally {
+      setCollectionPending(null);
+    }
+  }
+
+  async function toggleHide() {
+    if (!signedIn) return;
+    if (collectionPending) return;
+    if (!hidden && !window.confirm(t('hideConfirm'))) return;
+    setCollectionPending('hidden');
+    try {
+      const next = await toggleHiddenVideoServer(item.id);
+      setHidden(next.hidden);
+      setToast(next.hidden ? t('hideToast') : t('unhideToast'));
+      window.setTimeout(() => setToast(null), 2000);
+    } catch {
+      setToast(t('hideError'));
+      window.setTimeout(() => setToast(null), 3000);
+    } finally {
+      setCollectionPending(null);
+    }
   }
 
   async function copyLink() {
@@ -118,6 +180,48 @@ export function VideoPageInteractions({
             <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z" />
           </svg>
           {item.commentCount}
+        </button>
+        <button
+          type="button"
+          onClick={() => void toggleSave()}
+          disabled={!signedIn || collectionPending !== null}
+          aria-pressed={saved}
+          className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className={`h-5 w-5 ${saved ? 'text-emerald-400' : ''}`}
+            fill={saved ? 'currentColor' : 'none'}
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7 4.5h10a1.5 1.5 0 011.5 1.5v14l-6.5-4.2-6.5 4.2V6A1.5 1.5 0 017 4.5z" />
+          </svg>
+          {saved ? t('saved') : t('save')}
+        </button>
+        <button
+          type="button"
+          onClick={() => void toggleHide()}
+          disabled={!signedIn || collectionPending !== null}
+          aria-pressed={hidden}
+          className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className={`h-5 w-5 ${hidden ? 'text-amber-300' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 3l18 18M10.5 10.5A2.5 2.5 0 0013.5 13.5M9 6.7A9.7 9.7 0 0112 6c4.2 0 7.9 2.5 9.5 6-.8 1.6-2.2 3-3.9 4.1M6.6 7.5A16.2 16.2 0 002.5 12c1.6 3.5 5.3 6 9.5 6a11 11 0 004.1-.8" />
+          </svg>
+          {hidden ? t('hidden') : t('hide')}
         </button>
         <button
           type="button"
