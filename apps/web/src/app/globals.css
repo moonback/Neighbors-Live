@@ -548,7 +548,7 @@ body {
     left: auto;
   }
 
-  /* Desktop: maximize the video stage while preserving the 9:16 player and edge overlays. */
+  /* The player aspect ratio follows the selected video orientation. */
   .feed-list {
     scrollbar-width: none;
   }
@@ -556,7 +556,6 @@ body {
   .feed-list .video-card > video {
     width: auto;
     max-width: 100%;
-    aspect-ratio: 9 / 16;
     margin-inline: auto;
   }
 

@@ -86,7 +86,8 @@ export default async function VideoPage({ params }: Params) {
               autoPlay
               loop
               aria-label={item.caption || tc(`categories.${item.category}`)}
-              className="relative z-[1] aspect-[9/16] max-h-[70dvh] w-auto max-w-full rounded-2xl bg-black object-contain shadow-2xl shadow-black/50 lg:max-h-[82dvh]"
+              className="relative z-[1] max-h-[70dvh] w-auto max-w-full rounded-2xl bg-black object-contain shadow-2xl shadow-black/50 lg:max-h-[82dvh]"
+              style={{ aspectRatio: item.orientation === 'portrait' ? '9 / 16' : '16 / 9' }}
             />
             <div className="absolute bottom-5 left-5 z-10 flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-white/15 bg-black/60 px-3 py-2 text-sm backdrop-blur">

@@ -67,6 +67,8 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   fraîcheur, la distance arrondie, les retours « utile » et une priorité explicite aux alertes,
   événements, entraide et offres locales ; les préférences de réduction, mémorisées dans le
   navigateur, pénalisent une catégorie.
+  Le format choisi à la publication accompagne chaque vidéo jusqu’au lecteur : portrait 9:16 ou
+  paysage 16:9. Les deux formats sont affichés sans recadrage dans le feed et la page publique.
   Les rubriques Alertes, Événements, Entraide et Offres (bons plans + commerces) sont filtrables,
   et le mode chronologique reste disponible. La pagination encode le mode de tri dans un curseur
   opaque (`score,id,ref,sort`). La route signe en lot les URL vidéo/poster (TTL court) avec la clé
