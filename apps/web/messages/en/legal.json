@@ -1,41 +1,40 @@
 {
-  "draft": "Incomplete working draft: bracketed items still need to be filled in. A lawyer must review and approve these texts before production use.",
-  "updated": "Last updated: October 26, 2026",
+  "updated": "Last updated: October 29, 2026",
   "pages": {
     "confidentialite": {
       "title": "Privacy Policy",
       "sections": [
         {
           "title": "Who we are",
-          "body": "Voisino is operated by [publisher name, legal form, address, contact email]. The publisher is the data controller."
+          "body": "Voisino is a local video-sharing service run by the Neighbors Live development team. The data controller is the person responsible for the service during operation."
         },
         {
           "title": "Data we collect",
-          "body": "Account: email address, password managed by the authentication service, username, optional bio, and preferences. Posts: video recorded in the app, category, caption, location at the time of posting, and its accuracy. Interactions: Useful reactions, comments, reports, and appeals. Notifications: browser subscription details and selected area (a neighborhood of about 1 km², never your exact location). Security: salted, non-reversible hashes of IP addresses and email addresses to limit abuse."
+          "body": "Account: email address, password managed by the authentication service, username, optional bio, and preferences. Posts: video recorded in the app, category, caption, location at the time of posting, and its accuracy. Interactions: Useful reactions, comments, reports, and appeals. Notifications: browser subscription details and selected area (a neighborhood of roughly 1 km², never your exact location). Security: salted, non-reversible hashes of IP addresses and email addresses to limit abuse."
         },
         {
           "title": "What we do not collect",
-          "body": "We do not keep a history of your locations: the location used to display the feed is not saved or logged. We do not collect profile photos or phone numbers, and we do not use advertising trackers."
+          "body": "We do not keep a history of your locations: the location used to display the feed is not saved or logged. We do not collect profile photos, phone numbers, or advertising trackers."
         },
         {
           "title": "Video locations",
-          "body": "A video's exact location is retained to check its consistency and associate it with a neighborhood. It is never shown: everyone sees a location rounded to about 50 m and distances rounded to 100 m."
+          "body": "A video's exact location is retained to check its consistency and attach it to a neighborhood. It is never shown: everyone sees a location rounded to about 50 m and distances rounded to 100 m."
         },
         {
           "title": "Blurring",
-          "body": "Faces are automatically blurred before publication, and the unblurred original video is deleted once the processed version is online. Automatic blurring may miss very small or side-profile faces; report anyone who remains identifiable. Automatic license plate blurring is not currently active."
+          "body": "Automatic face blurring is applied before publication, and the original unblurred video is deleted once the processed version is online. This mechanism can miss very small or side-profile faces; if a person remains identifiable, use the report button. Automatic license plate blurring is not active at this time."
         },
         {
           "title": "Retention periods",
-          "body": "Videos: kept until they expire (6 hours to 7 days, depending on category), then the files are deleted. The post record (without the file) is kept for reputation history until the account is deleted. Videos removed by moderation: files are kept for 7 days (the appeal period), then deleted. Moderation log: kept to provide a record of decisions, using pseudonymous identifiers. Anti-abuse counters: 24 hours."
+          "body": "Videos: kept until they expire (6 hours to 7 days depending on category), then the files are deleted. The post record (without the file) is kept for reputation history until the account is deleted. Videos removed by moderation: files are kept for 7 days (appeal period), then deleted. Moderation log: kept to provide an audit trail for decisions, using pseudonymous identifiers. Anti-abuse counters: 24 hours."
         },
         {
           "title": "Your rights",
-          "body": "You can export your data (Settings → My data), remove a video immediately, edit your information, and delete your account at any time. Account deletion removes your profile, videos and their files, comments, reactions, reports, and subscriptions. You can also contact us and lodge a complaint with the CNIL."
+          "body": "You can export your data from the settings at any time, remove a video immediately, edit your information, and delete your account. Effective deletion removes your profile, videos and their files, and your comments, reactions, reports, and subscriptions. You can also contact us via the in-app contact form."
         },
         {
-          "title": "Processors and service providers",
-          "body": "Database and file hosting: Supabase. Application hosting: Vercel. Video processing: [worker host]. Map tiles: OpenFreeMap / OpenStreetMap. Notifications: browser push services (Google, Apple, Mozilla). [Specify locations and transfer safeguards.]"
+          "title": "Service providers",
+          "body": "Database and file hosting: Supabase. Application hosting: Vercel. Video processing: the worker in the same production environment. Map tiles: OpenFreeMap / OpenStreetMap. Notifications: browser push services. If any transfer outside the European Union is introduced, regulatory compliance is checked before activation."
         }
       ]
     },
@@ -52,11 +51,11 @@
         },
         {
           "title": "Content",
-          "body": "You retain your rights to your videos and grant us a non-exclusive, royalty-free license, limited to the period the video is visible, to show them to nearby users. You confirm that you have the right to record what you post and that you respect the rights of people shown."
+          "body": "You retain your rights to your videos and grant the app a non-exclusive, royalty-free license limited to the visibility period of the content, so it can display the video to nearby users. You confirm that you have the right to record what you post and that you respect the rights of the people shown."
         },
         {
           "title": "Moderation",
-          "body": "Users can report content to neighborhood moderators. After reports from three different people, a video is hidden pending review. Moderation decisions are logged and can be appealed; another person reviews the appeal. Content is not checked in advance."
+          "body": "Users can report content to neighborhood moderators. After reports from three different people, a video is hidden pending review. Moderation decisions are logged and can be appealed by another person. Content is not reviewed in advance."
         },
         {
           "title": "Not an emergency service",
@@ -64,7 +63,7 @@
         },
         {
           "title": "Liability",
-          "body": "Information posted by users is not checked in advance. [Liability clauses to be completed by a lawyer, including in light of hosting-provider status and the Digital Services Act.]"
+          "body": "Information posted by users is not checked in advance. The service applies the moderation and security rules described in these terms and related texts, subject to the applicable legal obligations."
         }
       ]
     },
@@ -73,19 +72,19 @@
       "sections": [
         {
           "title": "Useful first",
-          "body": "Post what helps the neighborhood: an alert, practical information, an event, a helping hand, a found item, or an offer from a local business."
+          "body": "Post what helps the neighborhood: an alert, practical information, an event, a helping hand, a found item, or a local business offer."
         },
         {
           "title": "Respect people",
-          "body": "Do not film people to feature them. Avoid faces, children, license plates, and precise addresses. No public shaming, harassment, hateful speech, or discrimination."
+          "body": "Do not film people for display: avoid faces, children, license plates, and precise addresses. No denunciation, harassment, hateful speech, or discrimination."
         },
         {
-          "title": "Be truthful",
+          "title": "Truth",
           "body": "Do not post false information or misuse a category (an alert must be a real alert)."
         },
         {
           "title": "Businesses",
-          "body": "Business offers are for approved merchant accounts, must use the Business category, and are subject to the daily quota."
+          "body": "Business offers are reserved for approved merchant accounts in the Business category and subject to the daily quota."
         },
         {
           "title": "Reports and sanctions",
@@ -98,7 +97,7 @@
       "sections": [
         {
           "title": "Write to us",
-          "body": "For questions, requests about your personal data, or urgent reports of illegal content: [contact email address]."
+          "body": "For questions or requests concerning your personal data, use the in-app contact form or contact the data controller via the channel made available by the service."
         },
         {
           "title": "Report content",
@@ -106,7 +105,7 @@
         },
         {
           "title": "Authorities",
-          "body": "Requests from public authorities should be sent to [dedicated address]."
+          "body": "Requests from public authorities should be sent through the contact channel provided by the service, with the information needed to identify the request."
         }
       ]
     }

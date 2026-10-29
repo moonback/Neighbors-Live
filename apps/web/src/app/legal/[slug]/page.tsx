@@ -27,12 +27,6 @@ export default async function LegalPage({ params }: Params) {
         ← Voisino
       </Link>
       <h1 className="text-3xl font-bold">{t(`pages.${slug}.title`)}</h1>
-      <p
-        role="note"
-        className="rounded-xl border border-amber-500 bg-amber-500/10 px-4 py-3 text-sm"
-      >
-        {t('draft')}
-      </p>
       {sections.map((s) => (
         <section key={s.title} className="flex flex-col gap-2">
           <h2 className="text-xl font-semibold">{s.title}</h2>

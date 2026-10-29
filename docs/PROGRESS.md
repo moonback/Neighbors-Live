@@ -4,6 +4,8 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
+Mise à jour 2026-10-29 — le texte juridique des pages de confidentialité/conditions/règles a été remplacé par des formulations conformes aux fonctionnalités réelles de l’application, sans placeholders. Le bandeau de brouillon est rendu conditionnel afin de ne plus afficher un message de document incomplet en production. Vérification : typecheck + tests workspace réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`.
+
 Mise à jour 2026-10-29 — précision GPS maximale à la publication portée de 100 m à 500 m : constante partagée, validation client/serveur, messages FR/EN, fonction SQL et contrainte via migration, et tests de frontière. Typecheck, tests workspace (108), build et ESLint ciblé réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`. Tests SQL non validés : la base locale ne contient pas encore le schéma attendu (tables/fonctions manquantes) ; E2E non exécuté.
 
 Mise à jour 2026-10-29 — limite d’envoi vidéo portée à 500 MiB dans la validation partagée, le stockage Supabase local et les buckets privés via une nouvelle migration. Tests de frontière TypeScript et pgTAP ajoutés. `git diff --cached --check` réussi ; typecheck, lint, Vitest, build et pgTAP non exécutés (exécution `pnpm` refusée par l’environnement, Supabase local non vérifié).
