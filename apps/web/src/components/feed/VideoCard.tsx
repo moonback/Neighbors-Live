@@ -311,10 +311,9 @@ export function VideoCard({
       data-testid="feed-item"
       data-video-id={item.id}
     >
-      {/* Desktop always shows the blurred backdrop around the centred 9:16 column. */}
       <div
         aria-hidden="true"
-        className={`absolute inset-[-2rem] z-0 bg-black bg-cover bg-center transition-opacity duration-300 ${fit === 'contain' ? '' : 'hidden lg:block'}`}
+        className={`absolute inset-[-2rem] z-0 bg-black bg-cover bg-center transition-opacity duration-300 ${fit === 'contain' || item.orientation === 'landscape' ? '' : 'hidden lg:block'}`}
         style={{
           backgroundImage: item.posterUrl ? `url("${item.posterUrl}")` : undefined,
           filter: 'blur(28px) brightness(0.42)',
@@ -345,7 +344,8 @@ export function VideoCard({
           if (load && src) void refreshUrl();
         }}
         onClick={togglePlay}
-        className={`relative z-10 h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`}
+        className={`relative z-10 h-full w-full ${item.orientation === 'landscape' || fit === 'contain' ? 'object-contain' : 'object-cover'}`}
+        style={{ aspectRatio: item.orientation === 'portrait' ? '9 / 16' : '16 / 9' }}
       />
       <div
         role="progressbar"
@@ -402,29 +402,31 @@ export function VideoCard({
           </svg>
         </button>
       </div>
-      <button
-        type="button"
-        onClick={onToggleFit}
-        aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
-        className="glass absolute right-4 top-[10.5rem] z-30 lg:top-auto lg:right-20 lg:bottom-3 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-      >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {item.orientation === 'portrait' && (
+        <button
+          type="button"
+          onClick={onToggleFit}
+          aria-label={fit === 'cover' ? t('showEntireVideo') : t('fillScreen')}
+          className="glass absolute right-4 top-[10.5rem] z-30 flex h-11 w-11 items-center justify-center rounded-full text-white transition-[transform,background-color] duration-200 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:top-auto lg:right-20 lg:bottom-3"
         >
-          {fit === 'cover' ? (
-            <path d="M8 3H5a2 2 0 00-2 2v3m13-5h3a2 2 0 012 2v3M3 16v3a2 2 0 002 2h3m13-5v3a2 2 0 01-2 2h-3" />
-          ) : (
-            <path d="M8 3v5H3m13-5v5h5M3 16h5v5m13-5h-5v5" />
-          )}
-        </svg>
-      </button>
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {fit === 'cover' ? (
+              <path d="M8 3H5a2 2 0 00-2 2v3m13-5h3a2 2 0 012 2v3M3 16v3a2 2 0 002 2h3m13-5v3a2 2 0 01-2 2h-3" />
+            ) : (
+              <path d="M8 3v5H3m13-5v5h5M3 16h5v5m13-5h-5v5" />
+            )}
+          </svg>
+        </button>
+      )}
       {load && mediaState === 'loading' && (
         <p
           role="status"

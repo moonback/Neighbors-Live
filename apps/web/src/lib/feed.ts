@@ -1,4 +1,4 @@
-import type { Category } from '@nl/shared';
+import { videoOrientationSchema, type Category, type VideoOrientation } from '@nl/shared';
 import { signMedia } from '@/lib/media';
 import { profileImageUrl } from '@/lib/profile-image';
 import { adminClient } from '@/lib/supabase/admin';
@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 export interface FeedItem {
   id: string;
   category: Category;
+  orientation: VideoOrientation;
   caption: string;
   offerTerms: string;
   author: {
@@ -45,6 +46,7 @@ export interface PublicVideoRow {
   author_phone?: string | null;
   author_address?: string | null;
   category: Category;
+  orientation?: string;
   caption: string;
   published_at: string | null;
   expires_at: string;
@@ -65,7 +67,7 @@ export async function hydrate(
   const ids = rows.map((r) => r.id);
   const { data: paths } = await adminClient()
     .from('videos')
-    .select('id, video_path, poster_path, offer_terms')
+    .select('id, video_path, poster_path, offer_terms, orientation')
     .in('id', ids);
   const byId = new Map((paths ?? []).map((p) => [p.id, p]));
   const urls = await signMedia((paths ?? []).flatMap((p) => [p.video_path, p.poster_path]));
@@ -88,6 +90,7 @@ export async function hydrate(
     return {
       id: r.id,
       category: r.category,
+      orientation: videoOrientationSchema.parse(p?.orientation),
       caption: r.caption,
       offerTerms: p?.offer_terms ?? '',
       author: {
