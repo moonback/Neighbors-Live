@@ -14,6 +14,7 @@ test('records a video with the camera, publishes it, and the worker makes it act
   await expect(page.getByText('30 secondes maximum')).toBeVisible();
   await expect(page.locator('input[type=file]')).toHaveCount(0); // no gallery import
 
+  await context.setGeolocation({ latitude: 48.8701, longitude: 2.3711, accuracy: 20 });
   await page.getByRole('button', { name: 'Démarrer l’enregistrement' }).click();
   await expect(page.getByText(/s restantes/)).toBeVisible();
   await page.waitForTimeout(3000);
@@ -22,15 +23,25 @@ test('records a video with the camera, publishes it, and the worker makes it act
   // Preview, retake once, record again.
   await expect(page.getByRole('button', { name: 'Refaire' })).toBeVisible();
   await page.getByRole('button', { name: 'Refaire' }).click();
+  await context.setGeolocation({ latitude: 48.8701, longitude: 2.3711, accuracy: 20 });
   await page.getByRole('button', { name: 'Démarrer l’enregistrement' }).click();
   await page.waitForTimeout(2500);
   await page.getByRole('button', { name: 'Arrêter l’enregistrement' }).click();
+  await expect(page.getByText(/Position capturée après l’enregistrement/)).toBeVisible();
+  await context.setGeolocation({ latitude: 48.8722, longitude: 2.3767, accuracy: 20 });
   await page.getByRole('button', { name: 'Continuer' }).click();
 
   await page.getByText('Bon plan', { exact: true }).click();
   await page.getByLabel('Légende').fill('Test e2e : cagettes de pommes gratuites');
   await expect(page.getByRole('button', { name: 'Publier ici' })).toBeInViewport();
+  const createVideoRequest = page.waitForRequest(
+    (request) => request.url().endsWith('/api/videos') && request.method() === 'POST',
+  );
   await page.getByRole('button', { name: 'Publier ici' }).click();
+  expect((await createVideoRequest).postDataJSON()).toMatchObject({
+    lat: 48.8701,
+    lng: 2.3711,
+  });
   await expect(page.getByText(/Vidéo envoyée/)).toBeVisible({ timeout: 60_000 });
 
   // Status goes processing → active once the worker has blurred and transcoded it.

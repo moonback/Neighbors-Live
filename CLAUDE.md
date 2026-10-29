@@ -56,7 +56,7 @@ docs              ARCHITECTURE, DECISIONS, PRIVACY, DEPLOYMENT, PROGRESS
   modérateur de zone, admin, commerce).
 - Rate limiting en base (publication, commentaires, signalements, connexion).
 - Validation serveur de tout ce qui vient du client, y compris cohérence de la position (précision
-  ≤ 100 m, coordonnées plausibles).
+  ≤ 500 m, coordonnées plausibles).
 - Headers de sécurité (CSP, HSTS…), protection CSRF sur les mutations, sanitisation des textes.
 - Import galerie interdit : la vidéo vient uniquement de `getUserMedia` / `MediaRecorder`.
 - Original non flouté supprimé après traitement réussi. Suppression de compte = suppression effective

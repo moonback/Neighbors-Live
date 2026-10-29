@@ -10,7 +10,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { PermissionPrimer } from '@/components/PermissionPrimer';
 import { Button, Field, inputClass, Notice } from '@/components/ui';
 import { useErrorText } from '@/components/useErrorText';
@@ -21,6 +21,7 @@ import { containerOf } from '@/lib/recorder';
 import { Camera, type Recording } from './Camera';
 
 type Step = 'primer' | 'camera' | 'preview' | 'form' | 'sending' | 'done' | 'queued';
+const LOCATION_MAX_AGE_MS = 5 * 60_000;
 
 /** datetime-local bounds for an event end: from now + 15 min to now + 7 days (local time). */
 function eventBounds() {
@@ -47,14 +48,30 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [locating, setLocating] = useState(false);
+  const [locationSnapshot, setLocationSnapshot] = useState<{
+    fix: Fix;
+    capturedAt: number;
+  } | null>(null);
+  const [locationStale, setLocationStale] = useState(false);
+  const locationRequestId = useRef(0);
 
   const previewUrl = useMemo(() => (rec ? URL.createObjectURL(rec.blob) : null), [rec]);
   useEffect(() => () => void (previewUrl && URL.revokeObjectURL(previewUrl)), [previewUrl]);
+  useEffect(() => {
+    if (!locationSnapshot) return;
+    const timeout = window.setTimeout(
+      () => setLocationStale(true),
+      Math.max(0, locationSnapshot.capturedAt + LOCATION_MAX_AGE_MS - Date.now() + 1),
+    );
+    return () => window.clearTimeout(timeout);
+  }, [locationSnapshot]);
 
   const categories = CATEGORIES.filter((c) => c !== 'shop' || isMerchant);
 
-  async function locate(): Promise<Fix | null> {
+  async function locate() {
+    const requestId = ++locationRequestId.current;
     setLocating(true);
+    setError(null);
     try {
       const pos = await currentPosition();
       const fix = {
@@ -63,19 +80,28 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
         accuracy: Math.ceil(pos.coords.accuracy),
       };
       if (fix.accuracy > MAX_ACCURACY_M) {
-        setError(t('location.imprecise', { accuracy: fix.accuracy }));
+        if (locationRequestId.current === requestId) {
+          setError(t('location.imprecise', { accuracy: fix.accuracy }));
+        }
         return null;
       }
-      return fix;
+      const snapshot = { fix, capturedAt: pos.timestamp };
+      if (locationRequestId.current === requestId) {
+        setLocationStale(false);
+        setLocationSnapshot(snapshot);
+      }
+      return snapshot;
     } catch (e) {
-      setError(
-        (e as GeolocationPositionError).code === 1
-          ? t('location.denied')
-          : t('location.unavailable'),
-      );
+      if (locationRequestId.current === requestId) {
+        setError(
+          (e as GeolocationPositionError).code === 1
+            ? t('location.denied')
+            : t('location.unavailable'),
+        );
+      }
       return null;
     } finally {
-      setLocating(false);
+      if (locationRequestId.current === requestId) setLocating(false);
     }
   }
 
@@ -83,8 +109,11 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
     e.preventDefault();
     if (!rec) return;
     setError(null);
-    const fix = await locate();
-    if (!fix) return;
+    const locationIsFresh =
+      locationSnapshot !== null && Date.now() - locationSnapshot.capturedAt <= LOCATION_MAX_AGE_MS;
+    const snapshot = locationIsFresh ? locationSnapshot : await locate();
+    if (!snapshot) return;
+    const fix = snapshot.fix;
     const meta: PublishMeta = {
       category,
       caption,
@@ -152,8 +181,11 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
       {step === 'camera' && (
         <Camera
           onRecorded={(r) => {
+            setLocationSnapshot(null);
+            setError(null);
             setRec(r);
             setStep('preview');
+            void locate();
           }}
         />
       )}
@@ -169,11 +201,18 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
             playsInline
             className="min-h-0 flex-1 bg-black object-contain"
           />
+          <div aria-live="polite" className="px-4 text-center text-sm text-fog">
+            {locating ? t('location.capturing') : locationSnapshot ? t('location.captured') : error}
+          </div>
           <div className="flex gap-3 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <Button
               variant="secondary"
               className="flex-1"
               onClick={() => {
+                locationRequestId.current += 1;
+                setLocating(false);
+                setLocationSnapshot(null);
+                setError(null);
                 setRec(null);
                 setStep('camera');
               }}
@@ -312,6 +351,25 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
               <p className="mt-2 text-xs text-fog">{t('form.hours', { count: merchantHours })}</p>
             )}
           </section>
+          <section aria-live="polite" className="flex items-center justify-between gap-3">
+            <p className="text-sm text-fog">
+              {locating
+                ? t('location.capturing')
+                : locationSnapshot
+                  ? locationStale
+                    ? t('location.stale')
+                    : t('location.captured')
+                  : t('location.missing')}
+            </p>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => void locate()}
+              disabled={locating || step === 'sending'}
+            >
+              {locating ? t('form.locating') : t('location.refresh')}
+            </Button>
+          </section>
           {error && <Notice kind="error">{error}</Notice>}
           {step === 'sending' && (
             <div role="status" className="flex flex-col gap-2">
@@ -358,6 +416,10 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
           <Button
             variant="ghost"
             onClick={() => {
+              locationRequestId.current += 1;
+              setLocating(false);
+              setLocationSnapshot(null);
+              setError(null);
               setRec(null);
               setCaption('');
               setOfferTerms('');

@@ -4,6 +4,8 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ fait (codé + tests verts) · �
 l'app) · ⚠️ écart documenté.
 Règle : rien n'est 🟢 sans exécution réelle. Les écarts sont décrits dans la colonne « Notes ».
 
+Mise à jour 2026-10-29 — la position d’une vidéo est maintenant relevée à la fin de l’enregistrement et conservée pendant le formulaire ; une position de plus de 5 minutes est actualisée avant publication et peut aussi être rafraîchie manuellement. Test E2E ajouté pour vérifier que changer de coordonnées après l’enregistrement ne modifie pas la position publiée. Typecheck, build, 109 tests workspace, ESLint ciblé, Prettier et contrôle des changements ciblés réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`. E2E non exécuté : Supabase local refuse la connexion sur `127.0.0.1:56421`.
+
 Mise à jour 2026-10-29 — le texte juridique des pages de confidentialité/conditions/règles a été remplacé par des formulations conformes aux fonctionnalités réelles de l’application, sans placeholders. Le bandeau de brouillon est rendu conditionnel afin de ne plus afficher un message de document incomplet en production. Vérification : typecheck + tests workspace réussis ; lint global bloqué par `EPERM` sur `.swc-safe-cache`.
 
 Mise à jour 2026-10-29 — la vue publique d’une vidéo inclut désormais les actions de sauvegarde et de masquage déjà disponibles dans le feed, avec états synchronisés depuis les listes utilisateur et confirmation serveur. Vérification : typecheck + tests workspace + build réussis ; validation DB/E2E bloquée par l’absence de Docker/Supabase local.

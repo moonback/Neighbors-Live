@@ -5,7 +5,7 @@
     "title": "Filmer ce qui se passe",
     "body": "Pour filmer, Voisino a besoin de :",
     "camera": "Caméra et micro : uniquement pendant que cet écran est ouvert. Les vidéos se filment dans l’application, l’import depuis la galerie n’est pas possible.",
-    "location": "Position, au moment de publier : pour montrer la vidéo aux voisins proches. Elle est arrondie à environ 50 m pour tout le monde.",
+    "location": "Position relevée juste après la fin de l’enregistrement pour situer la vidéo auprès des voisins proches. Elle est arrondie à environ 50 m pour tout le monde.",
     "privacy": "Un floutage automatique des visages est appliqué avant publication, mais il peut en manquer. Évitez de filmer des personnes reconnaissables et signalez tout contenu préoccupant. Les plaques ne sont pas floutées.",
     "continue": "Activer la caméra",
     "later": "Pas maintenant"
@@ -104,6 +104,11 @@
     "another": "Filmer une autre vidéo"
   },
   "location": {
+    "capturing": "Position en cours d’enregistrement…",
+    "captured": "Position capturée après l’enregistrement. Elle sera utilisée pour la publication.",
+    "stale": "Cette position a plus de 5 minutes. Elle sera actualisée avant publication.",
+    "missing": "Position non enregistrée. Réessayez avant de publier.",
+    "refresh": "Actualiser la position",
     "denied": "La localisation est refusée. Elle est nécessaire pour publier : autorisez-la dans les réglages du navigateur.",
     "imprecise": "Position trop imprécise (± {accuracy} m, 500 m maximum). Sortez à découvert ou attendez quelques secondes, puis réessayez.",
     "unavailable": "Position indisponible. Vérifiez que la localisation est activée et réessayez.",

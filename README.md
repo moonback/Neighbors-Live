@@ -114,7 +114,7 @@ Le payload temps réel ne contient qu’une position publique approximative.
 
 Les enregistrements mis en attente sont conservés dans IndexedDB sur l’appareil. Avant de les
 renvoyer, l’application relève la position à nouveau : elle attend une précision suffisante et ne
-reprend la publication que si l’appareil reste à moins de 100 m du lieu de capture. Une vidéo de plus
+reprend la publication que si l’appareil reste à moins de 500 m du lieu de capture. Une vidéo de plus
 de 6 heures ou éloignée de son lieu d’origine est abandonnée. La reprise complète doit encore être
 vérifiée sur appareil et après interruption réseau.
 
@@ -161,7 +161,7 @@ de compte.
   service worker; seules des pages explicitement publiques peuvent être conservées pour la navigation
   hors ligne. Les navigations personnelles restent réseau uniquement.
 - La position exacte de la vidéo est conservée côté base pour la recherche de proximité. Les réponses
-  publiques utilisent une position approximative (environ 50 m) et des distances arrondies à 100 m.
+  publiques utilisent une position approximative (environ 50 m) et des distances arrondies à 500 m.
   Les coordonnées de recherche du feed ne sont pas enregistrées comme historique.
 - Les abonnements d’alerte utilisent une cellule de zone plutôt que la position GPS brute.
 - Les tables sont protégées par RLS. Les routes mutatives valident les données, contrôlent l’origine
