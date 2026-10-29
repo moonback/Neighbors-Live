@@ -51,6 +51,7 @@ describe('video reservation route', () => {
         lng: 2.3767,
         accuracy: 12,
         mimeType: 'video/webm',
+        orientation: 'landscape',
         durationMs: 9000,
         sizeBytes: 9000,
         requestId,
@@ -67,6 +68,7 @@ describe('video reservation route', () => {
         p_author: userId,
         p_request_id: requestId,
         p_offer_terms: 'Hors boissons',
+        p_orientation: 'landscape',
       }),
     );
     await expect(response.json()).resolves.toMatchObject({ videoId });

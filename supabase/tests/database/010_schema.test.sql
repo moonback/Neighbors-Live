@@ -18,6 +18,7 @@ select tables_are('public', array[
 
 select col_type_is('public', 'videos', 'location', 'extensions', 'geography(Point,4326)', 'location is geography(Point,4326)');
 select col_type_is('public', 'videos', 'offer_terms', 'pg_catalog', 'text', 'offer terms are stored as text');
+select col_type_is('public', 'videos', 'orientation', 'pg_catalog', 'text', 'video orientation is stored as text');
 select has_index('public', 'videos', 'videos_location_gix', 'GIST index on location');
 select has_index('public', 'videos', 'videos_public_location_gix', 'GIST index on public_location');
 
@@ -38,6 +39,7 @@ select ok(not has_table_privilege('authenticated', 'public.rate_limits', 'select
 -- Sensitive functions are not callable from the API.
 select ok(not has_function_privilege('authenticated', 'public.create_video(uuid, public.video_category, text, double precision, double precision, real, text, text, text, integer, timestamptz)', 'execute'), 'create_video is service-only');
 select ok(not has_function_privilege('authenticated', 'public.create_video(uuid, public.video_category, text, double precision, double precision, real, text, text, text, integer, timestamptz, uuid, text)', 'execute'), 'offer-terms create_video overload is service-only');
+select ok(not has_function_privilege('authenticated', 'public.create_video(uuid, public.video_category, text, double precision, double precision, real, text, text, text, integer, timestamptz, uuid, text, text)', 'execute'), 'orientation create_video overload is service-only');
 select ok(not has_function_privilege('authenticated', 'public.moderate_video(uuid, uuid, public.moderation_kind, text)', 'execute'), 'moderate_video is service-only');
 select ok(not has_function_privilege('anon', 'public.expire_videos()', 'execute'), 'expire_videos is service-only');
 select ok(not has_function_privilege('authenticated', 'public.export_my_data(uuid)', 'execute'), 'export_my_data is service-only');

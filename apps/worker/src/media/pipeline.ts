@@ -3,10 +3,12 @@ import { once } from 'node:events';
 import { BoxTracker } from '../blur/tracker.ts';
 import { pixelate } from '../blur/pixelate.ts';
 import type { Box, Detector, Frame } from '../blur/types.ts';
+import type { VideoOrientation } from '@nl/shared';
 import { FPS, MAX_DURATION_S, NonRetryableError, probe, run, targetSize } from './ffmpeg.ts';
 
 export interface PipelineOptions {
   detectors: Detector[];
+  orientation: VideoOrientation;
   /** Run detectors every N frames; the tracker covers frames in between. */
   detectEvery: number;
   expectedDurationS?: number;
@@ -20,7 +22,7 @@ export interface PipelineResult {
 }
 
 /**
- * raw (WebM/MP4, any codec) → decoded RGB frames at 30 fps (1080×1920 portrait canvas) →
+ * raw (WebM/MP4, any codec) → decoded RGB frames at 30 fps (selected portrait/landscape canvas) →
  * detection + tracking + pixelation in memory → H.264/AAC MP4 (+faststart) and a JPEG poster
  * taken from the blurred output. The unblurred pixels never reach the output file.
  */
@@ -32,7 +34,7 @@ export async function blurAndTranscode(
 ): Promise<PipelineResult> {
   const info = await probe(input);
   if (info.durationS > MAX_DURATION_S) throw new NonRetryableError(`too long: ${info.durationS}s`);
-  const { width, height } = targetSize(info.width, info.height, info.rotation);
+  const { width, height } = targetSize(opts.orientation);
   const frameBytes = width * height * 3;
   const maxFrames = MAX_DURATION_S * FPS;
   const expectedDurationS = opts.expectedDurationS ?? (info.durationS || MAX_DURATION_S);

@@ -25,10 +25,12 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
 **Publication**
 
 1. Client : enregistre ≤ 30 s (`MediaRecorder`, `mimeType` détecté : `video/mp4` Safari,
-   `video/webm;codecs=vp9/vp8` sinon), relève la position à la fin de l’enregistrement
+   `video/webm;codecs=vp9/vp8` sinon), permet de choisir le canevas portrait 9:16 (1080 × 1920)
+   ou paysage 16:9 (1920 × 1080), relève la position à la fin de l’enregistrement
    (`enableHighAccuracy`) et la conserve pendant le formulaire. Une position de plus de 5 minutes
    est actualisée avant publication ; une précision > 500 m est refusée.
-2. `POST /api/videos` : Zod (catégorie, légende ≤ 140, lat/lng/accuracy, `expires_at` événement),
+2. `POST /api/videos` : Zod (catégorie, orientation, légende ≤ 140, lat/lng/accuracy,
+   `expires_at` événement),
    cohérence position (bornes, précision, pas de saut physiquement impossible depuis la dernière
    publication de l'auteur), rate limit, calcul `h3_cell` (h3-js, rés. 8) → insère `videos`
    (`status='processing'`) et renvoie `video_id` + chemin d'upload `raw-videos/<uid>/<video_id>`.
@@ -46,7 +48,8 @@ Plan court, choix figés pour l'exécution. Les justifications de dépendances s
   `UPDATE … WHERE id = (SELECT … FOR UPDATE SKIP LOCKED LIMIT 1)`.
 - Pipeline : ffmpeg décode en `rawvideo rgb24` (720p max, fps conservé) → détection (interface
   `Detector`, visages YuNet ONNX une image sur 3 + suivi IoU/interpolation entre détections) →
-  pixellisation des boîtes en mémoire → ffmpeg ré-encode H.264 + AAC (audio de la source) + poster.
+  adaptation proportionnelle avec padding noir sur le canevas choisi → pixellisation des boîtes en
+  mémoire → ffmpeg exporte H.264 + AAC (audio de la source) et un poster au même format.
 - Succès : upload `videos/<video_id>.mp4` + poster, `status='active'`, suppression de l'original
   `raw-videos`. Échec : retries backoff exponentiel (3 tentatives), puis `status='rejected'` +
   notification à l'auteur.

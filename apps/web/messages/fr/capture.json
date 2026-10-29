@@ -51,6 +51,11 @@
   "form": {
     "title": "Publier",
     "category": "Catégorie",
+    "orientation": "Format vidéo",
+    "orientations": {
+      "portrait": "Portrait · 9:16",
+      "landscape": "Paysage · 16:9"
+    },
     "caption": "Légende",
     "captionHint": "{count}/140 caractères",
     "captionGuide": {

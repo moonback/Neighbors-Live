@@ -47,6 +47,11 @@
   "form": {
     "title": "Publish",
     "category": "Category",
+    "orientation": "Video format",
+    "orientations": {
+      "portrait": "Portrait · 9:16",
+      "landscape": "Landscape · 16:9"
+    },
     "caption": "Caption",
     "captionHint": "{count}/140 characters",
     "captionGuide": {

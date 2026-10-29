@@ -13,6 +13,7 @@ test('records a video with the camera, publishes it, and the worker makes it act
   await page.getByRole('button', { name: 'Activer la caméra' }).click();
   await expect(page.getByText('30 secondes maximum')).toBeVisible();
   await expect(page.locator('input[type=file]')).toHaveCount(0); // no gallery import
+  await page.getByText('Paysage · 16:9').click();
 
   await context.setGeolocation({ latitude: 48.8701, longitude: 2.3711, accuracy: 20 });
   await page.getByRole('button', { name: 'Démarrer l’enregistrement' }).click();
@@ -41,6 +42,7 @@ test('records a video with the camera, publishes it, and the worker makes it act
   expect((await createVideoRequest).postDataJSON()).toMatchObject({
     lat: 48.8701,
     lng: 2.3711,
+    orientation: 'landscape',
   });
   await expect(page.getByText(/Vidéo envoyée/)).toBeVisible({ timeout: 60_000 });
 

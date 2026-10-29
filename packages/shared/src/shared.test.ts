@@ -17,6 +17,7 @@ import {
   realtimeCells,
   sanitizeText,
   usernameSchema,
+  videoOrientationSchema,
   zoneCell,
   zoneCenter,
 } from './index.ts';
@@ -97,6 +98,11 @@ describe('lifetime', () => {
 describe('schemas', () => {
   it('accepts a valid video and sanitises the caption', () => {
     expect(createVideoSchema.parse(baseVideo).caption).toBe('Pain au chocolat à 1 €');
+    expect(createVideoSchema.parse(baseVideo).orientation).toBe('portrait');
+    expect(createVideoSchema.parse({ ...baseVideo, orientation: 'landscape' }).orientation).toBe(
+      'landscape',
+    );
+    expect(videoOrientationSchema.safeParse('square').success).toBe(false);
   });
 
   it('accepts video uploads up to 500 MiB and rejects larger files', () => {

@@ -682,6 +682,7 @@ export type Database = {
           is_merchant: boolean;
           location: unknown;
           mime_type: string;
+          orientation: string;
           offer_terms: string;
           poster_path: string | null;
           public_location: unknown;
@@ -710,6 +711,7 @@ export type Database = {
           is_merchant?: boolean;
           location: unknown;
           mime_type: string;
+          orientation?: string;
           offer_terms?: string;
           poster_path?: string | null;
           public_location: unknown;
@@ -737,6 +739,7 @@ export type Database = {
           is_merchant?: boolean;
           location?: unknown;
           mime_type?: string;
+          orientation?: string;
           offer_terms?: string;
           poster_path?: string | null;
           public_location?: unknown;
@@ -901,6 +904,7 @@ export type Database = {
           p_lng: number;
           p_mime: string;
           p_offer_terms: string;
+          p_orientation: string;
           p_realtime_cell: string;
           p_request_id: string;
         };

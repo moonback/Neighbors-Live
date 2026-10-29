@@ -2,10 +2,12 @@
 //   node scripts/check-blur.ts image <file.jpg>                    → prints detected faces
 //   node scripts/check-blur.ts video <in> <out.mp4> <poster.jpg>   → full blur + transcode
 import { spawnSync } from 'node:child_process';
+import { videoOrientationSchema } from '@nl/shared';
 import { YunetFaceDetector } from '../src/blur/yunet.ts';
 import { blurAndTranscode } from '../src/media/pipeline.ts';
 
-const [mode, input, output, poster] = process.argv.slice(2);
+const [mode, input, output, poster, orientationArg] = process.argv.slice(2);
+const orientation = videoOrientationSchema.parse(orientationArg ?? 'portrait');
 const model = process.env.FACE_MODEL_PATH ?? 'models/face_detection_yunet_2023mar.onnx';
 const detector = await YunetFaceDetector.load(model);
 
@@ -41,9 +43,12 @@ if (mode === 'image' && input) {
   const stats = await blurAndTranscode(input, output, poster, {
     detectors: [detector],
     detectEvery: 2,
+    orientation,
   });
   console.log(JSON.stringify({ ...stats, ms: Date.now() - started }));
 } else {
-  console.error('usage: check-blur.ts image <file> | video <in> <out.mp4> <poster.jpg>');
+  console.error(
+    'usage: check-blur.ts image <file> | video <in> <out.mp4> <poster.jpg> [portrait|landscape]',
+  );
   process.exit(2);
 }

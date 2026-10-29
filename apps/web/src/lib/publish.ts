@@ -1,6 +1,6 @@
 'use client';
 
-import { RAW_BUCKET } from '@nl/shared';
+import { RAW_BUCKET, type VideoOrientation } from '@nl/shared';
 import { Upload } from 'tus-js-client';
 import { api } from '@/lib/client-api';
 import { clientEnv } from '@/lib/env';
@@ -10,6 +10,7 @@ export interface PublishMeta {
   category: string;
   caption: string;
   mimeType: 'video/mp4' | 'video/webm';
+  orientation: VideoOrientation;
   durationMs: number;
   eventEndsAt?: string;
   merchantHours?: number;
