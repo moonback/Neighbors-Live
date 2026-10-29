@@ -199,7 +199,7 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
               {categories.map((c) => (
                 <label
                   key={c}
-                  className={`flex min-h-11 cursor-pointer items-center justify-center rounded-xl border px-2 text-sm ${category === c ? 'border-accent bg-accent text-ink' : 'border-line'}`}
+                  className={`flex min-h-11 cursor-pointer items-center justify-center rounded-xl border px-2 text-sm focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent ${category === c ? 'border-accent bg-accent text-ink' : 'border-line'}`}
                 >
                   <input
                     type="radio"
@@ -323,21 +323,24 @@ export function CaptureFlow({ isMerchant }: { isMerchant: boolean }) {
               />
             </div>
           )}
-          <Button
-            type="submit"
-            disabled={
-              step === 'sending' ||
-              locating ||
-              (category === 'event' && !eventEnd) ||
-              (category === 'shop' && offerTerms.trim().length < 3)
-            }
-          >
-            {locating
-              ? t('form.locating')
-              : error && /±/.test(error)
-                ? t('location.retry')
-                : t('form.publish')}
-          </Button>
+          <div className="sticky bottom-0 -mx-4 mt-auto bg-gradient-to-t from-ink via-ink/95 to-ink/80 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-6 sm:px-6">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={
+                step === 'sending' ||
+                locating ||
+                (category === 'event' && !eventEnd) ||
+                (category === 'shop' && offerTerms.trim().length < 3)
+              }
+            >
+              {locating
+                ? t('form.locating')
+                : error && /±/.test(error)
+                  ? t('location.retry')
+                  : t('form.publish')}
+            </Button>
+          </div>
         </form>
       )}
 
