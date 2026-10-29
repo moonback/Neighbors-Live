@@ -51,7 +51,16 @@ export function Onboarding({
               : 'other',
       );
       const saved = Number(window.localStorage.getItem(ONBOARDING_STEP_KEY));
-      if (Number.isInteger(saved) && saved >= 0 && saved <= INSTALL_STEP) setStep(saved);
+      const requestedInstallGuide =
+        new URLSearchParams(window.location.search).get('step') === 'install';
+      if (
+        !requestedInstallGuide &&
+        Number.isInteger(saved) &&
+        saved >= 0 &&
+        saved <= INSTALL_STEP
+      ) {
+        setStep(saved);
+      }
     }, 0);
     return () => {
       window.removeEventListener('beforeinstallprompt', onPrompt);
