@@ -5,6 +5,7 @@ test('records a video with the camera, publishes it, and the worker makes it act
   page,
 }) => {
   await signUp(page, 'pub');
+  await page.setViewportSize({ width: 375, height: 500 });
   await page.goto('/filmer');
 
   // Explanation before any system prompt, then the camera (Chromium fake device).
@@ -28,6 +29,7 @@ test('records a video with the camera, publishes it, and the worker makes it act
 
   await page.getByText('Bon plan', { exact: true }).click();
   await page.getByLabel('Légende').fill('Test e2e : cagettes de pommes gratuites');
+  await expect(page.getByRole('button', { name: 'Publier ici' })).toBeInViewport();
   await page.getByRole('button', { name: 'Publier ici' }).click();
   await expect(page.getByText(/Vidéo envoyée/)).toBeVisible({ timeout: 60_000 });
 
