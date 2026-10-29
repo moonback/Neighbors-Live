@@ -71,4 +71,37 @@ describe('video reservation route', () => {
     );
     await expect(response.json()).resolves.toMatchObject({ videoId });
   });
+
+  it('reuses the same client request id when a reservation request is retried', async () => {
+    const payload = {
+      category: 'alert',
+      caption: 'Test de reprise',
+      lat: 48.8722,
+      lng: 2.3767,
+      accuracy: 12,
+      mimeType: 'video/webm',
+      durationMs: 9000,
+      sizeBytes: 9000,
+      requestId,
+    };
+
+    const first = await POST(request(payload), {});
+    const retry = await POST(request(payload), {});
+
+    expect(first.status).toBe(201);
+    expect(retry.status).toBe(201);
+    await expect(first.json()).resolves.toMatchObject({ videoId });
+    await expect(retry.json()).resolves.toMatchObject({ videoId });
+    expect(mocks.rpc).toHaveBeenCalledTimes(2);
+    expect(mocks.rpc).toHaveBeenNthCalledWith(
+      1,
+      'create_video',
+      expect.objectContaining({ p_request_id: requestId }),
+    );
+    expect(mocks.rpc).toHaveBeenNthCalledWith(
+      2,
+      'create_video',
+      expect.objectContaining({ p_request_id: requestId }),
+    );
+  });
 });

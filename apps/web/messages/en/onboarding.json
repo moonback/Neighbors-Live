@@ -27,7 +27,8 @@
     "ios": "On iPhone or iPad (Safari): tap Share, then “Add to Home Screen.” On iOS, notifications only work after installing the app and opening it from its icon.",
     "android": "On Android (Chrome): use the button below or the ⋮ menu, then “Install app.”",
     "button": "Install",
-    "installed": "The app is already installed."
+    "installed": "The app is already installed.",
+    "manual": "Open your browser menu and choose “Install app” or “Add to Home Screen” if that option is available."
   },
   "rules": {
     "title": "Community rules",

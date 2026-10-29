@@ -84,7 +84,7 @@ Les textes affichés et les constantes partagées doivent rester alignés sur ce
 ### Publication vidéo
 
 1. Le navigateur filme avec `MediaRecorder`, vérifie la disponibilité d’une position et refuse une
-   précision GPS supérieure à 100 m. La légende est limitée à 140 caractères et l’upload à 60 Mio.
+   précision GPS supérieure à 500 m. La légende est limitée à 140 caractères et l’upload à 500 Mio.
 2. `POST /api/videos` valide le contenu, les limites de débit, la cohérence de la position, la durée
    et les règles de compte; la ligne est créée en état `processing`.
 3. Le navigateur envoie le fichier au bucket privé `raw-videos` avec l’upload résumable TUS.
@@ -95,8 +95,8 @@ Les textes affichés et les constantes partagées doivent rester alignés sur ce
 6. Les jobs média échoués sont retentés avec backoff; après épuisement des tentatives, la publication
    est rejetée. Les fichiers expirés ou supprimés sont pris en charge par la purge.
 
-Une clé de requête stable et une réservation SQL idempotente sont prévues pour éviter la création de
-plusieurs lignes quand une réponse réseau se perd. Cette migration récente doit encore être validée
+Une clé de requête stable et une réservation SQL idempotente sont implémentées pour éviter la création de
+plusieurs lignes quand une réponse réseau se perd. La migration récente doit encore être validée
 par les tests de base de données et E2E; voir les limites ci-dessous.
 
 ### Feed, carte et alertes
