@@ -54,7 +54,7 @@ export default async function ProfilePage({ params, searchParams }: Params) {
     profile.role === 'merchant'
       ? admin
           .from('merchant_profiles')
-          .select('business_name, description, website, phone, address')
+          .select('business_name, description, website, phone, address, opening_hours')
           .eq('user_id', profile.id)
           .eq('status', 'approved')
           .maybeSingle()
@@ -170,6 +170,11 @@ export default async function ProfilePage({ params, searchParams }: Params) {
               {merchantData.address && (
                 <span className="inline-flex min-h-8 items-center rounded-full border border-white/10 px-2.5 text-white">
                   {merchantData.address}
+                </span>
+              )}
+              {merchantData.opening_hours && (
+                <span className="inline-flex min-h-8 items-center rounded-full border border-white/10 px-2.5 text-white">
+                  {merchantData.opening_hours}
                 </span>
               )}
             </div>

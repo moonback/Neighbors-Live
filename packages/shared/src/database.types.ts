@@ -236,6 +236,7 @@ export type Database = {
           created_at: string;
           daily_quota: number | null;
           description: string;
+          opening_hours: string;
           phone: string;
           reviewed_by: string | null;
           status: Database['public']['Enums']['merchant_status'];
@@ -249,6 +250,7 @@ export type Database = {
           created_at?: string;
           daily_quota?: number | null;
           description?: string;
+          opening_hours?: string;
           phone?: string;
           reviewed_by?: string | null;
           status?: Database['public']['Enums']['merchant_status'];
@@ -261,6 +263,7 @@ export type Database = {
           created_at?: string;
           daily_quota?: number | null;
           description?: string;
+          opening_hours?: string;
           phone?: string;
           reviewed_by?: string | null;
           status?: Database['public']['Enums']['merchant_status'];

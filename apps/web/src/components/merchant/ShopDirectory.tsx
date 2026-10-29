@@ -14,6 +14,7 @@ interface Entry {
   website?: string | null;
   phone?: string | null;
   address?: string | null;
+  openingHours?: string | null;
 }
 
 export function ShopDirectory({ entries }: { entries: Entry[] }) {
@@ -23,7 +24,7 @@ export function ShopDirectory({ entries }: { entries: Entry[] }) {
   const filtered = useMemo(
     () =>
       entries.filter((entry) =>
-        `${entry.name} ${entry.description} ${entry.address ?? ''} ${entry.website ?? ''} ${entry.phone ?? ''}`
+        `${entry.name} ${entry.description} ${entry.address ?? ''} ${entry.website ?? ''} ${entry.phone ?? ''} ${entry.openingHours ?? ''}`
           .toLocaleLowerCase()
           .includes(normalizedQuery),
       ),
@@ -116,6 +117,14 @@ export function ShopDirectory({ entries }: { entries: Entry[] }) {
                         title={entry.address}
                       >
                         {t('address')}
+                      </span>
+                    )}
+                    {entry.openingHours && (
+                      <span
+                        className="rounded-full border border-white/10 px-2 py-1"
+                        title={entry.openingHours}
+                      >
+                        {t('hours')}
                       </span>
                     )}
                   </span>

@@ -36,7 +36,7 @@ export default async function MerchantPage() {
   const format = await getFormatter();
   const { data: merchant, error: merchantError } = await supabase
     .from('merchant_profiles')
-    .select('business_name, status, created_at, website, phone, address')
+    .select('business_name, status, created_at, website, phone, address, opening_hours')
     .eq('user_id', viewer.id)
     .maybeSingle();
   const quota = merchant?.status === 'approved' ? await merchantQuota(viewer.id) : null;
@@ -122,6 +122,11 @@ export default async function MerchantPage() {
               {merchant.address && (
                 <span className="rounded-full border border-line px-2 py-1 font-medium text-white">
                   {merchant.address}
+                </span>
+              )}
+              {merchant.opening_hours && (
+                <span className="rounded-full border border-line px-2 py-1 font-medium text-white">
+                  {merchant.opening_hours}
                 </span>
               )}
             </div>

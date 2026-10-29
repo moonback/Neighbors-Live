@@ -16,12 +16,13 @@ export function MerchantForm() {
   const [website, setWebsite] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [openingHours, setOpeningHours] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const res = await api('/api/merchant', {
-      body: { businessName, description, website, phone, address },
+      body: { businessName, description, website, phone, address, openingHours },
     });
     if (!res.ok) return setError(errorText(res.error));
     router.refresh();
@@ -76,6 +77,16 @@ export function MerchantForm() {
           value={address}
           maxLength={200}
           onChange={(e) => setAddress(e.target.value)}
+        />
+      </Field>
+      <Field label={t('openingHours')} htmlFor="m-hours">
+        <input
+          id="m-hours"
+          className={inputClass}
+          value={openingHours}
+          maxLength={200}
+          placeholder={t('openingHoursPlaceholder')}
+          onChange={(e) => setOpeningHours(e.target.value)}
         />
       </Field>
       {error && <Notice kind="error">{error}</Notice>}

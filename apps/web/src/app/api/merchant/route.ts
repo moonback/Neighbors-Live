@@ -22,15 +22,20 @@ const schema = z.object({
   website: z.string().transform(sanitizeText).pipe(z.string().max(200)).default(''),
   phone: z.string().transform(sanitizeText).pipe(z.string().max(30)).default(''),
   address: z.string().transform(sanitizeText).pipe(z.string().max(200)).default(''),
+  openingHours: z.string().transform(sanitizeText).pipe(z.string().max(200)).default(''),
 });
 
 /** Merchant application (pending until an admin approves it). */
 export const POST = route(async (req) => {
   const user = await requireUser();
-  const { businessName, description, website, phone, address } = await parseBody(req, schema);
+  const { businessName, description, website, phone, address, openingHours } = await parseBody(
+    req,
+    schema,
+  );
   const normalizedWebsite = normalizeWebsite(website);
   const normalizedPhone = normalizePhone(phone);
   const normalizedAddress = sanitizeText(address).trim();
+  const normalizedOpeningHours = sanitizeText(openingHours).trim();
   if (normalizedWebsite && !/^https?:\/\//i.test(normalizedWebsite)) {
     throw new ApiError('invalid_website', 422);
   }
@@ -49,6 +54,7 @@ export const POST = route(async (req) => {
     website: normalizedWebsite,
     phone: normalizedPhone,
     address: normalizedAddress,
+    opening_hours: normalizedOpeningHours,
   });
   if (res.error?.code === '23505') throw new ApiError('conflict', 409);
   unwrap(res);
