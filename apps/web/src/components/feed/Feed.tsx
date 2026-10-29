@@ -430,7 +430,7 @@ export function Feed({
             </div>
           <div
             ref={categoryMenuRef}
-            className="feed-category-filters relative flex min-w-0 shrink-0 items-center gap-1 pl-0.5"
+            className="feed-category-filters relative flex min-w-0 max-w-[42vw] shrink-0 items-center gap-1 pl-0.5 sm:max-w-[14rem]"
           >
             <button
               type="button"
@@ -471,6 +471,7 @@ export function Feed({
             {isCategoryMenuOpen && (
               <div
                 id="feed-category-options"
+                role="group"
                 aria-label={t('filters.label')}
                 className="feed-category-options glass absolute right-0 top-full z-30 mt-2 flex max-h-[min(65svh,30rem)] w-[min(22rem,calc(100vw-1.5rem))] flex-col gap-3 overflow-y-auto rounded-2xl p-3 shadow-xl"
               >
