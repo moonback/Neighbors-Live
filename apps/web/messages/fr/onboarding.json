@@ -27,7 +27,8 @@
     "ios": "Sur iPhone ou iPad (Safari) : touchez le bouton Partager, puis « Sur l’écran d’accueil ». Les notifications ne fonctionnent sur iOS qu’une fois l’application installée et ouverte depuis l’icône.",
     "android": "Sur Android (Chrome) : utilisez le bouton ci-dessous ou le menu ⋮ puis « Installer l’application ».",
     "button": "Installer",
-    "installed": "L’application est déjà installée."
+    "installed": "L’application est déjà installée.",
+    "manual": "Dans votre navigateur, ouvrez le menu de partage ou du navigateur et choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil » si cette option est proposée."
   },
   "rules": {
     "title": "Les règles de la communauté",
