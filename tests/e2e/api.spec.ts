@@ -186,5 +186,8 @@ test('first visit gets a concise onboarding and can skip the optional install gu
   await expect(page).not.toHaveURL(/onboarding/);
   await page.goto('/onboarding?step=install');
   await expect(page.getByRole('heading', { name: 'Installer l’application' })).toBeVisible();
+  await expect(page.getByText(/Sur Android \(Chrome\)/)).toBeVisible();
+  await expect(page.getByText(/Sur iPhone ou iPad/)).toHaveCount(0);
+  await expect(page.getByText(/Étape \d sur \d/)).toHaveCount(0);
   await context.close();
 });
